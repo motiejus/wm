@@ -48,7 +48,7 @@
 \newcommand{\DP}{Douglas \& Peucker}
 \newcommand{\VW}{Visvalingam--Whyatt}
 \newcommand{\WM}{Wang--M{\"u}ller}
-% {\WM} algoritmo realizacija kartografinei upių generalizacijai vykdyti (PostGIS programinės įrangos pagrindu)
+% {\WM} algoritmo realizacija kartografinei upių generalizacijai
 \newcommand{\MYTITLE}{{\WM} algorithm realization for cartographic line generalization}
 \newcommand{\MYAUTHOR}{Motiejus Jakštys}
 
@@ -80,12 +80,15 @@
 
 \begin{abstract}
 \label{sec:abstract}
-Current open-source line generalization solutions have their roots in
-    mathematics and geometry, and are not fit for natural objects like rivers
-    and coastlines. This paper discusses our implementation of {\WM}'s algorithm
-    under and open-source license, explains things that we would had
-    appreciated in the original paper and compares our results to different
-    generalization algorithms.
+
+Currently available line simplification algorithms are rooted in mathematics
+    and geometry, and are not fit bendy natural features like rivers and
+    coastlines. This paper discusses our implementation of {\WM} algorithm,
+    with notes that we would have been appreciated before starting the
+    re-implementation endeavor. This paper accompanies our implementation of
+    {\WM} algorithm and will be helpful to anyone trying to understand the
+    original {\WM} paper, or our implementation.
+
 \end{abstract}
 
 \newpage
@@ -268,17 +271,33 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \label{fig:salvis-overlaid-generalized-chaikin-50k}
 \end{figure}
 
-There are a few problems with {\VW} and {\DP} immediately visible in
-figure~\onpage{fig:salvis-generalized-chaikin-50k}:
+The resulting generalized and smoothened example
+(figure~\onpage{fig:salvis-generalized-chaikin-50k}) yields a more
+aesthetically pleasant result, however, it obscures natural river features.
+Given the absence of rocks, the only natural features that influence the river
+direction are topographic:
 
 \begin{itemize}
-    \item problem 1
-    \item problem 2
+
+    \item Relatively straight river (completely straight or with small-angled
+        bends over a relatively long distance) implies greater slope, more
+        water, and/or faster flow.
+
+    \item Bendy river, on the contrary, implies slower flow, smaller slope,
+        and/or less water.
+
 \end{itemize}
 
-Therefore, a more robust generalization algorithm is worthwhile for lookout.
+Both {\VW} and {\DP} have a tendency to remove the small bends altogether,
+which is a valuable characterization of the river. Therefore, a more robust
+generalization algorithm is worthwhile for lookout.
 
 \subsubsection{Modern approaches}
+
+% TODO:
+% https://pdfs.semanticscholar.org/e80b/1c64345583eb8f7a6c53834d1d40852595d5.pdf
+% A New Algorithm for Cartographic Simplification of Streams and Lakes Using
+% Deviation Angles and Error Bands
 
 Due to their simplicity and ubiquity, {\DP} and {\VW} have been established as
 go-to algorithms for line generalization. During recent years, alternatives
