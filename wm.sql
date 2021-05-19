@@ -518,8 +518,7 @@ begin
   for i in 1..array_length(attrs, 1) loop
     if attrs[i].isolated and attrs[i].adjsize < desired_size then
       bend = wm_exaggerate_bend2(bends[i], attrs[i].adjsize, desired_size);
-
-      -- does bend intersect with the previous or next
+      -- Does bend intersect with the previous or next
       -- intersect_patience bends? If they do, abort exaggeration for this one.
 
       -- Do close-by bends intersect with this one? Special
@@ -564,8 +563,17 @@ begin
       -- bend, because bends always share a line segment together this is
       -- duplicated in a few places, because PostGIS does not allow (?)
       -- mutating an array when passed to a function.
-      bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
-      bends[i+1] = st_removepoint(bends[i+1], 0);
+      bends[i-1] = st_addpoint(
+        st_removepoint(bends[i-1], st_npoints(bends[i-1])-1),
+        st_pointn(bends[i], 1),
+        -1
+      );
+
+      bends[i+1] = st_addpoint(
+        st_removepoint(bends[i+1], 0),
+        st_pointn(bends[i], st_npoints(bends[i])-1),
+        0
+      );
 
       if dbgname is not null then
         insert into wm_debug (stage, name, gen, nbend, way) values(
