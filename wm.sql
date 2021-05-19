@@ -44,7 +44,7 @@ begin
     if p3 is null then
       continue;
     end if;
-    cur_sign = sign(pi - st_angle(p1, p2, p2, p3));
+    cur_sign = sign(pi - st_angle(p1, p2, p3));
 
     if bend is null then
       bend = st_makeline(p3, p2);
@@ -78,8 +78,8 @@ create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
 declare
   pi real;
   small_angle real;
-  phead geometry; -- head point of head bend
-  ptail geometry[]; -- 3 head points of tail bend
+  ptail geometry; -- tail point of tail bend
+  phead geometry[]; -- 3 tail points of head bend
   i int4; -- bends[i] is the current head
 begin
   pi = radians(180);
@@ -87,12 +87,7 @@ begin
   -- be joined
   small_angle := radians(30);
 
-  <<bend_loop>>
-  for i in select generate_subscripts(bends, 1) loop
-    if i = 1 then
-      continue;
-    end if;
-
+  for i in 2..array_length(bends, 1) loop
     -- Predicate: two bends will always share an edge. Assuming (A,B,C,D,E,F)
     -- is a bend:
     --           C________D
@@ -115,24 +110,22 @@ begin
     -- After processing the curve following the definition of a bend, the bend
     -- [A-E] would be detected. Assuming inflection point E and F are "small",
     -- the bend needs to be extended by two edges to [A,G].
-    select geom from st_dumppoints(bends[i]) order by path[1] desc limit 1 into phead;
+    select geom from st_dumppoints(bends[i-1]) order by path[1] asc limit 1 into ptail;
     while true loop
       -- copy last 3 points of bends[i-1] (tail) to ptail
-      select array(select geom from st_dumppoints(bends[i-1]) order by path[1] desc limit 3) into ptail;
+      select array(
+        select geom from st_dumppoints(bends[i]) order by path[1] asc limit 3
+      ) into phead;
 
       -- if inflection angle between ptail[1:3] "large", stop processing this bend
-      if abs(st_angle(ptail[1], ptail[2], ptail[2], ptail[3]) - pi) > small_angle then
-        exit bend_loop;
-      end if;
+      exit when abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle;
 
-      -- distance from last vertex should be larger than second-last vertex
-      if st_distance(phead, ptail[2]) < st_distance(phead, ptail[3]) then
-        exit bend_loop;
-      end if;
+      -- distance from head's first vertex should be larger than from second vertex
+      exit when st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]);
 
       -- detected a gentle inflection. Move head of the tail to the tail of head
-      bends[i] = st_addpoint(bends[i], ptail[3]);
-      bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
+      bends[i] = st_removepoint(bends[i], 0);
+      bends[i-1] = st_addpoint(bends[i-1], phead[3]);
     end loop;
 
   end loop;
