@@ -99,18 +99,21 @@ begin
     -- Then edges (A,B) and (E,F) are shared with the neighboring bends.
     --
     --
-    -- Assume this curve:
+    -- Assume this curve (figure `inflection-1`):
     --
     --        A______B
-    --     ---'      `---.___. E
-    --               C   D   |
-    --     _I                |
-    --      '---.________    |
-    --          H       G'---+ F
+    --     ---'      `-------. C
+    --                       |
+    --        G___ F         |
+    --        /   `-----.____+ D
+    --                  E
     --
     -- After processing the curve following the definition of a bend, the bend
-    -- [A-G] would be detected. Assuming inflection point G and H are "small",
-    -- the bend would be extended by two edges to [A,I].
+    -- [A-E] would be detected. Assuming inflection point E and F are "small",
+    -- the bend needs to be extended by two edges to [A,G].
+    --
+    -- Assuming the direction in this example is clock-wise, the first set of
+    -- `p` variables will be: p1=C, p2=B, p3=A.
     for p in (select geom from st_dumppoints(prev_bend) order by path[1] desc) loop
       p3 = p2;
       p2 = p1;
