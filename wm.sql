@@ -1,9 +1,9 @@
 \set ON_ERROR_STOP on
 SET plpgsql.extra_errors TO 'all';
 
+-- detect_bends detects bends using the inflection angles. No corrections.
 drop function if exists detect_bends;
--- detect_bends detects bends using the inflection angles. It does not do corrections.
-create or replace function detect_bends(line geometry, OUT bends geometry[]) as $$
+create function detect_bends(line geometry, OUT bends geometry[]) as $$
 declare
   pi real;
   p geometry;
@@ -16,8 +16,8 @@ declare
 begin
   pi = radians(180);
 
-  -- the last vertex is iterated over twice, because the algorithm uses 3 vertices
-  -- to calculate the angle between them.
+  -- the last vertex is iterated over twice, because the algorithm uses 3
+  -- vertices to calculate the angle between them.
   --
   -- Given 3 vertices p1, p2, p3:
   --
@@ -97,7 +97,8 @@ $$ language plpgsql;
 
 -- fix_gentle_inflections1 fixes gentle inflections of an array of lines in
 -- one direction. This is an implementation detail of fix_gentle_inflections.
-create or replace function fix_gentle_inflections1(INOUT bends geometry[]) as $$
+drop function if exists fix_gentle_inflections1;
+create function fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
   pi real;
   small_angle real;
@@ -145,13 +146,14 @@ begin
       -- if the bend got too short, stop processing it
       exit when array_length(phead, 1) < 3;
 
-      -- if inflection angle between ptail[1:3] "large", stop processing this bend
+      -- inflection angle between ptail[1:3] is "large", stop processing
       exit when abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle;
 
-      -- distance from head's first vertex should be larger than from second vertex
+      -- distance from head's 1st vertex should be larger than from 2nd vertex
       exit when st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]);
 
-      -- detected a gentle inflection. Move head of the tail to the tail of head
+      -- Detected a gentle inflection.
+      -- Move head of the tail to the tail of head
       bends[i] = st_removepoint(bends[i], 0);
       bends[i-1] = st_addpoint(bends[i-1], phead[3]);
     end loop;
@@ -162,7 +164,8 @@ $$ language plpgsql;
 
 -- self_crossing eliminates self-crossing from the bends, following the
 -- article's section "Self-line Crossing When Cutting a Bend".
-create or replace function self_crossing(INOUT bends geometry[]) as $$
+drop function if exists self_crossing;
+create function self_crossing(INOUT bends geometry[]) as $$
 declare
   i int4;
   j int4;
@@ -189,7 +192,9 @@ begin
     p1 = null;
     p2 = null;
     p3 = null;
-    for p0 in (select geom from st_dumppoints(bends[i]) order by path[1] asc) loop
+    for p0 in (
+      select geom from st_dumppoints(bends[i]) order by path[1] asc
+    ) loop
       p3 = p2;
       p2 = p1;
       p1 = p0;
@@ -219,8 +224,10 @@ begin
 
       -- are p2 and p3 on the different sides of line(p0,p1)? vector
       -- multiplication; https://stackoverflow.com/questions/1560492/
-      s2 = (st_x(p0)-st_x(p1)*(st_y(p2)-st_y(p1))-(st_y(p0)-st_y(p1))*(st_x(p2)-st_x(p1)));
-      s3 = (st_x(p0)-st_x(p1)*(st_y(p3)-st_y(p1))-(st_y(p0)-st_y(p1))*(st_x(p3)-st_x(p1)));
+      s2 = (st_x(p0)-st_x(p1)*(st_y(p2)-st_y(p1))-
+            (st_y(p0)-st_y(p1))*(st_x(p2)-st_x(p1)));
+      s3 = (st_x(p0)-st_x(p1)*(st_y(p3)-st_y(p1))-
+            (st_y(p0)-st_y(p1))*(st_x(p3)-st_x(p1)));
       continue when sign(s2) = sign(s3);
 
       -- do end vertices of bend[i] cross bend[j]?
@@ -228,12 +235,13 @@ begin
       b = st_pointn(bends[i], -1);
       multi = st_split(bends[j], st_makeline(a, b));
       continue when st_numgeometries(multi) = 1;
-      continue when st_numgeometries(multi) = 2 and (st_contains(bends[j], a) or st_contains(bends[j], b));
+      continue when st_numgeometries(multi) = 2 and
+        (st_contains(bends[j], a) or st_contains(bends[j], b));
 
       -- real self-crossing detected! Remove it.
       -- if j < i:
-      --   bends[j] = multi[1][1...n-1]; that will have all the vertices of bends[j],
-      --     except the crossing and what comes after it.
+      --   bends[j] = multi[1][1...n-1]; that will have all the vertices of
+      --     bends[j], except the crossing and what comes after it.
       --   bends[j] = append(bends[j], bends[i][-1])
       --   remove bends from bends[j+1] to bends[i] inclusive.
       --   j := i+1
@@ -253,7 +261,8 @@ begin
       prev_length = array_length(bends, 1);
       if j < i then
         bends[j] = st_geometryn(multi, 1);
-        bends[j] = st_setpoint(bends[j], st_npoints(bends[j])-1, st_pointn(bends[i], st_npoints(bends[i])));
+        bends[j] = st_setpoint(bends[j], st_npoints(bends[j])-1,
+                               st_pointn(bends[i], st_npoints(bends[i])));
         bends = bends[1:j] || bends[i+1:prev_length];
         j = i;
       else
