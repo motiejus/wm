@@ -261,7 +261,7 @@ simplification.
 \end{figure}
 
 Same rivers, unprocessed but in higher scales (1:\numprint{50000} and
-1:\numprint{250000}), are depicted in figure~\ref{fig:salvis-50-250}. Some
+1:\numprint{250000}), are depicted in Figure~\ref{fig:salvis-50-250}. Some
 river features are so compact that a reasonably thin line depicting the river
 is touching itself, creating a thicker line. We can assume that some
 simplification for scale 1:\numprint{50000} and especially for
@@ -286,7 +286,7 @@ Figure~\ref{fig:salvis-generalized-50k} illustrates the same river bend, but
 simplified using {\DP} and {\VW} algorithms. The resulting lines are jagged,
 and thus the resulting line looks unlike a real river. To smoothen the jaggedness,
 traditionally, Chaikin's\cite{chaikin1974algorithm} is applied after
-generalization, illustrated in figure~\ref{fig:salvis-generalized-chaikin-50k}.
+generalization, illustrated in Figure~\ref{fig:salvis-generalized-chaikin-50k}.
 
 \begin{figure}[ht!]
     \centering
@@ -334,7 +334,7 @@ generalization, illustrated in figure~\ref{fig:salvis-generalized-chaikin-50k}.
 \end{figure}
 
 The resulting simplified and smoothened example
-(figure~\onpage{fig:salvis-generalized-chaikin-50k}) yields a more
+(Figure~\onpage{fig:salvis-generalized-chaikin-50k}) yields a more
 aesthetically pleasing result; however, it obscures natural river features.
 
 Given the absence of rocks, the only natural features that influence the river
@@ -740,7 +740,7 @@ results have been manually calculated. The test suite executes parts of the
 algorithm against a predefined set of geometries, and asserts that the output
 matches the resulting hand-calculated geometries.
 
-The full set of test geometries is visualized in figure~\ref{fig:test-figures}.
+The full set of test geometries is visualized in Figure~\ref{fig:test-figures}.
 
 \begin{figure}[ht]
     \centering
@@ -762,7 +762,7 @@ the implementation:
         a subtle bug, created a self-crossing bend in Visinčia. The offending
         bend was copied to the automated test suite, which helped fix the bug.
         Now the test suite contains the same bend (a hook-like bend on the
-        right-hand side of figure~\ref{fig:test-figures}) and code to verify
+        right-hand side of Figure~\ref{fig:test-figures}) and code to verify
         that it was correctly exaggerated.
 
     \item During algorithm development, automated tests run about once a
@@ -883,7 +883,7 @@ purpose of each column in \textsc{wm\_debug} is described below:
         sub-stage name, e.g., \textsc{bbends-polygon} creates polygon
         geometries after polygons have been detected; this particular example
         is used to generate colored polygons in
-        figure~\ref{fig:fig8-definition-of-a-bend}.
+        Figure~\ref{fig:fig8-definition-of-a-bend}.
 
     \item[\normalfont\textsc{name}] is the name of the geometry, which comes from
         parameter~\textsc{dbgname}.
@@ -891,7 +891,7 @@ purpose of each column in \textsc{wm\_debug} is described below:
     \item[\normalfont\textsc{gen}] is the top-level iteration number. In other
         words, the number of times the execution flow passes through
         \textsc{detect bends} phase as depicted in
-        figure~\onpage{fig:flow-chart}.
+        Figure~\onpage{fig:flow-chart}.
 
     \item[\normalfont\textsc{nbend}] is the bend's index in its \textsc{line}.
 
@@ -947,7 +947,7 @@ of 45 cm (1.5 feet), is 1.5 mm, as analyzed in \titlecite{mappingunits}.
 
 In our case, our target is line bend, rather than a symbol. Assume 1.5 mm is a
 diameter of the bend. A semi-circle of 1.5 mm diameter is depicted in
-figure~\ref{fig:half-circle}. A bend of this size or larger, when adjusted to
+Figure~\ref{fig:half-circle}. A bend of this size or larger, when adjusted to
 scale, will not be simplified.
 
 \begin{figure}[ht]
@@ -1056,7 +1056,7 @@ on the number of iterations.
 
 To prove that the algorithm implementation is correct for multiple vertices,
 additional example was created and illustrated in
-figure~\ref{fig:inflection-1-gentle-inflection}: the rule re-assigns two
+Figure~\ref{fig:inflection-1-gentle-inflection}: the rule re-assigns two
 vertices to the next bend.
 
 \begin{figure}[ht]
@@ -1124,7 +1124,7 @@ Looking at the {\WM} paper alone, it may seem like self-crossing may happen
 only with the neighboring bend. This would mean an efficient $O(n)$
 implementation\footnote{where $n$ is the number of bends in a line. See
 explanation of \textsc{algorithmic complexity} in section~\ref{sec:vocab}.}.
-However, as one can see in figure~\ref{fig:selfcrossing-1-non-neighbor}, it may
+However, as one can see in Figure~\ref{fig:selfcrossing-1-non-neighbor}, it may
 not be the case: any other bend in the line may be crossing it.
 
 If one translates the requirements to code in a straightforward way, it would
@@ -1399,30 +1399,30 @@ Our generalized results are viewed from the following angles:
     \label{fig:salvis-wm-50k}
 \end{figure}
 
-As one can see in figure~\ref{fig:salvis-wm-50k}, the illustrations deliver
+As one can see in Figure~\ref{fig:salvis-wm-50k}, the illustrations deliver
 what was promised by the algorithm, but with a few caveats. Left side of the
 figure looks reasonably well simplified: long bends remain slightly curved,
 small bends are removed or slightly exaggerated.
 
 Figure's~\ref{fig:salvis-wm-50k} left part is clipped to
-figure~\ref{fig:salvis-wm-50k-nw}. As one can see, some bends were well
+Figure~\ref{fig:salvis-wm-50k-nw}. As one can see, some bends were well
 exaggerated, and some bends were eliminated.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm-50k-nw}
-    \caption{Left part of figure~\ref{fig:salvis-wm-50k}.}
+    \caption{Left part of Figure~\ref{fig:salvis-wm-50k}.}
     \label{fig:salvis-wm-50k-nw}
 \end{figure}
 
-Top--right side (clipped in figure~\ref{fig:salvis-wm-50k-ne}) some jagged
+Top--right side (clipped in Figure~\ref{fig:salvis-wm-50k-ne}) some jagged
 and sharp bends appear. These will become more pronounced in even larger-scale
 simplification in the next section.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm-50k-ne}
-    \caption{Top--right part of figure~\ref{fig:salvis-wm-50k}.}
+    \caption{Top--right part of Figure~\ref{fig:salvis-wm-50k}.}
     \label{fig:salvis-wm-50k-ne}
 \end{figure}
 
@@ -1432,7 +1432,7 @@ sharp edges for others.
 \subsubsection{Large-scale (1:\numprint{250000})}
 \label{sec:analyzed-large-scale}
 
-As visible in figure~\ref{fig:salvis-wm-250k-10x}, for large-scale map, some of the
+As visible in Figure~\ref{fig:salvis-wm-250k-10x}, for large-scale map, some of the
 resulting bends look significantly exaggerated. Why is that?
 Figure~\ref{fig:salvis-wm-250k-overlaid-zoom} zooms in the large-scale
 simplification and overlays the original.
@@ -1527,11 +1527,11 @@ all three shapes: GDR50LT, {\WM}--simplified GDB10LT, and the original GDB10LT.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm-gdr50-ne}
-    \caption{Top--right side of figure~\ref{fig:salvis-wm-gdr50}.}
+    \caption{Top--right side of Figure~\ref{fig:salvis-wm-gdr50}.}
     \label{fig:salvis-wm-gdr50-ne}
 \end{figure}
 
-Although figures are almost identical, figure~\ref{fig:salvis-wm-gdr50-ne}
+Although figures are almost identical, Figure~\ref{fig:salvis-wm-gdr50-ne}
 illustrates two small bends that have been removed in GDR50LT, but have been
 exaggerated by our implementation.
 
@@ -1688,8 +1688,8 @@ researched and extended.
 \section{Acknowledgments}
 \label{sec:acknowledgments}
 
-I would like to thank my thesis supervisor, Andrius Balčiūnas, for his help in
-formulating the requirements and providing early editorial feedback for the
+I would like to thank my thesis supervisor, Dr. Andrius Balčiūnas, for his help
+in formulating the requirements and providing early editorial feedback for the
 thesis.
 
 I am grateful to Tomas Straupis, who handed me the {\WM}\cite{wang1998line}
