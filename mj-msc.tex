@@ -458,7 +458,7 @@ bends need to be checked.
 
 \subsection{Attributes of a Single Bend}
 
-Compactness Index $cmp$ is "the ratio of the area of the polygon over the
+\textsc{Compactness Index} is "the ratio of the area of the polygon over the
 circle whose circumference length is the same as the length of the
 circumference of the polygon" \cite{wang1998line}. We assume the area of the
 circle is meant. Given a bend, its compactness index is calculated as follows:
@@ -486,9 +486,38 @@ circle is meant. Given a bend, its compactness index is calculated as follows:
 
 \end{enumerate}
 
+Other than that, once this section is implemented, each bend will have a list
+of properties, upon which actions later will be performed.
+
 \subsection{Shape of a Bend}
 
+This section introduces \textsc{adjusted size}, which trivially derives from
+\textsc{compactness index} $cmp$ and shape's area $A$:
+
+\[
+    adjsize = \frac{0.75 A}{cmp}
+\]
+
+Adjusted size becomes necessary later to compare bends with each other, and
+find out similar ones.
+
 \subsection{The Context of a Bend: Isolated and Similar Bends}
+
+To find out whether two bends are similar, they are compared by 3 components:
+
+\begin{enumerate}
+    \item \textsc{Adjusted Size}
+    \item \textsc{Compactness index}
+    \item Baseline length
+\end{enumerate}
+
+These 3 components represent a point in the 3-dimensional space, and Euclidean
+distance $d$ between those is calculated to differentiate between bends $p$ and
+$q$:
+
+\[
+    d(p,q) = \sqrt{(adjsize_p - adjsize_q)^2 + (cmp_p - cmp_q)^2 + (baseline_p - baseline_q)^2}
+\]
 
 \subsection{Elimination Operator}
 
@@ -524,8 +553,8 @@ We strongly believe in the ability to reproduce the results is critical for any
 
 This was tested on Linux Debian 11 with upstream packages only.
 
-\subsection{Algorithm code listings}
-\inputminted[fontsize=\small]{postgresql}{wm.sql}
+%\subsection{Algorithm code listings}
+%\inputminted[fontsize=\small]{postgresql}{wm.sql}
 
 \end{appendices}
 \end{document}

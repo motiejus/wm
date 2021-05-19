@@ -353,8 +353,8 @@ begin
       -- area of the circle. So here goes:
       -- 1. get polygon area P.
       -- 2. get polygon perimeter = u. Pretend it's our circle's circumference.
-      -- 3. get A (area) of the circle from u: A = (u^2)/(4*pi)
-      -- 4. divide P by A: cmp = P/A = P/((u^2)*4*pi) = 4*pi*P/u^2
+      -- 3. get A (area) of the circle from u: A = u^2/(4pi)
+      -- 4. divide P by A: cmp = P/A = P/(u^2/(4pi)) = 4pi*P/u^2
       res.area = st_area(polygon);
       res.cmp = fourpi*res.area/(st_perimeter(polygon)^2);
       if res.cmp > 0 then
