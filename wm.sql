@@ -45,9 +45,9 @@ begin
 end
 $$ language plpgsql;
 
-
--- fix_gentle_inflections moves bend endpoints in case of gentle inflections
-create or replace function fix_gentle_inflections(line geometry) returns table(bend geometry) as $$
+-- fix_gentle_inflections moves bend endpoints following "Gentle Inflection at
+-- End of a Bend" section.
+create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
 begin
 end
 $$ language plpgsql;

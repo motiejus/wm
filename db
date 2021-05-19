@@ -40,12 +40,7 @@ case ${1:-} in
     stop)
         docker stop "$name"
         ;;
-    "" | --)
-        [[ $# -gt 1 ]] && shift
-        _psql "$@"
-        ;;
     *)
-        >&2 echo "Unknown command: '$*'"
-        exit 1
+        _psql "$@"
         ;;
 esac
