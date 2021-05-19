@@ -10,14 +10,11 @@ from matplotlib import rc
 CMAP = 'tab20c'
 
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
-INCH_MM = 25.4
-INCH_CM = INCH_MM / 10
 BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
 
 # see `NOTICE` in the LaTeX document; this is the width of the main text block.
 TEXTWIDTH_CM = 12.12364
-TEXTWIDTH_INCH = TEXTWIDTH_CM * 10 / INCH_MM
 
 SCALES = {
     "GDR10": 10000,
@@ -25,6 +22,8 @@ SCALES = {
     "GDR250": 250000,
 }
 
+def inch(cm):
+    return cm / 2.54
 
 def wm_clip(string):
     if not string:
@@ -62,7 +61,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def read_layer(select, width_in, maybe_wmclip):
+def read_layer(select, width, maybe_wmclip):
     if not select:
         return
     way = "way"
@@ -71,7 +70,7 @@ def read_layer(select, width_in, maybe_wmclip):
         way = "st_intersection(way, wm_bbox('{name}', {scale}, {width}))".format(
                 name=name,
                 scale=scale,
-                width=width_in * INCH_CM,
+                width=width,
         )
     conn = psycopg2.connect(PSQL_CREDS)
     sql = "SELECT {way} as way1 FROM {select}".format(way=way, select=select)
@@ -92,7 +91,7 @@ def plot_args(color, maybe_cmap, maybe_linestyle):
 
 def main():
     args = parse_args()
-    width = TEXTWIDTH_INCH / args.widthdiv
+    width = TEXTWIDTH_CM / args.widthdiv
     group1 = read_layer(args.group1_select, width, args.wmclip)
     group2 = read_layer(args.group2_select, width, args.wmclip)
     group3 = read_layer(args.group3_select, width, args.wmclip)
@@ -102,7 +101,7 @@ def main():
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
-    fig.set_figwidth(width)
+    fig.set_figwidth(inch(width))
 
     group1 is not None and group1.plot(ax=ax, **c1)
     group2 is not None and group2.plot(ax=ax, **c2)
