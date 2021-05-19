@@ -365,7 +365,7 @@ help: ## Print this help message
 		$(MAKEFILE_LIST)
 
 .PHONY: wc
-wc: mj-msc.pdf ## Character and page count
+wc: mj-msc.pdf
 	@pdftotext $< - | \
 		awk '/\yReferences\y/{exit}; {print}' | \
 		tr -d '[:space:]' | wc -c | \

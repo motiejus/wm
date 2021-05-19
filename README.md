@@ -48,7 +48,6 @@ refresh-rivers     Refresh river data from national datasets
 clean              Clean the current working directory
 clean-tables       Remove tables created during unit or rivers tests
 help               Print this help message
-wc                 Character and page count
 ```
 
 To execute the algorithm, run:
