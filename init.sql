@@ -11,3 +11,7 @@ create table wm_debug(stage text, name text, gen bigint, nbend bigint, way geome
 -- is used for geometric assertions later in the file.
 drop table if exists wm_demo;
 create table wm_demo (name text, i bigint, way geometry);
+
+-- wm_visuals holds visual aids for the paper.
+drop table if exists wm_visuals;
+create table wm_visuals (name text, way geometry);
