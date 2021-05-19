@@ -282,7 +282,7 @@ begin
   if l_type = 'ST_LineString' then
     geoms = array[geom];
   elseif l_type = 'ST_MultiLineString' then
-    geoms = array((select geom from st_dump(geom) order by path[1] desc));
+    geoms = array((select a.geom from st_dump(geom) a order by path[1] desc));
   else
     raise 'Unknown geometry type %', l_type;
   end if;
@@ -291,8 +291,8 @@ begin
     mutated = true;
     while mutated loop
       bends = detect_bends(line);
-      bends = fix_gentle_inflections(line);
-      bends, mutated = self_crossing(bends);
+      bends = fix_gentle_inflections(bends);
+      select * from self_crossing(bends) into bends, mutated;
     end loop;
   end loop;
 
