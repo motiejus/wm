@@ -48,6 +48,7 @@
 \newcommand{\DP}{Douglas \& Peucker}
 \newcommand{\VW}{Visvalingam--Whyatt}
 \newcommand{\WM}{Wang--M{\"u}ller}
+\newcommand{\WnM}{Wang and M{\"u}ller}
 % {\WM} algoritmo realizacija kartografinei upių generalizacijai
 \newcommand{\MYTITLE}{{\WM} algorithm realization for cartographic line generalization}
 \newcommand{\MYTITLESC}{wang--m{\"u}ller algorithm realization for cartographic line generalization}
@@ -91,11 +92,11 @@
 \label{sec:abstract}
 
 Currently available line simplification algorithms are rooted in mathematics
-    and geometry, and are unfit for natural features like rivers and
-    coastlines. {\WM} algorithm is derived from cartographic knowledge, and
-    thus is well suited for natural features. We also documented our
-    implementation, which allows anyone understand the algorithm and our
-    implementation in detail.
+    and geometry, and are unfit for bendy map features like rivers and
+    coastlines. {\WnM} observed how cartographers simplify these natural
+    features and created an algorithm. We implemented this algorithm and
+    documented it in great detail. Our implementation makes {\WM} algorithm
+    freely available in PostGIS, and this paper explains it.
 
 \end{abstract}
 
