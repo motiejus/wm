@@ -441,6 +441,33 @@ begin
 end
 $$ language plpgsql;
 
+drop function if exists ST_SimplifyWM_Estimate;
+create function ST_SimplifyWM_Estimate(
+  geom geometry,
+  OUT npoints bigint,
+  OUT secs bigint
+) as $$
+declare
+  lines geometry[];
+  l_type text;
+begin
+  l_type = st_geometrytype(geom);
+  if l_type = 'ST_LineString' then
+    lines = array[geom];
+  elseif l_type = 'ST_MultiLineString' then
+    lines = array((select a.geom from st_dump(geom) a order by path[1] asc));
+  else
+    raise 'Unknown geometry type %', l_type;
+  end if;
+
+  npoints = 0;
+  for i in 1..array_length(lines, 1) loop
+    npoints = npoints + st_numpoints(lines[i]);
+  end loop;
+  secs = npoints / 800;
+end
+$$ language plpgsql;
+
 -- ST_SimplifyWM simplifies a given geometry using Wang & Müller's
 -- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
 -- 1998.

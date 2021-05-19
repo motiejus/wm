@@ -56,7 +56,6 @@ insert into wm_figures (name, way) values ('multi-island',ST_GeomFromText('MULTI
 insert into wm_figures (name, way) values ('selfcrossing-1',ST_GeomFromText('LINESTRING(-27 180,-20 166,-21 142,-18 136,55 136,55 136,71 145,44 165,37 146,22 145,14 164,11 164,3 146,-12 146,-13 176,-18 184)'));
 insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Translate((select way from wm_figures where name='selfcrossing-1'), 0, 60)));
 
-
 -- Run ST_SimplifyWM in debug mode, so `wm_debug` is populated. That table
 -- is used for geometric assertions later in the file.
 drop table if exists wm_demo;
