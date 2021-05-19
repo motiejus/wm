@@ -8,8 +8,8 @@ Accepts a few geometry fine-tuning parameters.
 import argparse
 import geopandas
 import psycopg2
-import matplotlib.pyplot as plt
 from matplotlib import rc
+import matplotlib.pyplot as plt
 
 CMAP = 'tab20c'  # 'Set3'  # is nice too
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
@@ -34,15 +34,20 @@ def inch(cm):
 def parse_args():
     kwcolor = {'type': color, 'default': 'black'}
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--group1-select')
-    parser.add_argument('--group1-linestyle')
-    parser.add_argument('--group1-color', **kwcolor)
-    parser.add_argument('--group2-select')
-    parser.add_argument('--group2-linestyle')
-    parser.add_argument('--group2-color', **kwcolor)
-    parser.add_argument('--group3-select')
-    parser.add_argument('--group3-linestyle')
-    parser.add_argument('--group3-color', **kwcolor)
+    parser.add_argument('--g1-select')
+    parser.add_argument('--g1-linestyle')
+    parser.add_argument('--g1-label')
+    parser.add_argument('--g1-color', **kwcolor)
+    parser.add_argument('--g2-select')
+    parser.add_argument('--g2-linestyle')
+    parser.add_argument('--g2-label')
+    parser.add_argument('--g2-color', **kwcolor)
+    parser.add_argument('--g3-select')
+    parser.add_argument('--g3-linestyle')
+    parser.add_argument('--g3-label')
+    parser.add_argument('--g3-color', **kwcolor)
+    parser.add_argument('--legend',
+            help="Legend location, following matplotlib rules", default='best')
     parser.add_argument('--widthdiv', default=1, type=float,
             help="Divide the width by this number "
             "(useful when two images are laid horizontally "
@@ -68,7 +73,7 @@ def read_layer(select, width, maybe_quadrant):
     return geopandas.read_postgis(sql, con=conn, geom_col='way1')
 
 
-def plot_args(geom, color, maybe_linestyle):
+def plot_args(geom, color, maybe_linestyle, maybe_label):
     if geom is None:
         return
 
@@ -88,27 +93,32 @@ def plot_args(geom, color, maybe_linestyle):
         r['color'] = (0, 0, 0, 0)
     elif maybe_linestyle:
         r['linestyle'] = maybe_linestyle
+
+    if maybe_label:
+        r['label'] = '\\normalfont %s' % maybe_label
+
     return r
 
 
 def main():
     args = parse_args()
     width = TEXTWIDTH_CM / args.widthdiv
-    group1 = read_layer(args.group1_select, width, args.quadrant)
-    group2 = read_layer(args.group2_select, width, args.quadrant)
-    group3 = read_layer(args.group3_select, width, args.quadrant)
-    c1 = plot_args(group1, args.group1_color, args.group1_linestyle)
-    c2 = plot_args(group2, args.group2_color, args.group2_linestyle)
-    c3 = plot_args(group3, args.group3_color, args.group3_linestyle)
+    g1 = read_layer(args.g1_select, width, args.quadrant)
+    g2 = read_layer(args.g2_select, width, args.quadrant)
+    g3 = read_layer(args.g3_select, width, args.quadrant)
+    c1 = plot_args(g1, args.g1_color, args.g1_linestyle, args.g1_label)
+    c2 = plot_args(g2, args.g2_color, args.g2_linestyle, args.g2_label)
+    c3 = plot_args(g3, args.g3_color, args.g3_linestyle, args.g3_label)
 
     rc('text', usetex=True)
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(constrained_layout=True)
     fig.set_figwidth(inch(width))
 
-    group1 is not None and group1.plot(ax=ax, linewidth=.75, **c1)
-    group2 is not None and group2.plot(ax=ax, linewidth=.75, **c2)
-    group3 is not None and group3.plot(ax=ax, linewidth=.75, **c3)
+    g1 is not None and g1.plot(ax=ax, linewidth=.75, **c1)
+    g2 is not None and g2.plot(ax=ax, linewidth=.75, **c2)
+    g3 is not None and g3.plot(ax=ax, linewidth=.75, **c3)
 
+    ax.legend(loc=args.legend, frameon=False)
     ax.axis('off')
     ax.margins(0, 0)
     if args.outfile:

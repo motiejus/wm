@@ -102,12 +102,14 @@ mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
 define FIG_template
 $(1).pdf: layer2img.py Makefile $(2)
 	python3 ./layer2img.py --outfile=$(1).pdf \
+		$$(if $$($(1)_LEGEND),--legend=$$($(1)_LEGEND)) \
 		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
 		$$(if $$($(1)_QUADRANT),--quadrant=$$($(1)_QUADRANT)) \
 		$$(foreach i,1 2 3, \
-			$$(if $$($(1)_$$(i)COLOR),--group$$(i)-color="$$($(1)_$$(i)COLOR)") \
-			$$(if $$($(1)_$$(i)SELECT),--group$$(i)-select="$$($(1)_$$(i)SELECT)") \
-			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
+			$$(if $$($(1)_$$(i)LABEL),--g$$(i)-label="$$($(1)_$$(i)LABEL)") \
+			$$(if $$($(1)_$$(i)COLOR),--g$$(i)-color="$$($(1)_$$(i)COLOR)") \
+			$$(if $$($(1)_$$(i)SELECT),--g$$(i)-select="$$($(1)_$$(i)SELECT)") \
+			$$(if $$($(1)_$$(i)LINESTYLE),--g$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
 $(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
@@ -267,12 +269,16 @@ salvis-wm-dp-chaikin-50k_1COLOR  = green
 salvis-wm-dp-chaikin-50k_2COLOR  = orange
 salvis-wm-dp-chaikin-50k_3LINESTYLE  = dotted
 
-salvis-wm-vw-50k_1SELECT = wm_visuals where name='salvis-vw-64'
-salvis-wm-vw-50k_2SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-vw-50k_3SELECT = wm_visuals where name='salvis'
-salvis-wm-vw-50k_1COLOR  = green
-salvis-wm-vw-50k_2COLOR  = orange
-salvis-wm-vw-50k_3LINESTYLE  = dotted
+salvis-wm-vw-50k_1SELECT    = wm_visuals where name='salvis-vw-64'
+salvis-wm-vw-50k_2SELECT    = wm_visuals where name='salvis-wm-75'
+salvis-wm-vw-50k_3SELECT    = wm_visuals where name='salvis'
+salvis-wm-vw-50k_1COLOR     = green
+salvis-wm-vw-50k_1LABEL     = Visvalingam--Whyatt
+salvis-wm-vw-50k_2COLOR     = orange
+salvis-wm-vw-50k_2LABEL     = Wang--Müller
+salvis-wm-vw-50k_3LINESTYLE = dotted
+salvis-wm-vw-50k_3LABEL     = GRPK
+salvis-wm-vw-50k_LEGEND     = "lower left"
 
 salvis-wm-vw-chaikin-50k_1SELECT = wm_visuals where name='salvis-vw-64-chaikin'
 salvis-wm-vw-chaikin-50k_2SELECT = wm_visuals where name='salvis-wm-75'
