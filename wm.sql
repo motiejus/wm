@@ -209,6 +209,10 @@ begin
 end
 $$ language plpgsql;
 
+-- if_selfcross returns whether baseline of bendi crosses bendj.
+-- If it doesn't, returns a null geometry.
+-- Otherwise, it will return the baseline split into a few parts where it
+-- crosses bendj.
 drop function if exists if_selfcross;
 create function if_selfcross(
   bendi geometry,
@@ -217,22 +221,22 @@ create function if_selfcross(
 declare
   a geometry;
   b geometry;
-  partitions geometry;
+  multi geometry;
 begin
   a = st_pointn(bendi, 1);
   b = st_pointn(bendi, -1);
-  partitions = st_split(bendj, st_makeline(a, b));
+  multi = st_split(bendj, st_makeline(a, b));
 
-  if st_numgeometries(partitions) = 1 then
+  if st_numgeometries(multi) = 1 then
     return null;
   end if;
 
-  if st_numgeometries(partitions) = 2 and
+  if st_numgeometries(multi) = 2 and
     (st_contains(bendj, a) or st_contains(bendj, b)) then
     return null;
   end if;
 
-  return partitions;
+  return multi;
 end
 $$ language plpgsql;
 

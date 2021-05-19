@@ -76,11 +76,23 @@ begin
   insert into wm_visuals (name, way) values('fig6-newline', st_makeline(st_endpoint(fig6b1), st_endpoint(fig6b2)));
 end $$ language plpgsql;
 
+
+drop function if exists debug_wm_get;
+create function debug_wm_get(
+  _stage text,
+  _name text,
+  OUT ways geometry[]
+) as $$
+declare
+begin
+  ways = array((select way from wm_debug where stage=_stage and name=_name));
+end $$ language plpgsql;
+
 do $$
 declare
   vbends geometry[];
 begin
-  select array((select way from wm_debug where name='fig3' and stage='bbends')) into vbends;
+  vbends = debug_wm_get('bbends', 'fig3');
   perform assert_equals(5, array_length(vbends, 1));
   perform assert_equals('LINESTRING(0 0,12 0,13 4)', st_astext(vbends[1]));
   perform assert_equals('LINESTRING(12 0,13 4,20 2,20 0)', st_astext(vbends[2]));
@@ -96,7 +108,7 @@ declare
   vbends geometry[];
   vinflections geometry[];
 begin
-  select array((select way from wm_debug where name='fig5' and stage='cinflections')) into vinflections;
+  vinflections = debug_wm_get('cinflections', 'fig5');
   perform assert_equals('LINESTRING(0 39,19 52,27 77)', st_astext(vinflections[1]));
   perform assert_equals('LINESTRING(19 52,27 77,26 104,41 115,49 115,65 103,65 75,53 45)', st_astext(vinflections[2]));
   perform assert_equals('LINESTRING(65 75,53 45,63 15,91 0)', st_astext(vinflections[3]));
@@ -116,7 +128,7 @@ declare
   vcrossings geometry[];
   mutated boolean;
 begin
-  select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='fig6')))).* into vcrossings, mutated;
+  select * from self_crossing(debug_wm_get('cinflections', 'fig6')) into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     fig6,
@@ -125,7 +137,7 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='fig6-rev')))).* into vcrossings, mutated;
+  select * from self_crossing(debug_wm_get('cinflections', 'fig6-rev')) into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     fig6,
@@ -134,7 +146,7 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='fig6-combi' and gen=1)))).* into vcrossings, mutated;
+  select * from self_crossing(debug_wm_get('cinflections', 'fig6-combi')) into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     'MULTILINESTRING((84 137,91 149,114 154,120 135,125 129,141 129,147 122),(164 137,171 149,194 154,200 135,205 129,221 129,227 122))',
@@ -144,7 +156,7 @@ begin
   );
 
 
-  select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='selfcrossing-1' and gen=1)))).* into vcrossings, mutated;
+  select * from self_crossing(debug_wm_get('cinflections', 'selfcrossing-1')) into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     selfcrossing1,
@@ -153,7 +165,7 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='selfcrossing-1-rev')))).* into vcrossings, mutated;
+  select * from self_crossing(debug_wm_get('cinflections', 'selfcrossing-1-rev')) into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     selfcrossing1,
