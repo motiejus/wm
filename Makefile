@@ -159,11 +159,11 @@ salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 
 
-.faux_test-rivers: tests-rivers.sql wm.sql Makefile .faux_db
+.faux_test-rivers: test-rivers.sql wm.sql Makefile .faux_db
 	bash db -v scaledwidth=$(SCALEDWIDTH) -f $<
 	touch $@
 
-.faux_test: tests.sql wm.sql .faux_db
+.faux_test: test.sql wm.sql .faux_db
 	bash db -f $<
 	touch $@
 
