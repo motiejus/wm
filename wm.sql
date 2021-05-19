@@ -407,7 +407,7 @@ create function wm_exaggerate_bend(
   desired_size float
 ) as $$
 declare
-  scale constant float default 2; -- per-step scaling factor
+  scale constant float default 1.2; -- exaggeration enthusiasm
   midpoint geometry; -- midpoint of the baseline
   splitbend geometry; -- bend split across its half
   bendm geometry; -- bend with coefficients to prolong the lines
