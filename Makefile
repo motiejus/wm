@@ -13,6 +13,8 @@ SCALEDWIDTH = $(shell awk '/^TEXTWIDTH_CM/{print 25000/100*$$3}' layer2img.py)
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
 ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
 
+LISTINGS = aggregate-rivers.sql wm.sql extract-and-generate
+
 FIGURES = \
 		  test-figures \
 		  fig8-definition-of-a-bend \
@@ -66,8 +68,8 @@ slides: $(SLIDES)
 # The report, quick version
 ###########################
 
-mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex extract-and-generate bib.bib \
-	$(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
+mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
+	$(LISTINGS) $(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
 	latexmk -shell-escape -g -pdf $<
 
 ############################

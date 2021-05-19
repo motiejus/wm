@@ -1,6 +1,10 @@
 /* Aggregates rivers by name and proximity. */
 drop function if exists aggregate_rivers;
-create function aggregate_rivers() returns table(osm_id bigint, name text, way geometry) as $$
+create function aggregate_rivers() returns table(
+  osm_id bigint,
+  name text,
+  way geometry
+) as $$
 declare
   c record;
   cc record;
@@ -12,7 +16,11 @@ begin
     changed = true;
     while changed loop
       changed = false;
-      for cc in (select * from wm_rivers_tmp a where a.name = c.name and st_dwithin(a.way, c.way, 500)) loop
+      for cc in (
+        select * from wm_rivers_tmp a where
+          a.name = c.name and
+          st_dwithin(a.way, c.way, 500)
+        ) loop
         c.way = st_linemerge(st_union(c.way, cc.way));
         delete from wm_rivers_tmp a where a.osm_id = cc.osm_id;
         changed = true;
@@ -36,5 +44,7 @@ insert into wm_rivers_tmp
     where waterway in ('river', 'stream', 'canal') and :where;
 
 drop table if exists wm_rivers;
-create table wm_rivers as (select * from aggregate_rivers() where st_length(way) >= 50000);
+create table wm_rivers as (
+  select * from aggregate_rivers() where st_length(way) >= 50000
+);
 drop table wm_rivers_tmp;
