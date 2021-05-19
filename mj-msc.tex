@@ -1070,7 +1070,7 @@ The smaller the distance $d$, the more similar the bends are.
 
 Figure~\ref{fig:elimination-through-iterations} illustrates steps of figure 8
 from the original paper. There is not much to add to the original description
-beyond an illustrated example.
+beyond repeating the elimination steps in an illustrated example.
 
 \begin{figure}[ht]
     \centering
@@ -1092,11 +1092,39 @@ beyond an illustrated example.
 
 \subsection{Combination Operator}
 
-NOTE: not implemented.
+Combination operator was not implemented in this version.
 
 \subsection{Exaggeration Operator}
 
-NOTE: implemented, explain. Also {\textsc intersection\_tolerance} parameter.
+Exaggeration operator finds bends whose \textsc{adjusted size} is smaller than
+the incoming parameter --- \textsc{half-circle diameter}. Once it finds the
+bend, it will exaggerate it in increments until either becomes true:
+
+\begin{itemize}
+    \item \textsc{adjusted size} of the exaggerated bend is larger than area of
+        the half-circle.
+    \item The exaggerated bend starts intersecting with a neighboring bend. Then,
+\end{itemize}
+
+Exaggeration operator requires a constant \textsc{exaggeration step} $s$, which
+should be between 1 and 2. It was arbitrarily picked to \exaggerationEnthusiasm
+for this implementation. A single exaggeration increment is done as follows:
+
+\begin{enumerate}
+    \item Find a candidate bend.
+    \item Find the bend's baseline.
+    \item Find \textsc{midpoint}, the center of the bend's baseline.
+
+    \item Mark each bend's vertex with a number between $[1,s]$. The number is
+        derived with elements linearly interpolated between the start and
+        mid-points of the bend. The other half of the bend, from mid-point to
+        the final vertex, is linearly interpolated between $[s,1]$.
+
+    \item Each point will be placed farther away from the baseline. The length
+        of misplacement is the marked value in the previous step. I.e.
+
+\end{enumerate}
+
 
 \section{Program Implementation}
 
