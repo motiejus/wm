@@ -1,6 +1,6 @@
 \i wm.sql
 
--- wm_envelope clips a geometry by a bounding box around a given object,
+-- wm_bbox clips a geometry by a bounding box around a given object,
 -- matching dimensions of A-class paper (1 by sqrt(2).
 drop function if exists wm_bbox;
 create function wm_bbox(
@@ -21,6 +21,50 @@ begin
   );
 end
 $$ language plpgsql;
+
+-- wm_quadrant divides the given geometry to 4 rectangles
+-- and returns the requested quadrant following cartesian
+-- convention:
+--  +----------+
+--  | II  | I  |
+--- +----------+
+--  | III | IV |
+--  +-----+----+
+-- matching dimensions of A-class paper (1 by sqrt(2).
+drop function if exists wm_quadrant;
+create function wm_quadrant(
+  geom geometry,
+  quadrant integer
+) returns geometry as $$
+declare
+  xmin float;
+  xmax float;
+  ymin float;
+  ymax float;
+begin
+  xmin = st_xmin(geom);
+  xmax = st_xmax(geom);
+  ymin = st_ymin(geom);
+  ymax = st_ymax(geom);
+
+  if quadrant = 1 or quadrant = 2 then
+    ymin = (ymin + ymax)/2;
+  else
+    ymax = (ymin + ymax)/2;
+  end if;
+
+  if quadrant = 2 or quadrant = 3 then
+    xmax = (xmin + xmax)/2;
+  else
+    xmin = (xmin + xmax)/2;
+  end if;
+
+  return st_intersection(
+    geom,
+    st_makeenvelope(xmin, ymin, xmax, ymax, st_srid(geom))
+  );
+end $$ language plpgsql;
+
 
 delete from wm_visuals where name like 'salvis%';
 insert into wm_visuals(name, way) values('salvis', (

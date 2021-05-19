@@ -231,7 +231,6 @@ smaller scale is worthy.
     \label{fig:salvis-generalized-50k}
 \end{figure}
 
-
 Figure~\onpage{fig:salvis-generalized-50k} illustrates the same river bend, but
 generalized using {\DP} and {\VW} algorithms. The resulting lines are jagged,
 thus the resulting line looks unlike a real river. To smoothen the jaggedness,
@@ -252,6 +251,21 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \end{subfigure}
     \caption{Generalized and smoothened river (1:50000).}
     \label{fig:salvis-generalized-chaikin-50k}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.49\textwidth}
+        \includegraphics[width=\textwidth]{salvis-overlaid-douglas-64-chaikin-50k}
+        \caption{Original and {\DP} + Chaikin's}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.49\textwidth}
+        \includegraphics[width=\textwidth]{salvis-overlaid-visvalingam-64-chaikin-50k}
+        \caption{Original and {\VW} + Chaikin's}
+    \end{subfigure}
+    \caption{Generalized and smoothened river (1:50000) and the original one overlaid.}
+    \label{fig:salvis-overlaid-generalized-chaikin-50k}
 \end{figure}
 
 There are a few problems with {\VW} and {\DP} immediately visible in

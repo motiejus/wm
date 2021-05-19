@@ -48,17 +48,22 @@ def parse_args():
 
     parser.add_argument('--widthdiv',
                         default=1, type=float, help='Width divisor')
+    parser.add_argument('--quadrant', type=int, choices=(1,2,3,4))
 
     parser.add_argument('-o', '--outfile', metavar='<file>')
     return parser.parse_args()
 
 
-def read_layer(select, width):
+def read_layer(select, width, maybe_quadrant):
     if not select:
         return
     way = "way"
+    if maybe_quadrant:
+        way = "wm_quadrant(way, {})".format(maybe_quadrant)
+
     conn = psycopg2.connect(PSQL_CREDS)
     sql = "SELECT {way} as way1 FROM {select}".format(way=way, select=select)
+    print(sql)
     return geopandas.read_postgis(sql, con=conn, geom_col='way1')
 
 
@@ -80,9 +85,9 @@ def plot_args(geom, color, maybe_linestyle):
 def main():
     args = parse_args()
     width = TEXTWIDTH_CM / args.widthdiv
-    group1 = read_layer(args.group1_select, width)
-    group2 = read_layer(args.group2_select, width)
-    group3 = read_layer(args.group3_select, width)
+    group1 = read_layer(args.group1_select, width, args.quadrant)
+    group2 = read_layer(args.group2_select, width, args.quadrant)
+    group3 = read_layer(args.group3_select, width, args.quadrant)
     c1 = plot_args(group1, BLACK, args.group1_linestyle)
     c2 = plot_args(group2, ORANGE, args.group2_linestyle)
     c3 = plot_args(group3, GREEN, args.group3_linestyle)

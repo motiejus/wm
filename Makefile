@@ -32,7 +32,9 @@ RIVERS = \
 		 salvis-douglas-64-50k \
 		 salvis-visvalingam-64-50k \
 		 salvis-douglas-64-chaikin-50k \
-		 salvis-visvalingam-64-chaikin-50k
+		 salvis-visvalingam-64-chaikin-50k \
+		 salvis-overlaid-douglas-64-chaikin-50k \
+		 salvis-overlaid-visvalingam-64-chaikin-50k
 
 #################################
 # The thesis, publishable version
@@ -76,6 +78,7 @@ define FIG_template
 $(1).pdf: layer2img.py Makefile $(2)
 	python ./layer2img.py --outfile=$(1).pdf \
 		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
+		$$(if $$($(1)_QUADRANT),--quadrant=$$($(1)_QUADRANT)) \
 		$$(foreach i,1 2 3, \
 			$$(if $$($(1)_$$(i)SELECT),--group$$(i)-select="$$($(1)_$$(i)SELECT)") \
 			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
@@ -134,17 +137,24 @@ salvis-250k_WIDTHDIV = 10
 salvis-douglas-64-50k_2SELECT = wm_visuals where name='salvis-douglas-64'
 salvis-douglas-64-50k_WIDTHDIV = 2
 
-#salvis-visvalingam-64-50k_1SELECT = wm_visuals where name='salvis'
 salvis-visvalingam-64-50k_2SELECT = wm_visuals where name='salvis-visvalingam-64'
 salvis-visvalingam-64-50k_WIDTHDIV = 2
 
-#salvis-douglas-64-chaikin-50k_1SELECT = wm_visuals where name='salvis'
 salvis-douglas-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-douglas-64-chaikin'
 salvis-douglas-64-chaikin-50k_WIDTHDIV = 2
 
-#salvis-visvalingam-64-chaikin-50k_1SELECT = wm_visuals where name='salvis'
 salvis-visvalingam-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-visvalingam-64-chaikin'
 salvis-visvalingam-64-chaikin-50k_WIDTHDIV = 2
+
+salvis-overlaid-douglas-64-chaikin-50k_1SELECT = wm_visuals where name='salvis'
+salvis-overlaid-douglas-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-douglas-64-chaikin'
+salvis-overlaid-douglas-64-chaikin-50k_WIDTHDIV = 2
+salvis-overlaid-douglas-64-chaikin-50k_QUADRANT = 4
+
+salvis-overlaid-visvalingam-64-chaikin-50k_1SELECT = wm_visuals where name='salvis'
+salvis-overlaid-visvalingam-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-visvalingam-64-chaikin'
+salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
+salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 4
 
 
 .faux_test-rivers: tests-rivers.sql wm.sql Makefile .faux_db
