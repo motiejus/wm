@@ -79,7 +79,7 @@ def plot_args(geom, color, maybe_linestyle):
                 'color': (0, 0, 0, 0),
             }
         else:
-            return {'cmap': CMAP}
+            return {'cmap': CMAP, 'alpha': .25}
 
     r = {'color': color}
     if maybe_linestyle == 'invisible':

@@ -99,30 +99,44 @@ test-figures_1SELECT = wm_figures
 
 fig8-definition-of-a-bend_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
 fig8-definition-of-a-bend_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
+fig8-definition-of-a-bend_3SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
+fig8-definition-of-a-bend_3LINESTYLE = dotted
 
 fig8-elimination-gen1_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
 fig8-elimination-gen1_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
-fig8-elimination-gen1_2LINESTYLE = dotted
+fig8-elimination-gen1_3SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
+fig8-elimination-gen1_3LINESTYLE = dotted
+
 fig8-elimination-gen2_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=2
 fig8-elimination-gen2_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=2
-fig8-elimination-gen2_2LINESTYLE = dotted
+fig8-elimination-gen2_3SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=2
+fig8-elimination-gen2_3LINESTYLE = dotted
 fig8-elimination-gen3_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=3
 fig8-elimination-gen3_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=3
-fig8-elimination-gen3_2LINESTYLE = dotted
+fig8-elimination-gen3_3SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=3
+fig8-elimination-gen3_3LINESTYLE = dotted
 
 fig5-gentle-inflection-before_WITHDIV = 2
 fig5-gentle-inflection-before_1SELECT = wm_debug where name='fig5' AND stage='bbends' AND gen=1
 fig5-gentle-inflection-before_2SELECT = wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1
+fig5-gentle-inflection-before_3SELECT = wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1
+fig5-gentle-inflection-before_3LINESTYLE = dotted
 fig5-gentle-inflection-after_WITHDIV = 2
 fig5-gentle-inflection-after_1SELECT = wm_debug where name='fig5' AND stage='cinflections' AND gen=1
 fig5-gentle-inflection-after_2SELECT = wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1
+fig5-gentle-inflection-after_3SELECT = wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1
+fig5-gentle-inflection-after_3LINESTYLE = dotted
 
 inflection-1-gentle-inflection-before_WIDTHDIV = 2
 inflection-1-gentle-inflection-before_1SELECT = wm_debug where name='inflection-1' AND stage='bbends' AND gen=1
 inflection-1-gentle-inflection-before_2SELECT = wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1
+inflection-1-gentle-inflection-before_3SELECT = wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1
+inflection-1-gentle-inflection-before_3LINESTYLE = dotted
 inflection-1-gentle-inflection-after_WIDTHDIV = 2
 inflection-1-gentle-inflection-after_1SELECT = wm_debug where name='inflection-1' AND stage='cinflections' AND gen=1
 inflection-1-gentle-inflection-after_2SELECT = wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1
+inflection-1-gentle-inflection-after_3SELECT = wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1
+inflection-1-gentle-inflection-after_3LINESTYLE = dotted
 
 fig6-selfcrossing-before_WIDTHDIV = 2
 fig6-selfcrossing-before_1SELECT = wm_debug where name='fig6' AND stage='bbends' AND gen=1
