@@ -18,20 +18,20 @@ Self-line crossing when cutting a bend
 The self-line-crossing may happen after a few bends have been skipped. E.g.
 ends of A<->B cross the line, but "swallow" a few more in between:
 
-   ,______
-  /       \
-  |___A   |    \  \
-      \   |    B\ |             __
-       \  |     | |            /  \
-       /  |     | |___,---,___/A  |
-      /   |     \_________________|
-      \   |
-       \  |    \  \
-       /  /    B\ |     _       __
-  ----/  /      | |    / \     /  \
- / ,____/       | |___/   \___/A  |
-/ B|            \_________________|
-   |
+     ,______
+    /       \
+    |___A   |    \  \
+        \   |    B\ |             __
+         \  |     | |            /  \
+         /  |     | |___,---,___/A  |
+        /   |     \_________________|
+        \   |
+         \  |    \  \
+         /  /    B\ |     _       __
+    ----/  /      | |    / \     /  \
+   / ,____/       | |___/   \___/A  |
+  / B|            \_________________|
+     |
 
 
 
@@ -48,20 +48,19 @@ but they will be eliminated by joining A and B anyway.
 Also, there is another way to remove self-crossing, without removing most of
 the bend. E.g. from:
 
-
-\  \
-B\ |      __
- | |     /  \
- | |____/A  |
- \__________|
+  \  \
+  B\ |      __
+   | |     /  \
+   | |____/A  |
+   \__________|
 
 To:
 
-\  \_
-B\   `-,_.__
- |       A' \
- |          |
- \__________|
+  \  \_
+  B\   `-,_.__
+   |       A' \
+   |          |
+   \__________|
 
 But perhaps it doesn't look quite as natural. I will trust the original
 article to do the right thing here.
