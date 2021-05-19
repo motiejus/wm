@@ -22,11 +22,11 @@ insert into figures (name, way) values ('fig6-rev',ST_Reverse(ST_Translate((sele
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
 
 -- DETECT BENDS
-drop table if exists bends, demo_bends;
+drop table if exists bends, demo_bends1;
 create table bends (name text, ways geometry[]);
 insert into bends select name, detect_bends(way) from figures;
-create table demo_bends (name text, i bigint, way geometry);
-insert into demo_bends select name, generate_subscripts(ways, 1), unnest(ways) from bends;
+create table demo_bends1 (name text, i bigint, way geometry);
+insert into demo_bends1 select name, generate_subscripts(ways, 1), unnest(ways) from bends;
 
 do $$
 declare
@@ -44,11 +44,11 @@ begin
 end $$ language plpgsql;
 
 -- FIX BEND INFLECTIONS
-drop table if exists inflections, demo_inflections;
+drop table if exists inflections, demo_inflections2;
 create table inflections (name text, ways geometry[]);
 insert into inflections select name, fix_gentle_inflections(ways) from bends;
-create table demo_inflections (name text, i bigint, way geometry);
-insert into demo_inflections select name, generate_subscripts(ways, 1), unnest(ways) from inflections;
+create table demo_inflections2 (name text, i bigint, way geometry);
+insert into demo_inflections2 select name, generate_subscripts(ways, 1), unnest(ways) from inflections;
 
 do $$
 declare
@@ -69,9 +69,12 @@ begin
   perform assert_equals('LINESTRING(123 7,114 7,111 2)', st_astext(vinflections[3]));
 end $$ language plpgsql;
 
+drop table if exists debug;
+create table debug (i bigint, way geometry);
+
 -- SELF-LINE CROSSING
-drop table if exists selfcrossing, demo_selfcrossing;
+drop table if exists selfcrossing, demo_selfcrossing3;
 create table selfcrossing (name text, ways geometry[]);
 insert into selfcrossing select name, self_crossing(ways) from inflections;
-create table demo_selfcrossing (name text, i bigint, way geometry);
-insert into demo_selfcrossing select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;
+create table demo_selfcrossing3 (name text, i bigint, way geometry);
+insert into demo_selfcrossing3 select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;

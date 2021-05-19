@@ -242,11 +242,13 @@ begin
       --   bends[i] = append(bends[i], multi[2][2..n])
       --   remove bends from bends[i+1] to bends[j] inclusive.
 
-      raise notice 'j: %, i: %', i, j;
+      raise notice 'j: %, i: %', j, i;
       raise notice 'bends[i]: %', st_astext(bends[i]);
       raise notice 'bends[j]: %', st_astext(bends[j]);
       raise notice 'a: %, b: %', st_astext(a), st_astext(b);
       raise notice 'multi: %', st_astext(multi);
+      insert into debug select x.path[1], x.geom from st_dump(multi) x;
+
       raise notice '';
       prev_length = array_length(bends, 1);
       if j < i then
