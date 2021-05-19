@@ -5,7 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage [autostyle,english=american]{csquotes}
 \MakeOuterQuote{"}
-\usepackage[maxbibnames=99,style=numeric,sorting=none,alldates=edtf]{biblatex}
+\usepackage[maxbibnames=99,style=numeric,sorting=none,alldates=iso]{biblatex}
 \addbibresource{bib.bib}
 \usepackage[
     pdfusetitle,
@@ -611,9 +611,9 @@ example reference for anyone willing to start using the algorithm.
   arrow/.style={thick,->,>=stealth},
 }
 
-\begin{figure}[h]
+\begin{figure}[!h]
   \centering
-  \begin{tikzpicture}[node distance=2cm,auto]
+  \begin{tikzpicture}[node distance=1.5cm,auto]
     \node (start) [startstop] {Read \textsc{linestring}};
     \node (detect) [proc,below of=start] {Detect bends};
     \node (inflections) [proc,below of=detect] {Fix gentle inflections};
@@ -622,25 +622,64 @@ example reference for anyone willing to start using the algorithm.
     \node (bendattrs) [proc,below of=mutated1] {Compute bend attributes};
     \node (exaggeration) [proc,below of=bendattrs] {Exaggeration};
     \node (mutated2) [decision,below of=exaggeration] {Mutated?};
+    \node (elimination) [proc,below of=mutated2] {Elimination};
+    \node (mutated3) [decision,below of=elimination] {Mutated?};
+    \node (stop) [startstop,below of=mutated3] {Stop};
 
-    \coordinate [right of=mutated1,node distance=5cm] (mutated1yes) {};
-    \coordinate [right of=mutated2,node distance=5cm] (mutated2yes) {};
+    \coordinate [right of=mutated1,node distance=5cm] (mutated1y) {};
+    \coordinate [right of=mutated2,node distance=5cm] (mutated2y) {};
+    \coordinate [right of=mutated3,node distance=5cm] (mutated3y) {};
 
     \draw [arrow] (start) -- (detect);
     \draw [arrow] (detect) -- (inflections);
     \draw [arrow] (inflections) -- (selfcrossing);
     \draw [arrow] (selfcrossing) -- (mutated1);
-    \draw [arrow] (mutated1) -| node [near start] {Yes} (mutated1yes) |- (detect);
+    \draw [arrow] (mutated1) -| node [near start] {Yes} (mutated1y) |- (detect);
     \draw [arrow] (mutated1) -- node[anchor=west] {No} (bendattrs);
     \draw [arrow] (bendattrs) -- (exaggeration);
-    \draw [arrow] (mutated2) -| node [near start] {Yes} (mutated2yes) |- (detect);
-
+    \draw [arrow] (exaggeration) -- (mutated2);
+    \draw [arrow] (mutated2) -| node [near start] {Yes} (mutated2y) |- (detect);
+    \draw [arrow] (mutated2) -- node[anchor=west] {No} (elimination);
+    \draw [arrow] (mutated3) -| node [near start] {Yes} (mutated3y) |- (detect);
+    \draw [arrow] (mutated3) -- node[anchor=west] {No} (stop);
+    \draw [arrow] (elimination) -- (mutated3);
   \end{tikzpicture}
+  \caption{Flow chart of the implementation workflow.}
+  \label{fig:flow-chart}
 \end{figure}
 
-TODO: list most of the functions defined in the algorithm and draw how they
-interact. Similar to "Flow chart of the prototype system" in the original
-paper.
+Figure~\ref{fig:flow-chart} visualizes the algorithm steps for each line.
+\textsc{multilinestring} features are split to \textsc{linestring} features and
+executed in order.
+
+Judging from {\WM} prototype flow chart (depicted in Figure 11 of the original
+paper), their approach is iterative for the line: it will process the line in
+sequence, doing all steps, before moving on to the next step. We will call this
+approach "streaming", because it does not require to have the full line to
+process it.
+
+We have taken a different approach: process each step fully for the line,
+before moving to the next step. This way provides the following advantages:
+
+\begin{itemize}
+
+    \item \textsc{eliminate self-crossing}, when finds a bend with the right
+        sum of inflection angles, it checks the full line for self-crossings.
+        This is impossible with streaming, because it requires having the full
+        line in memory. It could be optimized by, for example, looking for a
+        fixed number of neighboring bends (say, 10), but that would complicate
+        the implementation.
+
+    \item \textsc{fix gentle inflections} is iterating the same line twice from
+        opposite directions. That could be re-written to streaming fashion, but
+        that complicates the implementation too.
+
+\end{itemize}
+
+On the other hand, comparing to the {\WM} prototype flow chart, our
+implementation uses more memory (because it needs to have the full line before
+processing), and some steps are unnecessarily repeated, like re-computing the
+bend's attributes.
 
 \section{Algorithm implementation}
 
@@ -1076,8 +1115,8 @@ Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
 
 \inputcode{bash}{extract-and-generate}
 
-\subsection{Function \textsc{st\_simplifywv}}
-\inputcode{postgresql}{wm.sql}
+%\subsection{Function \textsc{st\_simplifywv}}
+%\inputcode{postgresql}{wm.sql}
 
 \subsection{Function \textsc{aggregate\_rivers}}
 \inputcode{postgresql}{aggregate-rivers.sql}

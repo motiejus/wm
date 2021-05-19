@@ -97,7 +97,7 @@ $$ language plpgsql;
 --
 -- The text does not specify how many vertices can be "adjusted"; it can
 -- equally be one or many. This function is adjusting many, as long as the
--- cumulative inflection angle small (see variable below).
+-- cumulative inflection angle is small (see variable below).
 --
 -- The implementation could be significantly optimized to avoid `st_reverse`
 -- and array reversals, trading for complexity in wm_fix_gentle_inflections1.
