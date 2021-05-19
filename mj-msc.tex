@@ -93,9 +93,9 @@
 \begin{abstract}
 \label{sec:abstract}
 
-	Currently available line simplification algorithms are rooted in mathematics
-    and geometry, and are unfit for bendy map features like rivers and
-    coastlines. {\WnM} observed how cartographers simplify these natural
+    Currently available line simplification algorithms are rooted in
+    mathematics and geometry, and are unfit for bendy map features like rivers
+    and coastlines. {\WnM} observed how cartographers simplify these natural
     features and created an algorithm. We implemented this algorithm and
     documented it in great detail. Our implementation makes {\WM} algorithm
     freely available in PostGIS, and this paper explains it.
@@ -1213,6 +1213,10 @@ Two conditions must be followed to claim that a bend is isolated:
 
 \end{enumerate}
 
+We believe unclear criteria for \textsc{isolated bend} is one of the main
+causes for jagged lines in section~\ref{sec:results}, and is a suggested
+further area of research in section~\ref{sec:future-suggestions}.
+
 \subsection{The Context of a Bend: Isolated And Similar Bends}
 
 To find out whether two bends are similar, they are compared by 3 components:
@@ -1330,6 +1334,7 @@ the algorithm.
 \end{figure}
 
 \section{Results}
+\label{sec:results}
 
 \subsection{Generalization Results of Analyzed Rivers}
 \label{sec:generalization-results-of-analyzed-rivers}
@@ -1465,7 +1470,7 @@ already been used to create a prototype on-line service to evaluate the
 algorithm robustness.
 
 \section{Future Suggestions}
-\label{sec:related_work}
+\label{sec:future-suggestions}
 
 These are the areas for possible future work with this, published,
 implementation:
