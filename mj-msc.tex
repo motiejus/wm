@@ -5,7 +5,9 @@
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{a4wide}
-\usepackage{csquotes}
+%\usepackage{csquotes}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
 \usepackage[maxbibnames=99,style=authoryear]{biblatex}
 \usepackage[pdfusetitle]{hyperref}
 \usepackage{enumitem}
@@ -270,23 +272,52 @@ purposes) using the following algorithm:
 \section{Definition of a Bend}
 \label{sec:definition-of-a-bend}
 
+The original article describes:
+
+\begin{displayquote}[\cite{wang1998line}][]
+    A bend can be defined as that part of a line which contains a number of
+    subsequent vertices, with the inflection angles on all vertices included in
+    the bend being either positive or negative and the inflection of the bend's
+    two end vertices being in opposite signs.
+\end{displayquote}
+
+While it gives a good intuitive understanding of what the bend is, some more
+technical details would be appreciated.
+
+Figure~\ref{fig:fig8-definition-of-a-bend} illustrates article's figure 8,
+but with bends colored as polygons: each color is a distinctive bend.
+
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{fig8-definition-of-a-bend}
-    \caption{Originally Figure 8: detected bends are highlighted}
+    \caption{Originally figure 8: detected bends are highlighted}
     \label{fig:fig8-definition-of-a-bend}
 \end{figure}
 
-End line segments of all lines should also be part of the bend. That way, all
-line segments belong to 1 or 2 bends. This characteristic is not obvious when
-reading the introductory sections, but becomes unavoidable (there could be no
-other way) when reading the following sections in detail.
+Once the intuitive definition is established, here are some non-obvious
+characteristics that are necessary when writing code to detect the bends:
 
-First and last segments of each bend (except for the two end-line segments) is
-also the first vertex of the next bend. This is apparent when looking at the
-illustration of the detected bends.
+\begin{itemize}
+
+    \item End segments of each line should also belong to bends. That way, all
+        segments belong to 1 or 2 bends.
+
+    \item First and last segments of each bend (except for the two end-line
+        segments) is also the first vertex of the next bend.
+\end{itemize}
+
+Properties above may be apparent when looking at illustrations at this article
+or reading here, but they are nowhere as such when looking at the original
+article.
 
 \section{Gentle Inflection at End of a Bend}
+
+The gist of the section is in the original article:
+
+\begin{displayquote}[\cite{wang1998line}][]
+    But if the inflection that marks the end of a bend is quite small, people
+    would not recognize this as the bend point of a bend
+\end{displayquote}
 
 Figure~\ref{fig:fig5-gentle-inflection} visualizes original paper's Figure 5,
 when a single vertex is moved outwards the end of the bend.
@@ -302,20 +333,21 @@ when a single vertex is moved outwards the end of the bend.
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
-    \caption{Originally Figure 5: gentle inflections at the ends of the bend}
+    \caption{Originally figure 5: gentle inflections at the ends of the bend}
     \label{fig:fig5-gentle-inflection}
 \end{figure}
 
-The example in this section was clear, but insufficient: it does not specify
-how many vertices should be included when calculating the end-of-bend
-inflection. We chose the iterative approach -- as long as the angle is "right"
+The illustration for this section was clear, but insufficient: it does not
+specify how many vertices should be included when calculating the end-of-bend
+inflection. We chose the iterative approach --- as long as the angle is "right"
 and the distance is decreasing, the algorithm should keep re-assigning vertices
 to different bends; practically not having an upper bound on the number of
 iterations.
 
-Additional example, not found in the original paper, is illustrated in
-figure~\ref{fig:inflection-1-gentle-inflection}, which re-assigns two vertices
-to the next bend instead of one.
+To prove that the algorithm implementation is correct for multiple vertices,
+additional example was created, and illustrated in
+figure~\ref{fig:inflection-1-gentle-inflection}: the rule re-assigns two
+vertices to the next bend instead of one.
 
 \begin{figure}[h]
     \centering
