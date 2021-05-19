@@ -135,13 +135,15 @@ end $$ language plpgsql;
 
 do $$
 declare
+  fig6 constant text default 'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)';
+  selfcrossing1 constant text default 'LINESTRING(-27 180,-20 166,-13 176,-18 184)';
   vcrossings geometry[];
   mutated boolean;
 begin
   select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='fig6')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
-    'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
+    fig6,
     (select st_astext(
         st_linemerge(st_union(way))
     ) from (select unnest(vcrossings) way) a)
@@ -150,7 +152,7 @@ begin
   select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='fig6-rev')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
-    'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
+    fig6,
     (select st_astext(
         st_translate(st_reverse(st_linemerge(st_union(way))), -60, 0)
     ) from (select unnest(vcrossings) way) a)
@@ -162,6 +164,25 @@ begin
     'MULTILINESTRING((84 137,91 149,114 154,120 135,125 129,141 129,147 122),(164 137,171 149,194 154,200 135,205 129,221 129,227 122))',
     (select st_astext(
         st_linemerge(st_union(way))
+    ) from (select unnest(vcrossings) way) a)
+  );
+
+
+  select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='selfcrossing-1' and gen=1)))).* into vcrossings, mutated;
+  perform assert_equals(true, mutated);
+  perform assert_equals(
+    selfcrossing1,
+    (select st_astext(
+        st_linemerge(st_union(way))
+    ) from (select unnest(vcrossings) way) a)
+  );
+
+  select (self_crossing(array((select way from wm_debug where stage='cinflections' and name='selfcrossing-1-rev')))).* into vcrossings, mutated;
+  perform assert_equals(true, mutated);
+  perform assert_equals(
+    selfcrossing1,
+    (select st_astext(
+        st_translate(st_reverse(st_linemerge(st_union(way))), -60, 0)
     ) from (select unnest(vcrossings) way) a)
   );
 
