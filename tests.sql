@@ -46,8 +46,8 @@ insert into demo_inflections2 select name, generate_subscripts(ways, 1), unnest(
 
 -- SELF-LINE CROSSING
 drop table if exists selfcrossing, demo_selfcrossing3;
-create table selfcrossing (name text, ways geometry[]);
-insert into selfcrossing select name, self_crossing(ways) from inflections;
+create table selfcrossing (name text, ways geometry[], mutated boolean);
+insert into selfcrossing select name, (self_crossing(ways)).* from inflections;
 create table demo_selfcrossing3 (name text, i bigint, way geometry);
 insert into demo_selfcrossing3 select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;
 
@@ -88,9 +88,11 @@ end $$ language plpgsql;
 
 do $$
 declare
+  mutated boolean;
   vcrossings geometry[];
 begin
-  select self_crossing((select ways from inflections where name='fig6')) into vcrossings;
+  select (self_crossing((select ways from inflections where name='fig6'))).* into vcrossings, mutated;
+  perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
     (select st_astext(
@@ -98,7 +100,8 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  select self_crossing((select ways from inflections where name='fig6-rev')) into vcrossings;
+  select (self_crossing((select ways from inflections where name='fig6-rev'))).* into vcrossings, mutated;
+  perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
     (select st_astext(
@@ -106,7 +109,8 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  select self_crossing((select ways from inflections where name='fig6-combi')) into vcrossings;
+  select (self_crossing((select ways from inflections where name='fig6-combi'))).* into vcrossings, mutated;
+  perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 137,91 149,114 154,120 135,125 129,141 129,147 122,164 137,171 149,194 154,200 135,205 129,221 129,227 122)',
     (select st_astext(

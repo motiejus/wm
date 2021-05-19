@@ -165,7 +165,10 @@ $$ language plpgsql;
 -- self_crossing eliminates self-crossing from the bends, following the
 -- article's section "Self-line Crossing When Cutting a Bend".
 drop function if exists self_crossing;
-create function self_crossing(INOUT bends geometry[]) as $$
+create function self_crossing(
+  INOUT bends geometry[],
+  OUT mutated boolean
+) as $$
 declare
   i int4;
   j int4;
@@ -182,6 +185,7 @@ declare
   multi geometry;
 begin
   pi = radians(180);
+  mutated = false;
 
   -- go through the bends and find one where sum of inflection angle is >180
   for i in 1..array_length(bends, 1) loop
@@ -226,6 +230,9 @@ begin
       continue when st_numgeometries(multi) = 1;
       continue when st_numgeometries(multi) = 2 and
         (st_contains(bends[j], a) or st_contains(bends[j], b));
+
+      -- stars are aligned, we are changing the bend
+      mutated = true;
 
       -- Sincere apologies to someone who will need to debug the block below.
       -- To understand it, I suggest you take a pencil and paper, draw a
