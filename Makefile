@@ -290,9 +290,6 @@ wc: mj-msc.pdf ## Character and page count
 		tr -d '[:space:]' | wc -c | \
 		awk '{printf("Chars: %d, pages: %.1f\n", $$1, $$1/1500)}'
 
-$(OSM):
-	wget http://download.geofabrik.de/europe/$@
-
 .PHONY: refresh-rivers
 refresh-rivers: aggregate-rivers.sql .faux_db ## Refresh rivers.sql from GDB10LT
 	@if [ ! -f "$(GDB10LT)" ]; then \
