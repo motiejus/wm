@@ -1,6 +1,6 @@
 ---
 title: |
-    Wang & Müller linijų generalizacijos algoritmo implementacija ir analizė Lietuvos upėms
+    Wang & Müller linijų generalizacijos algoritmo įgyvendinimas upių pavyzdžiu
 author:
 - Motiejus Jakštys
 description: |
@@ -29,8 +29,8 @@ header-includes: |
   - Douglas-Peucker
 
 - Problematika
-  - nepritaikyti kartografiniams objektams
-  - prarandama geografinė teisybė
+  - nepritaikyti gamitiniams objektams: upėms, krantų linijoms
+  - prarandami raiškūs gamtinių objektų elementai: vingiai, kilpos
 
 - Alternatyvos
   - egzistuoja tik teorinės
@@ -39,16 +39,26 @@ header-includes: |
 
 # Aktualumas
 
-- Smulkesnių mastelių žemėlapių geografinis pagrindas yra kuriamas naudojant
-  generalizuotus duomenis (dažnai pagal GDR50 ir GDR250)
-- Nėra atvirai prieinamo sprendimo kartografinių linijų generalizacijai
+- Smulkesnių mastelių žemėlapių georeferenciniai duomenys kuriami taikant
+  automatizuoto generalizavimo metodus (pvz., GDR10LT generaluzuojant į
+  GDR50LT, GDR250LT).
+- Nėra atvirai prieinamo sprendimo gamtinių linijinių objektų generalizacijai
 
 # Naujumas
 
-Šis darbas pasiūlys iki šiol neegzistuojantį atvirą sprendimą kartografinei
-linijų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
+Šis darbas pasiūlys iki šiol neegzistuojantį atvirą sprendimą gamtinių
+linijinių objektų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
 
-# Etapai: programavimo
+# Tolimesnis pritaikymas
+
+Sukurta algoritmo techninė realizacija atviro kodo GIS bus pradžia tolesniam jo
+pritaikymui kitiems gamtiniams objektams: ežerų kranto linija, jūrų,
+kontinentų, miškų ribos.
+
+Kadangi rezultatas bus techninė realizacija, o ne rašinėlis, tai suteikia
+toliau galimybę vystyti sprendimą.
+
+# Etapai: techninio įgyvendinimo
 
 ::: nonincremental
 - Įlinkių atpažinimas
@@ -77,6 +87,7 @@ linijų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
 - Nauda praktikoje
 - Tolimesnių tyrimų kryptys
 :::
+
 
 # Demonstracija
 
