@@ -716,8 +716,8 @@ begin
       -- is not implemented.
       perform wm_isolated_bends(bendattrs, dbgname, gen);
 
-      select * from wm_exaggeration(
-        bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
+      --select * from wm_exaggeration(
+      --  bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
 
       select * from wm_elimination(
         bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;

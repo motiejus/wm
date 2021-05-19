@@ -587,6 +587,20 @@ table~\ref{table:scale-halfcirlce-diameter}.
     \label{table:scale-halfcirlce-diameter}
 \end{table}
 
+Sometimes, when working with {\WM}, it is useful to convert between
+half-circle's diameter and adjusted size. These easily derive from circle's
+area formula $A = 2\pi r^2$. Diameter:
+
+\[
+  D = 2\sqrt{2 adjsize / \pi}
+\]
+
+In reverse, half-circle's area from it's diameter (adjusted size):
+
+\[
+  adjsize = \frac{\pi D^2}{8}
+\]
+
 \subsection{Definition of a Bend}
 \label{sec:definition-of-a-bend}
 
@@ -806,7 +820,10 @@ This section introduces \textsc{adjusted size}, which trivially derives from
 \]
 
 Adjusted size becomes necessary later to compare bends with each other, and
-find out similar ones.
+decide if the bend is within the simplification threshold.
+
+Sometimes it is useful to convert adjusted size to half-circle's diameter $D$,
+which comes as a parameter to the {\WM} algorithm:
 
 \subsection{Isolated Bend}
 
