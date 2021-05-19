@@ -70,8 +70,8 @@ accept broader contributions, TODO:
 - [x] Elimination operator.
 - [x] Exaggeration operator.
 - [ ] Combination operator.
-- [ ] CI.
-- [ ] Known bug in `wm_self_crossing`: the program crashes with a river in
+- [ ] CI (unlikely to happen).
+- [x] Known bug in `wm_self_crossing`: the program crashes with a river in
   Lithuania.
 
 License
