@@ -29,25 +29,20 @@ def inch(cm):
 
 def parse_args():
     kwcolor = {'type': color, 'default': 'black'}
-
     parser = argparse.ArgumentParser(
             description='Convert a geometry to an image')
     parser.add_argument('--group1-select')
     parser.add_argument('--group1-linestyle')
     parser.add_argument('--group1-color', **kwcolor)
-
     parser.add_argument('--group2-select')
     parser.add_argument('--group2-linestyle')
     parser.add_argument('--group2-color', **kwcolor)
-
     parser.add_argument('--group3-select')
     parser.add_argument('--group3-linestyle')
     parser.add_argument('--group3-color', **kwcolor)
-
     parser.add_argument('--widthdiv',
                         default=1, type=float, help='Width divisor')
     parser.add_argument('--quadrant', type=int, choices=(1, 2, 3, 4))
-
     parser.add_argument('-o', '--outfile', metavar='<file>')
     return parser.parse_args()
 
