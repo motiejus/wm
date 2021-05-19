@@ -272,7 +272,8 @@ create type t_bend_attrs as (
   bend geometry,
   area real,
   cmp real,
-  adjsize real
+  adjsize real,
+  baselinelength real
 );
 create function bend_attrs(bends geometry[], dbg boolean default false) returns setof t_bend_attrs as $$
 declare
@@ -292,6 +293,7 @@ begin
       polygon = null;
     else
       select st_makepolygon(st_addpoint(bend, st_startpoint(bend))) into polygon;
+      select st_distance(st_startpoint(bend), st_endpoint(bend)) into res.baselinelength;
       -- Compactness Index (cmp) is defined as "the ratio of the area of the
       -- polygon over the circle whose circumference length is the same as the
       -- length of the circumference of the polygon". I assume they meant the
@@ -311,7 +313,12 @@ begin
       insert into debug_wm (name, way, props) values(
         'bend_attrs_' || i,
         bend,
-        json_build_object('area', res.area, 'cmp', res.cmp, 'adjsize', res.adjsize)
+        json_build_object(
+          'area', res.area,
+          'cmp', res.cmp,
+          'adjsize', res.adjsize,
+          'baselinelength', res.baselinelength
+        )
       );
     end if;
     return next res;

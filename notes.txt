@@ -65,3 +65,21 @@ To:
 
 But perhaps it doesn't look quite as natural. I will trust the original
 article to do the right thing here and remove the bend altogether.
+
+The Context of a Bend
+---------------------
+
+Similar bends:
+
+> For example, if bend 1 has four unit areas and bend 2 has six unit areas, the
+> average size is five units, and the normalized areas of bends 1 and 2 are
+> 4/5=0.8 and 6/5=1.2, respectively.
+
+My comment: everything until this sentence is clear. However, "unit areas" is
+misleading: there is little reason to normalize areas, but leave the distances
+intact (if we'd like to normalize areas, it would make sense to square-root
+them).
+
+Removing that removes changes the meaning of the sentence that **euclidean
+distance** is normalized (the composite of the bend properties), rather than
+a single component.
