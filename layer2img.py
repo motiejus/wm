@@ -111,6 +111,7 @@ def main():
     c3 = plot_args(g3, args.g3_color, args.g3_linestyle, args.g3_label)
 
     rc('text', usetex=True)
+    rc('text.latex', preamble='\\usepackage{numprint}\n')
     fig, ax = plt.subplots(constrained_layout=True)
     fig.set_figwidth(inch(width))
 
