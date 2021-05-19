@@ -5,6 +5,7 @@ SLIDES = slides-2021-03-29.pdf
 
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
 ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
+FIGURES = fig8-definition-of-a-bend.pdf
 
 .PHONY: test
 test: .faux_test
@@ -31,7 +32,7 @@ clean-tables:
 .PHONY: slides
 slides: $(SLIDES)
 
-mj-msc.pdf: mj-msc.tex test-figures.pdf version.tex bib.bib
+mj-msc.pdf: mj-msc.tex test-figures.pdf version.tex bib.bib $(FIGURES)
 	latexmk -shell-escape -g -pdf $<
 
 mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)

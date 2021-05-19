@@ -76,9 +76,8 @@ def main():
 
     ax.axis('off')
     ax.margins(0, 0)
-    fig.tight_layout(0)
     if args.outfile:
-        fig.savefig(args.outfile, bbox_inches=0, dpi=600)
+        fig.savefig(args.outfile, bbox_inches='tight', dpi=600)
     else:
         plt.show()
 

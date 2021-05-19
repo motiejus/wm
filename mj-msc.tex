@@ -212,9 +212,32 @@ unexpected bugs have snug in while modifying the algorithm.
 
 \chapter{Description of the implementation}
 
+Like alluded in section~\ref{sec:introduction}, \cite{wang1998line} paper skims
+over certain details, which are important to implement the algorithm. This
+section goes through each algorithm stage, illustrating the intermediate steps
+and explaining the author's desiderata for a detailed description.
+
+Step illustrations of the following sections are extracted from the automated
+test cases.
+
 \section{Definition of a Bend}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{fig8-definition-of-a-bend}
+    \caption{Originally figure 8: detected bends are highlighted}
+    \label{fig:fig8-definition-of-a-bend}
+\end{figure}
 
+End vertices of all lines should also be part of the bend. That way, all
+vertices belong to 1 or 2 bends. This characteristic is not obvious when
+reading the introductory sections, but becomes unavoidable (there could be no
+other way) when reading the following sections in detail.
+
+Last vertex of each bend (except for the two end-line vertices) is also the
+first vertex of the next bend. This is apparent when looking at the
+illustration of the detected bends. However, the original {\WM} paper did not
+have such an explanation or illustration.
 
 \section{Gentle Inflection at End of a Bend}
 
