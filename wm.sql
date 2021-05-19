@@ -273,6 +273,7 @@ drop function if exists ST_SimplifyWM;
 create function ST_SimplifyWM(geom geometry, dbg boolean default false) returns geometry as $$
 declare
   dbg_stage integer;
+  i integer;
   line geometry;
   lines geometry[];
   bends geometry[];
@@ -290,26 +291,26 @@ begin
 
   if dbg then
     drop table if exists debug_wm;
-    create table debug_wm(name text, i bigint, way geometry);
+    create table debug_wm(name text, way geometry);
   end if;
 
-  dbg_stage = 1;
-  foreach line in array lines loop
+  for i in 1..array_length(lines, 1) loop
+
     mutated = true;
+    dbg_stage = 1;
     while mutated loop
       if dbg then
         insert into debug_wm (name, way) values(
-          dbg_stage || 'afigures',
-          line
+          dbg_stage || 'afigures_' || i,
+          lines[i]
         );
       end if;
 
-      bends = detect_bends(line);
+      bends = detect_bends(lines[i]);
 
       if dbg then
-        insert into debug_wm(name, i, way) values(
-          dbg_stage || 'bbends',
-          generate_subscripts(bends, 1),
+        insert into debug_wm(name, way) values(
+          dbg_stage || 'bbends_' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
@@ -317,9 +318,8 @@ begin
       bends = fix_gentle_inflections(bends);
 
       if dbg then
-        insert into debug_wm(name, i, way) values(
-          dbg_stage || 'cinflections',
-          generate_subscripts(bends, 1),
+        insert into debug_wm(name, way) values(
+          dbg_stage || 'cinflections' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
@@ -327,22 +327,24 @@ begin
       select * from self_crossing(bends) into bends, mutated;
 
       if dbg then
-        insert into debug_wm(name, i, way) values(
-          dbg_stage || 'dcrossings',
-          generate_subscripts(bends, 1),
+        insert into debug_wm(name, way) values(
+          dbg_stage || 'dcrossings' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
 
-      line = st_linemerge(st_union(bends));
+      lines[i] = st_linemerge(st_union(bends));
+
+      raise notice 'lines[i]: %', st_summary(lines[i]);
+
+      dbg_stage = dbg_stage + 1;
     end loop;
-    dbg_stage = dbg_stage + 1;
   end loop;
 
   if l_type = 'ST_LineString' then
-    return st_linemerge(st_union(bends));
+    return st_linemerge(st_union(lines));
   elseif l_type = 'ST_MultiLineString' then
-    return st_union(bends);
+    return st_union(lines);
   end if;
 end
 $$ language plpgsql;
