@@ -1,6 +1,11 @@
 SOURCE ?= lithuania-latest.osm.pbf
 WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas'
 
+SLIDY_PATH= /usr/share/xml/docbook/stylesheet/docbook-xsl/slides/slidy
+ifneq ($(wildcard $(SLIDY_PATH)/.*),)
+SLIDY_ARGS = -V slidy-url=$(SLIDY_PATH)
+endif
+
 .PHONY: test
 test: tests.sql .faux.db
 	./db -f tests.sql
@@ -23,8 +28,8 @@ clean-tables:
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
-slides-2021-03-29.html:
-	pandoc -t slidy --self-contained $< -o $@
+slides-2021-03-29.html: slides-2021-03-29.txt
+	pandoc --verbose -t slidy --self-contained $< -o $@ $(SLIDY_ARGS)
 
 .faux_filter-rivers: .faux_import-osm
 	./db -v where="$(WHERE)" -f aggregate-rivers.sql

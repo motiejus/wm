@@ -48,8 +48,6 @@ Kombinavimo operatorius                                        -
 Padinimo operatorius                                           -
 Pritaikymas visoms Lietuvos upėms                              -
 
-Table: programavimo etapai
-
 # Progresas: programavimo analizės ir darbo rašymo etapai
 
 Užduotis                                                       Statusas
@@ -58,8 +56,6 @@ Esamų algoritmų apžvalga                                       -
 Problemos aprašymas                                            -
 Pasirinkto generalizacijos sprendimo apibūdinimas              -
 Sukurtos implementacijos aptarimas                             -
-
-Table: analizės ir darbo rašymo etapai
 
 # Demonstracija
 
