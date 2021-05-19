@@ -11,9 +11,9 @@ begin
 end $$ LANGUAGE plpgsql;
 
 -- to preview this somewhat conveniently in QGIS:
--- stage || '_' || dbgname || ' i:' || coalesce(i,'<nil>') || ' j:'|| coalesce(j,'<nil>')
+-- stage || '_' || dbgname || ' iter:' || iter || ' nbend:'|| nbend
 drop table if exists debug_wm;
-create table debug_wm(stage text, dbgname text, i bigint, j bigint, way geometry, props json);
+create table debug_wm(stage text, dbgname text, iter bigint, nbend bigint, way geometry, props json);
 
 drop table if exists figures;
 create table figures (name text, way geometry);

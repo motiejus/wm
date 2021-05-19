@@ -299,9 +299,10 @@ begin
       select (res.area*(0.75/res.cmp)) into res.adjsize;
     end if;
     if dbgname is not null then
-      insert into debug_wm (stage, dbgname, i, way, props) values(
+      insert into debug_wm (stage, dbgname, iter, nbend, way, props) values(
         'ebendattrs',
         dbgname,
+        1,
         i,
         bend,
         json_build_object(
@@ -345,9 +346,10 @@ begin
     dbg_stage = 1;
     while mutated loop
       if dbgname is not null then
-        insert into debug_wm (stage, dbgname, i, way) values(
+        insert into debug_wm (stage, dbgname, iter, nbend, way) values(
           'afigures',
           dbgname,
+          1,
           i,
           lines[i]
         );
@@ -356,7 +358,7 @@ begin
       bends = detect_bends(lines[i]);
 
       if dbgname is not null then
-        insert into debug_wm(stage, dbgname, i, j, way) values(
+        insert into debug_wm(stage, dbgname, iter, nbend, way) values(
           'bbends',
           dbgname,
           i,
@@ -368,7 +370,7 @@ begin
       bends = fix_gentle_inflections(bends);
 
       if dbgname is not null then
-        insert into debug_wm(stage, dbgname, i, j, way) values(
+        insert into debug_wm(stage, dbgname, iter, nbend, way) values(
           'cinflections',
           dbgname,
           i,
@@ -380,7 +382,7 @@ begin
       select * from self_crossing(bends) into bends, mutated;
 
       if dbgname is not null then
-        insert into debug_wm(stage, dbgname, i, j, way) values(
+        insert into debug_wm(stage, dbgname, iter, nbend, way) values(
           'dcrossings',
           dbgname,
           i,
