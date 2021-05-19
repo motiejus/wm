@@ -98,15 +98,13 @@ drop function if exists fix_gentle_inflections1;
 create function fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
   pi constant real default radians(180);
-  small_angle real;
+  -- the threshold when the angle is still "small", so gentle inflections can
+  -- be joined
+  small_angle constant real default radians(30);
   ptail geometry; -- tail point of tail bend
   phead geometry[]; -- 3 tail points of head bend
   i int4; -- bends[i] is the current head
 begin
-  -- the threshold when the angle is still "small", so gentle inflections can
-  -- be joined
-  small_angle := radians(30);
-
   for i in 2..array_length(bends, 1) loop
     -- Predicate: two bends will always share an edge. Assuming (A,B,C,D,E,F)
     -- is a bend:

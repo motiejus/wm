@@ -104,7 +104,7 @@ declare
   vcrossings geometry[];
   mutated boolean;
 begin
-  select (self_crossing((select ways from inflections where name='fig6'))).* into vcrossings, mutated;
+  select (self_crossing(array((select way from debug_wm where stage='cinflections' and dbgname='fig6')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
@@ -113,7 +113,7 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  select (self_crossing((select ways from inflections where name='fig6-rev'))).* into vcrossings, mutated;
+  select (self_crossing(array((select way from debug_wm where stage='cinflections' and dbgname='fig6-rev')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
@@ -123,6 +123,7 @@ begin
   );
 
   select (self_crossing((select ways from inflections where name='fig6-combi'))).* into vcrossings, mutated;
+  --select (self_crossing(array((select way from debug_wm where stage='cinflections' and dbgname='fig6-combi')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 137,91 149,114 154,120 135,125 129,141 129,147 122,164 137,171 149,194 154,200 135,205 129,221 129,227 122)',
