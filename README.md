@@ -21,7 +21,7 @@ It contains a few supporting files, notably:
 - `aggregate-rivers.sql` combines multiple river objects (linestrings or
   multilinestrings) to a single one.
 - `init.sql` initializes PostGIS database for running the tests.
-- `rivers.sql` is an OpenStreetMap snapshot of select rivers (`Makefile`
+- `rivers-*.sql` are national dataset snapshots of rivers (`Makefile`
   contains code to update them).
 - ... and a few more files necessary to build the paper.
 
@@ -39,7 +39,7 @@ clean              Clean the current working directory
 clean-tables       Remove tables created during unit or rivers tests
 help               Print this help message
 wc                 Character and page count
-refresh-rivers     Refresh rivers.sql from Open Street Maps
+refresh-rivers     Refresh rivers-*.sql from Open Street Maps
 ```
 
 To execute the algorithm, run:

@@ -75,7 +75,7 @@ test-rivers: .faux_test-rivers ## Rivers tests (slow)
 slides: $(SLIDES)
 
 .PHONY: refresh-rivers
-refresh-rivers: rivers.sql rivers-50.sql rivers-250.sql ## Refresh river data from national datasets
+refresh-rivers: rivers-10.sql rivers-50.sql rivers-250.sql ## Refresh river data from national datasets
 
 ###########################
 # The report, quick version
@@ -217,8 +217,8 @@ salvis-wm-overlaid-250k-zoom_1COLOR = orange
 	bash db -f init.sql
 	touch $@
 
-.faux_db: .faux_db_pre rivers.sql
-	bash db -f rivers.sql
+.faux_db: .faux_db_pre rivers-10.sql
+	bash db -f rivers-10.sql
 	touch $@
 
 .faux_test: test.sql wm.sql .faux_db
@@ -313,6 +313,6 @@ $(1): aggregate-rivers.sql gdr2pgsql .faux_db_pre
 	./gdr2pgsql "$$($(2))" "$(3)" "$(RIVERFILTER)" "$(1)"
 endef
 
-$(eval $(call rivers_template,rivers.sql,GDB10LT,wm_rivers))
+$(eval $(call rivers_template,rivers-10.sql,GDB10LT,wm_rivers))
 $(eval $(call rivers_template,rivers-50.sql,GDR50LT,wm_rivers_50))
 $(eval $(call rivers_template,rivers-250.sql,GDR250LT,wm_rivers_250))
