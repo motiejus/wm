@@ -1,6 +1,10 @@
 \set ON_ERROR_STOP on
 SET plpgsql.extra_errors TO 'all';
 
+-- This fails with real rivers since dcf4c02307baeece51470a961a113a8fad68fad5
+-- (adding GDB10LT data). The same rivers from OpenStreetMaps work.
+-- There seems to be a bug in wm_exaggeration.
+
 do $$
 declare
   npoints bigint;
