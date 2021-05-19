@@ -86,8 +86,7 @@ declare
   vbends geometry[];
   vinflections geometry[];
 begin
-  -- fig5
-  select fix_gentle_inflections((select ways from bends where name='fig5')) into vinflections;
+  select array((select way from debug_wm where dbgname='fig5' and stage='cinflections')) into vinflections;
   perform assert_equals('LINESTRING(0 39,19 52,27 77)', st_astext(vinflections[1]));
   perform assert_equals('LINESTRING(19 52,27 77,26 104,41 115,49 115,65 103,65 75,53 45)', st_astext(vinflections[2]));
   perform assert_equals('LINESTRING(65 75,53 45,63 15,91 0)', st_astext(vinflections[3]));

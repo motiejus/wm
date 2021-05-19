@@ -301,9 +301,10 @@ begin
       select (res.area*(0.75/res.cmp)) into res.adjsize;
     end if;
     if dbgname is not null then
-      insert into debug_wm (stage, dbgname, way, props) values(
+      insert into debug_wm (stage, dbgname, i, way, props) values(
         'ebendattrs',
         dbgname,
+        i,
         bend,
         json_build_object(
           'area', res.area,
