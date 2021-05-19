@@ -1,7 +1,16 @@
 \set ON_ERROR_STOP on
 SET plpgsql.extra_errors TO 'all';
 
--- This fails with real rivers since dcf4c02307baeece51470a961a113a8fad68fad5
+-- This fails with real rivers since this:
+-- commit dcf4c02307baeece51470a961a113a8fad68fad5
+-- Merge: 44ee741 3638033
+-- Author: Motiejus Jakštys <motiejus@uber.com>
+-- Date:   Tue May 11 20:29:41 2021 +0300
+-- 
+--     Merge branch 'gdb10lt'
+--     
+--     This breaks "test-rivers" for Nemunas.
+--
 -- (adding GDB10LT data). The same rivers from OpenStreetMaps work.
 -- There seems to be a bug in wm_exaggeration.
 

@@ -1,13 +1,20 @@
 Wang–Müller algorithm in PostGIS
 --------------------------------
 
-This is a work-in-progress implementation following "Line generalization based
-on analysis of shape characteristics" by Wang and Müller, 1998.
+This is Wang–Müller line generalization algorithm implementation in PostGIS.
+Following "Line generalization based on analysis of shape characteristics" by
+the same author, 1998.
+
+Status
+------
+
+It mostly works. Read `mj-msc-full.pdf` for visual examples and possible
+gotchas.
 
 Structure
 ---------
 
-There will be 2 deliverables from this folder:
+There are be 2 deliverables:
 
 - `wm.sql`, the implementation.
 - paper `mj-msc-full.pdf`, a MSc thesis, explaining it.
@@ -49,6 +56,10 @@ To execute the algorithm, run:
   data source (e.g. use a different country instead of Lithuania) by changing
   the `Makefile` and the test files. Left as an exercise for the reader.
 
+N.B. the `make test-rivers` fails (see `test-rivers.sql`), because with higher
+`dhalfcircle` values, the unionized river (`salvis`) is going on top of itself,
+making the resulting geometry invalid.
+
 Building the paper (pdf)
 ------------------------
 
@@ -57,24 +68,19 @@ Building the paper (pdf)
 ```
 
 `mj-msc.tex` results in `mj-msc-full.pdf`, which will be at some point
-published. It needs quite a few dependencies, including a functioning Docker
-environment, postgresql client, geopandas, pygments, osm2pgsql, poppler, and a
-"quite extensive" LaTeX installation. This was tested on Debian 11.
+published to this repo. It needs quite a few dependencies, including a
+functioning Docker environment, postgresql client, geopandas, pygments,
+osm2pgsql, poppler, and a "quite extensive" LaTeX installation. Tested on
+Debian 11.
 
 Contributing
 ------------
 
-Please reach out to me before contributing. As of writing, this is not ready to
-accept broader contributions, TODO:
-
-- [x] Elimination operator.
-- [x] Exaggeration operator.
-- [ ] Combination operator.
-- [ ] CI (unlikely to happen).
-- [x] Known bug in `wm_self_crossing`: the program crashes with a river in
-  Lithuania.
+This repository is frozen and will not accept contributions. Please fork it.
+If fork has improved the algorithm substantially, feel free to ping me, I will
+link to it in this README.
 
 License
 -------
 
-GPL 2.0 or later, same as PostGIS.
+GPLv2 or later.
