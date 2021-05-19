@@ -265,10 +265,10 @@ drop function if exists bend_attrs;
 drop type if exists t_bend_attrs;
 create type t_bend_attrs as (
   bend geometry,
-  area real not null default 0,
-  cmp real not null default 0,
-  adjsize real not null default 0,
-  baselinelength real not null default 0
+  area real,
+  cmp real,
+  adjsize real,
+  baselinelength real
 );
 create function bend_attrs(bends geometry[], dbgname text default null) returns setof t_bend_attrs as $$
 declare
@@ -282,6 +282,10 @@ begin
     bend = bends[i];
     res = null;
     res.bend = bend;
+    res.area = 0;
+    res.cmp = 0;
+    res.adjsize = 0;
+    res.baselinelength = 0;
     if st_numpoints(bend) >= 3 then
       polygon = st_makepolygon(st_addpoint(bend, st_startpoint(bend)));
       res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
