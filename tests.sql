@@ -19,11 +19,11 @@ insert into figures (name, way) values ('fig5',ST_GeomFromText('LINESTRING(0 39,
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
 
 -- DETECT BENDS
-drop table if exists abends, bends;
-create table abends (name text, ways geometry[]);
-insert into abends select f.name, detect_bends(f.way) from figures f;
-create table bends (name text, i bigint, way geometry);
-insert into bends select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from abends a;
+drop table if exists bends, demo_bends;
+create table bends (name text, ways geometry[]);
+insert into bends select f.name, detect_bends(f.way) from figures f;
+create table demo_bends (name text, i bigint, way geometry);
+insert into demo_bends select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from bends a;
 
 do $$
 declare
@@ -41,11 +41,11 @@ begin
 end $$ language plpgsql;
 
 -- FIX BEND INFLECTIONS
-drop table if exists ainflections, inflections;
-create table ainflections (name text, ways geometry[]);
-insert into ainflections select a.name, fix_gentle_inflections(a.ways) from abends a;
-create table inflections (name text, i bigint, way geometry);
-insert into inflections select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from ainflections a;
+drop table if exists inflections, demo_inflections;
+create table inflections (name text, ways geometry[]);
+insert into inflections select a.name, fix_gentle_inflections(a.ways) from bends a;
+create table demo_inflections (name text, i bigint, way geometry);
+insert into demo_inflections select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from inflections a;
 
 do $$
 declare
@@ -53,8 +53,7 @@ declare
   vinflections geometry[];
 begin
   -- fig5
-  select detect_bends((select way from figures where name='fig5')) into vbends;
-  select fix_gentle_inflections(vbends) into vinflections;
+  select fix_gentle_inflections((select ways from bends where name='fig5')) into vinflections;
   perform assert_equals('LINESTRING(0 39,19 52,27 77)', st_astext(vinflections[1]));
   perform assert_equals('LINESTRING(19 52,27 77,26 104,41 115,49 115,65 103,65 75,53 45)', st_astext(vinflections[2]));
   perform assert_equals('LINESTRING(65 75,53 45,63 15,91 0)', st_astext(vinflections[3]));
