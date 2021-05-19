@@ -43,20 +43,20 @@ end $$ language plpgsql;
 
 drop table if exists inflections;
 create table inflections (name text, way geometry);
---insert into inflections select 'fig3', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='fig3'))));
+insert into inflections select 'fig3', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='fig3'))));
 insert into inflections select 'fig5', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='fig5'))));
---insert into inflections select 'inflection-1', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='inflection-1'))));
+insert into inflections select 'inflection-1', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='inflection-1'))));
 
 -- FIX BEND INFLECTIONS
---do $$
---declare
---  vbends geometry[];
---  vinflections geometry[];
---begin
---  select detect_bends((select way from figures where name='inflection-1')) into vbends;
---  select fix_gentle_inflections(vbends) into vinflections;
---
---  perform assert_equals(vbends[1], vinflections[1]); -- unchanged
---  perform assert_equals('LINESTRING(114 20,133 20,145 15,145 0,136 5,123 7,114 7)', st_astext(vinflections[2]));
---  perform assert_equals('LINESTRING(123 7,114 7,111 2)', st_astext(vinflections[3]));
---end $$ language plpgsql;
+do $$
+declare
+  vbends geometry[];
+  vinflections geometry[];
+begin
+  select detect_bends((select way from figures where name='inflection-1')) into vbends;
+  select fix_gentle_inflections(vbends) into vinflections;
+
+  perform assert_equals(vbends[1], vinflections[1]); -- unchanged
+  perform assert_equals('LINESTRING(114 20,133 20,145 15,145 0,136 5,123 7,114 7)', st_astext(vinflections[2]));
+  perform assert_equals('LINESTRING(123 7,114 7,111 2)', st_astext(vinflections[3]));
+end $$ language plpgsql;

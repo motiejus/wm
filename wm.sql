@@ -76,10 +76,21 @@ $$ language plpgsql;
 -- commulative inflection angle small (see variable below).
 create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
 declare
+  len int4;
   bends1 geometry[];
+  bends2 geometry[];
 begin
+  len = array_length(bends, 1);
+
   bends1 = fix_gentle_inflections1(bends);
-  bends1 = array_reverse(fix_gentle_inflections1(array_reverse(bends1)));
+  for i in 1..len loop
+    bends2[i] = st_reverse(bends1[len-i+1]);
+  end loop;
+  bends2 = fix_gentle_inflections1(bends2);
+
+  for i in 1..len loop
+    bends[i] = st_reverse(bends2[len-i+1]);
+  end loop;
 end
 $$ language plpgsql;
 
@@ -134,13 +145,19 @@ begin
       exit when array_length(phead, 1) < 3;
 
       -- if inflection angle between ptail[1:3] "large", stop processing this bend
-      exit when abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle;
+      if abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle then
+        --raise notice 'quitting % because angle between % % %', st_astext(ptail), st_astext(phead[1]), st_astext(phead[2]), st_astext(phead[3]);
+        exit;
+      end if;
 
       -- distance from head's first vertex should be larger than from second vertex
-      exit when st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]);
+      if st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]) then
+        --raise notice 'quitting % because distance', st_astext(ptail);
+        exit;
+      end if;
 
       -- detected a gentle inflection. Move head of the tail to the tail of head
-      raise notice 'fixing a gentle inflection of angle %', degrees(abs(st_angle(phead[1], phead[2], phead[3]) - pi));
+      --raise notice 'fixing a gentle inflection of angle %', degrees(abs(st_angle(phead[1], phead[2], phead[3]) - pi));
 
       bends[i] = st_removepoint(bends[i], 0);
       bends[i-1] = st_addpoint(bends[i-1], phead[3]);
