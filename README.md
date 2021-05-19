@@ -67,10 +67,12 @@ Contributing
 Please reach out to me before contributing. As of writing, this is not ready to
 accept broader contributions, TODO:
 
-[ ] CI.
-[ ] It has a bug in `wm_self_crossing`: the program crashes with a river in
+[] CI.
+
+[] It has a bug in `wm_self_crossing`: the program crashes with a river in
     Lithuania.
-[ ] Implementation is not yet complete (stay tuned).
+
+[] Implementation is not yet complete (stay tuned).
 
 License
 -------
