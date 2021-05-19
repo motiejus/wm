@@ -431,7 +431,7 @@ begin
       end if;
 
       -- self-crossing mutations are done, calculate bend properties
-      perform bend_attrs(bends, dbgname);
+      bend_attrs = array((select bend_attrs(bends, dbgname)));
 
     end loop;
 
