@@ -1,0 +1,164 @@
+\documentclass[a4paper]{article}
+
+\iffalse
+\usepackage[L7x,T1]{fontenc}
+\usepackage[lithuanian]{babel}
+\else
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\fi
+
+\usepackage[utf8]{inputenc}
+\usepackage{a4wide}
+\usepackage{csquotes}
+\usepackage[maxbibnames=99,style=authoryear]{biblatex}
+\usepackage[pdfusetitle]{hyperref}
+\usepackage{enumitem}
+\usepackage[toc,page,title]{appendix}
+\addbibresource{bib.bib}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{gensymb}
+\usepackage{varwidth}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{minted}
+\usetikzlibrary{er,positioning}
+\definecolor{mypurple}{RGB}{117,112,179}
+\input{version}
+
+\newcommand{\DP}{Douglas \& Peucker}
+\newcommand{\VW}{Visvalingam--Whyatt}
+\newcommand{\WM}{Wang--M{\"u}ller}
+
+\title{
+    Cartographic Generalization of Lines using free software \\
+    (example of rivers) \\ \vspace{4mm}
+}
+
+\iffalse
+\fi
+
+\author{Motiejus Jakštys}
+
+\date{
+    \vspace{10mm}
+    Version: \VCDescribe \\ \vspace{4mm}
+    Generated At: \GeneratedAt
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\label{sec:abstract}
+
+Current open-source line generalization solutions have their roots in
+    mathematics and geometry, and are not fit for natural objects like rivers
+    and coastlines. This paper discusses our implementation of \WM algorithm
+    under and open-source license, explains things that we would had
+    appreciated in the original paper and compares our results to different
+    generalization algorithms.
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+\listoffigures
+
+\newpage
+
+\section{Introduction}
+\label{sec:introduction}
+
+A number of cartographic line generalization algorithms have been researched,
+which claim to better process cartographic objects like lines. These fall into
+two rough categories:
+\begin{itemize}
+    \item Cartographic knowledge was encoded to an algorithm (bottom-up
+        approach). One among these are \cite{wang1998line}.
+    \item Mathematical shape transformation which yields a more
+        cartographically suitable down-scaling. E.g. \cite{jiang2003line},
+        \cite{dyken2009simultaneous}, \cite{mustafa2006dynamic},
+        \cite{nollenburg2008morphing}.
+\end{itemize}
+
+During research for the mentioned articles, prototype code has been written for
+most of the algorithms. However, none of them seem to be available for use
+except for the two "classical" ones -- {\DP} and {\VW}.
+
+\cite{wang1998line} is an algorithm specifically created for cartographic
+generalization and available for general use, though it is only currently
+available in a commercial product. This poses a problem for map creation in
+open source software: there is not a similar high-quality simplification
+algorithm to create down-scaled maps, so any cartographic work, which uses line
+generalization as part of its processing, will be of sub-par quality.
+We believe that availability of high-quality open-source tools is an important
+foundation for future cartographic experimentation and development, thus it
+it benefits the cartographic society as a whole.
+
+This paper will be reviewing and comparing two widely available algorithms that
+are often used for line generalization:
+\begin{itemize}
+    \item \cite{douglas1973algorithms} via
+        \href{https://postgis.net/docs/ST_Simplify.html}{PostGIS Simplify}.
+
+    \item \cite{visvalingam1993line} via
+        \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS SimplifyVW}.
+
+\end{itemize}
+
+Since both algorithms produce jaggy output lines, it is worthwhile to process
+those through a widely available \cite{chaikin1974algorithm} smoothing
+algorithm via \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
+ChaikinSmoothing}.
+
+\section{Visual comparison}
+
+\subsection{Comparison algorithms and parameters}
+\subsection{Combining bends}
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+\section{Related Work and future suggestions}
+\label{sec:related_work}
+
+\printbibliography
+
+\begin{appendices}
+
+\section{Žeimena and Lakaja in context}
+
+\section{Code listings}
+
+For the curious users it may be useful to see how the analysis was executed.
+Also, given the source listings, it should be relatively straightforward to
+re-run the same analysis on a different area.
+
+The analysis was executed and report was generated on Ubuntu 20.04 with only
+system packages. This should be sufficient: {\tt postgis gdal-bin biber
+latexmk texlive-bibtex-extra python3-geopandas python3-pygments}.
+
+\subsection{Makefile}
+This file binds all the pieces together:
+\begin{itemize}
+    \item Prepares the PostGIS database.
+    \item Generates helper figures (sine waves, squares).
+    \item Runs analysis on input files ({\DP}, {\VW}, Chaikin).
+    \item Invokes {\tt latexmk} as a final report generation step.
+\end{itemize}
+\inputminted[fontsize=\small]{make}{Makefile}
+
+\subsection{layer2img.py}
+This file accepts a layer (or two) and generates a PDF image suitable for embedding into the report.
+\inputminted[fontsize=\small]{python}{layer2img.py}
+
+\subsection{db}
+Manages a PostGIS database in the Docker container. That way, the database can
+be torn down and re-created by automated tools like the {\tt Makefile} itself.
+\inputminted[fontsize=\small]{bash}{db}
+
+\end{appendices}
+\end{document}

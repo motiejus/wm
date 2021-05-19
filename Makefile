@@ -1,12 +1,9 @@
 SOURCE ?= lithuania-latest.osm.pbf
 WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas'
 
-SLIDES = slides-2021-03-29.pdf slides-2021-03-29.html
-
-SLIDY_PATH= /usr/share/xml/docbook/stylesheet/docbook-xsl/slides/slidy
-ifneq ($(wildcard $(SLIDY_PATH)/.*),)
-SLIDY_ARGS = -V slidy-url=$(SLIDY_PATH)
-endif
+SLIDES = slides-2021-03-29.pdf
+NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
+ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
 
 .PHONY: test
 test: tests.sql .faux.db
@@ -29,6 +26,18 @@ clean-tables:
 
 .PHONY: slides
 slides: $(SLIDES)
+
+mj-msc.pdf: mj-msc.tex version.tex bib.bib 
+	latexmk -shell-escape -g -pdf $<
+
+mj-msc-all.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
+	cp $< .tmp-$@
+	for f in $^; do \
+		if [ "$$f" = "$<" ]; then continue; fi; \
+		pdfattach .tmp-$@ $$f .tmp2-$@; \
+		mv .tmp2-$@ .tmp-$@; \
+	done
+	mv .tmp-$@ $@
 
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
@@ -53,3 +62,10 @@ slides-2021-03-29.html: slides-2021-03-29.txt
 
 $(SOURCE):
 	wget http://download.geofabrik.de/europe/$@
+
+version.tex: $(shell git rev-parse --show-toplevel)/.git
+	( \
+		date '+\gdef\GeneratedAt{%F %T %Z}%'; \
+		printf '\gdef\VCDescribe{%s}%%\n' $(REF); \
+	) > $@
+
