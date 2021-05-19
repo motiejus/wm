@@ -1,19 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
-fail() {
-    >&2 echo "$1"
-    exit 1
-}
-
 dir=$(mktemp -d)
+fname=mj-msc-all.pdf
 
-echo "Extracting all files from the report ..."
-pdfdetach -saveall -o "$dir" mj-msc-all.pdf
+echo "Extracting all files from the report to $dir ..."
+pdfdetach -saveall -o "$dir" "$fname"
 
-echo "Re-generating the report..."
+echo "Generating $dir/$fname..."
 fail=0
-make -C "$dir" -j $(nproc) mj-msc-all.pdf 2>&1 > make.log || fail=1
+make -C "$dir" -j $(nproc) "$fname" > "$dir/make.log" 2>&1 || fail=1
 
 if [[ $fail == 1 ]]; then
     >&2 echo "Generation failed. Here are the last 10 log lines:"
@@ -22,7 +18,10 @@ if [[ $fail == 1 ]]; then
 fi
 
 open=open
-if [[ $(uname) == Linux ]]
-    open=xdg-open
-fi
-"$open" "$dir/mj-msc-all.pdf"
+[[ $(uname) == Linux ]] && open=xdg-open
+
+echo "Opening $dir/$fname ..."
+"$open" "$dir/$fname"
+
+echo "Editor has been closed. Removing $dir"
+rm -fr "$dir"

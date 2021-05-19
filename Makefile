@@ -5,6 +5,12 @@ SLIDES = slides-2021-03-29.pdf
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
 ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
 
+ifeq ($(shell git rev-parse --is-inside-git-dir),true)
+GIT_DEP=$(shell git rev-parse --show-toplevel)/.git
+else
+GIT_DEP=
+endif
+
 .PHONY: test
 test: tests.sql .faux.db
 	./db -f tests.sql
@@ -64,7 +70,7 @@ $(SOURCE):
 	wget http://download.geofabrik.de/europe/$@
 
 REF = $(shell git describe --abbrev=12 --always --dirty)
-version.tex: Makefile $(shell git rev-parse --show-toplevel)/.git
+version.tex: Makefile $(GIT_DEP)
 	( \
 		TZ=UTC date '+\gdef\VCDescribe{%F ($(REF))}%'; \
 	) > $@
