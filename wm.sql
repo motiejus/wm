@@ -166,12 +166,15 @@ create or replace function self_crossing(INOUT bends geometry[]) as $$
 declare
   i int4;
   j int4;
+  prev_length int4;
   pi real;
   angle real;
   p0 geometry;
   p1 geometry;
   p2 geometry;
   p3 geometry;
+  a geometry;
+  b geometry;
   s2 real;
   s3 real;
   bend geometry;
@@ -206,7 +209,9 @@ begin
     -- cross bends[i]. optimization: we care only about bends which beginning
     -- and end start at different sides of the plane, separated by endpoints
     -- p0 and p1.
-    for j in 1..array_length(bends, 1) loop
+    j = 0;
+    while j < array_length(bends, 1) loop
+      j = j + 1;
       continue when i = j;
 
       p2 = st_pointn(bends[j], 1);
@@ -219,9 +224,11 @@ begin
       continue when sign(s2) = sign(s3);
 
       -- do end vertices of bend[i] cross bend[j]?
-      this = st_makeline(st_pointn(bends[i], 1), st_pointn(bends[i], -1));
-      multi = st_split(bends[j], this);
+      a = st_pointn(bends[i], 1);
+      b = st_pointn(bends[i], -1);
+      multi = st_split(bends[j], st_makeline(a, b));
       continue when st_numgeometries(multi) = 1;
+      continue when st_numgeometries(multi) = 2 and (st_contains(bends[j], a) or st_contains(bends[j], b));
 
       -- real self-crossing detected! Remove it.
       -- if j < i:
@@ -229,18 +236,29 @@ begin
       --     except the crossing and what comes after it.
       --   bends[j] = append(bends[j], bends[i][-1])
       --   remove bends from bends[j+1] to bends[i] inclusive.
+      --   j := i+1
       -- elif j > i:
       --   bends[i] = bends[i][1]
       --   bends[i] = append(bends[i], multi[2][2..n])
       --   remove bends from bends[i+1] to bends[j] inclusive.
 
+      raise notice 'j: %, i: %', i, j;
+      raise notice 'bends[i]: %', st_astext(bends[i]);
+      raise notice 'bends[j]: %', st_astext(bends[j]);
+      raise notice 'a: %, b: %', st_astext(a), st_astext(b);
+      raise notice 'multi: %', st_astext(multi);
+      raise notice '';
+      prev_length = array_length(bends, 1);
       if j < i then
         bends[j] = st_geometryn(multi, 1);
         bends[j] = st_setpoint(bends[j], st_npoints(bends[j])-1, st_pointn(bends[i], st_npoints(bends[i])));
-        bends = bends[1:j] || bends[i+1:array_length(bends, 1)];
+        bends = bends[1:j] || bends[i+1:prev_length];
+        j = i;
       else
-        --
+        bends[i] = st_makeline(st_pointn(bends[i], 1), st_removepoint(st_geometryn(multi, 2), 0));
+        bends = bends[1:i] || bends[j+1:prev_length];
       end if;
+      j = j - prev_length + array_length(bends, 1);
 
     end loop;
 
