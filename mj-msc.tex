@@ -220,6 +220,7 @@ This section defines vocabulary and terms as defined in the rest of the paper.
     \item[Bend] is a subset of a line that humans perceive as a curve. For the
         purpose of this paper, the geometric definition is complex and is
         discussed in section~\onpage{sec:definition-of-a-bend}.
+
 \end{description}
 
 \section{Automated tests}
@@ -235,7 +236,7 @@ The full set of test geometries is visualized in
 figure~\onpage{fig:test-figures}. The figure includes arrows depicting line
 direction.
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{test-figures}
     \caption{Line geometries for automated test cases}
@@ -269,7 +270,7 @@ purposes) using the following algorithm:
 \section{Definition of a Bend}
 \label{sec:definition-of-a-bend}
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{fig8-definition-of-a-bend}
     \caption{Originally Figure 8: detected bends are highlighted}
@@ -308,12 +309,13 @@ when a single vertex is moved outwards the end of the bend.
 The example in this section was clear, but insufficient: it does not specify
 how many vertices should be included when calculating the end-of-bend
 inflection. We chose the iterative approach -- as long as the angle is "right"
-and the distance is decreasing, the algorithm should keep going; practically
-not having an upper bound on the number of iterations.
+and the distance is decreasing, the algorithm should keep re-assigning vertices
+to different bends; practically not having an upper bound on the number of
+iterations.
 
 Additional example, not found in the original paper, is illustrated in
-figure~\ref{fig:inflection-1-gentle-inflection}, which moves two vertices
-instead of one.
+figure~\ref{fig:inflection-1-gentle-inflection}, which re-assigns two vertices
+to the next bend instead of one.
 
 \begin{figure}[h]
     \centering
@@ -326,7 +328,7 @@ instead of one.
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
-    \caption{Originally Figure 5: gentle inflections at the ends of the bend}
+    \caption{Gentle inflection at the end of the bend when multiple vertices is moved.}
     \label{fig:inflection-1-gentle-inflection}
 \end{figure}
 

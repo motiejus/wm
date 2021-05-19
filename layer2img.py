@@ -6,21 +6,12 @@ import matplotlib.pyplot as plt
 
 from matplotlib import rc
 
-#CMAP = 'Set3'
+# CMAP = 'Set3'  # this is nice too
 CMAP = 'tab20c'
-INCH = 25.4  # mm
+
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
 BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
-
-def plt_size(string):
-    if not string:
-        return None
-    try:
-        w, h = string.split("x")
-        return float(w) / INCH, float(h) / INCH
-    except Exception as e:
-        raise argparse.ArgumentTypeError from e
 
 
 def parse_args():
@@ -38,9 +29,10 @@ def parse_args():
     parser.add_argument('--group3-where')
     parser.add_argument('--group3-cmap', type=bool)
 
+    parser.add_argument('--sizediv',
+                        default=1, type=float, help='Size divisor')
+
     parser.add_argument('-o', '--outfile', metavar='<file>')
-    parser.add_argument(
-            '--size', type=plt_size, help='Figure size in mm (WWxHH)')
     parser.add_argument('--clip', type=float, nargs=4, metavar=BOUNDS)
     return parser.parse_args()
 
@@ -66,8 +58,7 @@ def main():
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
-    if args.size:
-        fig.set_size_inches(args.size)
+    fig.set_figwidth(8.27 / args.sizediv)
     if c := args.clip:
         ax.set_xlim(left=c[0], right=c[2])
         ax.set_ylim(bottom=c[1], top=c[3])
