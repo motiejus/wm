@@ -335,7 +335,7 @@ create function wm_bend_attrs(
   dbggen integer default null
 ) returns wm_t_attrs[] as $$
 declare
-  isolation_threshold constant real default 0.3;
+  isolation_threshold constant real default 0.5;
   attrs wm_t_attrs[];
   attr wm_t_attrs;
   bend geometry;
