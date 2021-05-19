@@ -358,7 +358,6 @@ drop type if exists wm_t_bend_attrs;
 create type wm_t_bend_attrs as (
   bend geometry,
   area real,
-  cmp real,
   adjsize real,
   baselinelength real,
   curvature real,
@@ -370,7 +369,7 @@ create function wm_bend_attrs(
   dbggen integer default null
 ) returns setof wm_t_bend_attrs as $$
 declare
-  fourpi constant real default 4*radians(180);
+  cmp float;
   i int4;
   polygon geometry;
   bend geometry;
@@ -380,27 +379,12 @@ begin
     bend = bends[i];
     res = null;
     res.bend = bend;
-    res.area = 0;
-    res.cmp = 0;
     res.adjsize = 0;
     res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
     res.curvature = wm_inflection_angle(bend) / st_length(bend);
     res.isolated = false;
     if st_numpoints(bend) >= 3 then
-      polygon = st_makepolygon(st_addpoint(bend, st_startpoint(bend)));
-      -- Compactness Index (cmp) is defined as "the ratio of the area of the
-      -- polygon over the circle whose circumference length is the same as the
-      -- length of the circumference of the polygon". I assume they meant the
-      -- area of the circle. So here goes:
-      -- 1. get polygon area P.
-      -- 2. get polygon perimeter = u. Pretend it's our circle's circumference.
-      -- 3. get A (area) of the circle from u: A = u^2/(4pi)
-      -- 4. divide P by A: cmp = P/A = P/(u^2/(4pi)) = 4pi*P/u^2
-      res.area = st_area(polygon);
-      res.cmp = fourpi*res.area/(st_perimeter(polygon)^2);
-      if res.cmp > 0 then
-        res.adjsize = (res.area*(0.75/res.cmp));
-      end if;
+      res.adjsize = wm_adjsize(bend);
     end if;
 
     if dbgname is not null then
@@ -411,8 +395,6 @@ begin
         i,
         bend,
         jsonb_build_object(
-          'area', res.area,
-          'cmp', res.cmp,
           'adjsize', res.adjsize,
           'baselinelength', res.baselinelength,
           'curvature', res.curvature
@@ -424,6 +406,72 @@ begin
 end;
 $$ language plpgsql;
 
+-- wm_exaggerate exaggerates a given bend. Must be a simple linestring.
+drop function if exists wm_exaggerate;
+create function wm_exaggerate(
+  bend geometry,
+  size real,
+  desired_size real
+) returns geometry as $$
+declare
+  step constant float default 1.5; -- line length multiplier per step
+  midpoint geometry; -- midpoint of the baseline
+  splitbend geometry; -- bend split across farthest point
+  bendm geometry; -- bend with coefficients to prolong the lines
+begin
+  midpoint = st_lineinterpolatepoint(st_makeline(
+      st_pointn(bend, 1),
+      st_pointn(bend, -1)
+    ), .5);
+
+  while size < desired_size loop
+    splitbend = st_split(
+      bend,
+      st_pointn(st_longestline(midpoint, bend), -1)
+    );
+
+    -- Convert bend to LINESTRINGM, where M is the fraction by how
+    -- much the point will be prolonged.
+    -- Currently using linear interpolation; can be updated to gaussian
+    -- or so (then interpolate manually instead of relying on st_addmeasure)
+    bendm = st_linemerge(st_union(
+        st_addmeasure(st_geometryn(splitbend, 1), 0, frac),
+        st_addmeasure(st_geometryn(splitbend, 2), frac, 0)
+    ));
+
+
+
+    size = wm_adjsize(bend);
+  end loop;
+end
+$$ language plpgsql;
+
+-- wm_adjsize calculates adjusted size for a polygon. Can return 0.
+drop function if exists wm_adjsize;
+create function wm_adjsize(bend geometry, OUT adjsize float) as $$
+declare
+  polygon geometry;
+  area float;
+  cmp float;
+begin
+  adjsize = 0;
+  polygon = st_makepolygon(st_addpoint(bend, st_startpoint(bend)));
+  -- Compactness Index (cmp) is defined as "the ratio of the area of the
+  -- polygon over the circle whose circumference length is the same as the
+  -- length of the circumference of the polygon". I assume they meant the
+  -- area of the circle. So here goes:
+  -- 1. get polygon area P.
+  -- 2. get polygon perimeter = u. Pretend it's our circle's circumference.
+  -- 3. get A (area) of the circle from u: A = u^2/(4pi)
+  -- 4. divide P by A: cmp = P/A = P/(u^2/(4pi)) = 4pi*P/u^2
+  area = st_area(polygon);
+  cmp = 4*pi()*area/(st_perimeter(polygon)^2);
+  if cmp > 0 then
+    adjsize = (area*(0.75/cmp));
+  end if;
+end
+$$ language plpgsql;
+
 create function wm_exaggeration(
   INOUT bendattrs wm_t_bend_attrs[],
   dhalfcircle float,
@@ -432,7 +480,6 @@ create function wm_exaggeration(
   OUT mutated boolean
 ) as $$
 declare
-  area_threshold float;
 begin
 
 end
@@ -552,7 +599,6 @@ begin
         res.bend,
         jsonb_build_object(
           'area', res.area,
-          'cmp', res.cmp,
           'adjsize', res.adjsize,
           'baselinelength', res.baselinelength,
           'curvature', res.curvature,
