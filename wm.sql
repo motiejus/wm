@@ -481,6 +481,7 @@ $$ language plpgsql;
 create function wm_exaggeration(
   INOUT bendattrs wm_t_bend_attrs[],
   dhalfcircle float,
+  intersect_patience integer,
   dbgname text default null,
   dbggen integer default null,
   OUT mutated boolean
@@ -489,18 +490,55 @@ declare
   desired_size constant float default pi()*(dhalfcircle^2)/8;
   tmpbendattr wm_t_bend_attrs;
   i integer;
+  n integer;
   last_id integer;
 begin
   mutated = false;
+  <<bendloop>>
   for i in 1..array_length(bendattrs, 1) loop
     if bendattrs[i].isolated and bendattrs[i].adjsize < desired_size then
-      mutated = true;
       tmpbendattr.bend = wm_exaggerate_bend(
         bendattrs[i].bend,
         bendattrs[i].adjsize,
         desired_size
       );
+
+      -- does tmpbendattrs.bend intersect with the previous or next
+      -- intersect_patience bends? If they do, abort exaggeration for this one.
+
       bendattrs[i] = tmpbendattr;
+
+      -- Do close-by bends intersect with this one? Special
+      -- handling first, because 2 vertices need to be removed before checking.
+      n = st_npoints(bendattrs[i-1].bend);
+      if n > 3 then
+        continue when st_overlaps(tmpbendattr.bend,
+          st_removepoint(st_removepoint(bendattrs[i-1].bend, n-1), n-2));
+      end if;
+
+      n = st_npoints(bendattrs[i+1].bend);
+      if n > 3 then
+        continue when st_intersects(tmpbendattr.bend,
+          st_removepoint(st_removepoint(bendattrs[i+1].bend, 0), 0));
+      end if;
+
+      -- now loop over the next intersect_patience
+      for n in -intersect_patience+1..intersect_patience-1 loop
+        continue when n in (-1, 0, 1);
+        continue when i+n < 1;
+        continue when i+n > array_length(bendattrs, 1);
+
+        if st_overlaps(tmpbendattr.bend, bendattrs[i+n].bend) then
+          insert into wm_manual(name, way) values
+            ('intersecter', tmpbendattr.bend),
+            ('intersectee', bendattrs[i+n].bend);
+          raise notice '[%] % intersects with %', dbggen, i, i+n;
+          continue bendloop;
+        end if;
+      end loop;
+
+      -- no intersections within intersect_patience. Mutate bend.
+      mutated = true;
 
       -- remove last vertex of the previous bend and
       -- first vertex of the next bend, because bends always
@@ -690,6 +728,7 @@ drop function if exists ST_SimplifyWM;
 create function ST_SimplifyWM(
   geom geometry,
   dhalfcircle float,
+  intersect_patience integer default 10,
   dbgname text default null
 ) returns geometry as $$
 declare
@@ -703,6 +742,9 @@ declare
   mutated boolean;
   l_type text;
 begin
+  if intersect_patience is null then
+    intersect_patience = 10;
+  end if;
   l_type = st_geometrytype(geom);
   if l_type = 'ST_LineString' then
     lines = array[geom];
@@ -736,7 +778,8 @@ begin
       bendattrs = wm_isolated_bends(bendattrs, dbgname, gen);
 
       select * from wm_exaggeration(
-        bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
+        bendattrs, dhalfcircle, intersect_patience, dbgname, gen
+      ) into bendattrs, mutated;
 
       -- TODO: wm_combination
 
@@ -750,6 +793,18 @@ begin
           bends[j] = bendattrs[j].bend;
         end loop;
         lines[i] = st_linemerge(st_union(bends));
+        if st_geometrytype(lines[i]) != 'ST_LineString' then
+          raise 'Got % instead of ST_LineString. '
+          'Does the exaggerated bend intersect? '
+          'If so, try increasing intersect_patience.',
+          st_geometrytype(lines[i]);
+
+          insert into wm_manual(name, way)
+          select 'non-linestring-' || a.path[1], a.geom
+          from st_dump(lines[i]) a
+          order by a.path[1];
+          exit;
+        end if;
         gen = gen + 1;
         continue;
       end if;
