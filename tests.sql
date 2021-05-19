@@ -53,6 +53,16 @@ drop table if exists wm_demo;
 create table wm_demo (name text, i bigint, way geometry);
 insert into wm_demo (name, way) select name, ST_SimplifyWM(way, name) from wm_figures;
 
+-- wm_visuals holds visual aids for the paper.
+drop table if exists wm_visuals;
+create table wm_visuals (name text, way geometry);
+do $$
+  declare fig6 geometry;
+begin
+  select way from wm_debug where name='fig6' and stage='bbends' and gen=1 into fig6 limit 1 offset 2;
+  insert into wm_visuals (name, way) values('fig6-baseline', st_makeline(st_startpoint(fig6), st_endpoint(fig6)));
+end $$ language plpgsql;
+
 do $$
 declare
   vbends geometry[];

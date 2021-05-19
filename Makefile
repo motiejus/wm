@@ -9,7 +9,9 @@ FIGURES = fig8-definition-of-a-bend.pdf \
 		  fig5-gentle-inflection-before.pdf \
 		  fig5-gentle-inflection-after.pdf \
 		  inflection-1-gentle-inflection-before.pdf \
-		  inflection-1-gentle-inflection-after.pdf
+		  inflection-1-gentle-inflection-after.pdf \
+			fig6-self-crossing-before.pdf \
+			fig6-self-crossing-after.pdf
 
 .PHONY: test
 test: .faux_test
@@ -113,6 +115,21 @@ inflection-1-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
 		--group2-where="name='inflection-1' AND stage='cinflections-polygon' AND gen=1" \
 		--outfile=$@
 
+fig6-self-crossing-before.pdf: layer2img.py Makefile .faux_test
+	python ./layer2img.py \
+		--widthdiv=4 \
+		--group1-table=wm_debug \
+		--group1-where="name='fig6' AND stage='bbends' AND gen=1" \
+		--group2-table=wm_visuals \
+		--group2-where="name='fig6-baseline'" \
+		--outfile=$@
+
+fig6-self-crossing-after.pdf: layer2img.py Makefile .faux_test
+	python ./layer2img.py \
+		--widthdiv=4 \
+		--group1-table=wm_debug \
+		--group1-where="name='fig6' AND stage='dcrossings' AND gen=1" \
+		--outfile=$@
 
 .faux_test: tests.sql wm.sql .faux_db
 	./db -f tests.sql
