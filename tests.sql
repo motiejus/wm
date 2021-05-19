@@ -176,3 +176,15 @@ begin
   );
 
 end $$ language plpgsql;
+
+-- verifying bends in fig8 are eliminated like explained in the WM paper
+do $$
+declare
+  fig8gen2 constant text default 'LINESTRING(173 12,174 10,180 8,186 8,189 6,201 5,203 11,216 16,216 6,229 3,236 2,239 6,243 8,248 6)';
+  fig8gen3 constant text default 'LINESTRING(173 12,174 10,180 8,189 6,201 5,203 11,216 16,216 6,229 3,236 2,239 6,243 8,248 6)';
+  eliminations geometry[];
+begin
+  eliminations = wm_debug_get('afigures', 'fig8');
+  perform assert_equals(fig8gen2, st_astext(eliminations[2]));
+  perform assert_equals(fig8gen3, st_astext(eliminations[3]));
+end $$ language plpgsql;
