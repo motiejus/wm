@@ -12,8 +12,8 @@ BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
 GREEN, ORANGE, PURPLE = '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS="host=127.0.0.1 dbname=osm user=osm password=osm"
 
-def arrowplot(axes, x, y, narrs=30, dspace=0.5, direc='pos', \
-                          hl=0.3, hw=3, c='black'): 
+def arrowplot(axes, x, y, narrs=30, dspace=0.1, direc='pos', \
+                          hl=0.1, hw=5, c='black'):
     ''' narrs  :  Number of arrows that will be drawn along the curve
 
         dspace :  Shift the position of the arrows along the curve.
@@ -21,19 +21,19 @@ def arrowplot(axes, x, y, narrs=30, dspace=0.5, direc='pos', \
 
         direc  :  can be 'pos' or 'neg' to select direction of the arrows
 
-        hl     :  length of the arrow head 
+        hl     :  length of the arrow head
 
-        hw     :  width of the arrow head        
+        hw     :  width of the arrow head
 
-        c      :  color of the edge and face of the arrow head  
+        c      :  color of the edge and face of the arrow head
     https://stackoverflow.com/questions/8247973
     '''
 
     # r is the distance spanned between pairs of points
     r = [0]
     for i in range(1,len(x)):
-        dx = x[i]-x[i-1] 
-        dy = y[i]-y[i-1] 
+        dx = x[i]-x[i-1]
+        dy = y[i]-y[i-1]
         r.append(np.sqrt(dx*dx+dy*dy))
     r = np.array(r)
 
@@ -47,7 +47,7 @@ def arrowplot(axes, x, y, narrs=30, dspace=0.5, direc='pos', \
     aspace = r.sum() / narrs
 
     if direc is 'neg':
-        dspace = -1.*abs(dspace) 
+        dspace = -1.*abs(dspace)
     else:
         dspace = abs(dspace)
 
@@ -57,7 +57,7 @@ def arrowplot(axes, x, y, narrs=30, dspace=0.5, direc='pos', \
                                  # an arrow at the beginning of the curve
 
     ndrawn = 0
-    rcount = 1 
+    rcount = 1
     while arrowPos < r.sum() and ndrawn < narrs:
         x1,x2 = x[rcount-1],x[rcount]
         y1,y2 = y[rcount-1],y[rcount]
@@ -68,7 +68,7 @@ def arrowplot(axes, x, y, narrs=30, dspace=0.5, direc='pos', \
         arrowData.append((ax,ay,theta))
         ndrawn += 1
         arrowPos+=aspace
-        while arrowPos > rtot[rcount+1]: 
+        while arrowPos > rtot[rcount+1]:
             rcount+=1
             if arrowPos > rtot[-1]:
                 break
@@ -84,15 +84,15 @@ def arrowplot(axes, x, y, narrs=30, dspace=0.5, direc='pos', \
         dy1 = -1.*np.cos(theta)*hl/2. + ay
 
         if direc is 'neg' :
-          ax0 = dx0 
+          ax0 = dx0
           ay0 = dy0
           ax1 = dx1
-          ay1 = dy1 
+          ay1 = dy1
         else:
-          ax0 = dx1 
+          ax0 = dx1
           ay0 = dy1
           ax1 = dx0
-          ay1 = dy0 
+          ay1 = dy0
 
         axes.annotate('', xy=(ax0, ay0), xycoords='data',
                 xytext=(ax1, ay1), textcoords='data',
@@ -114,18 +114,22 @@ def parse_args():
     group1 = parser.add_mutually_exclusive_group()
     group1.add_argument('--group1-infile')
     group1.add_argument('--group1-table')
-    parser.add_argument('-o', '--outfile', metavar='<file>')
-    parser.add_argument(
-            '--size', type=plt_size, help='Figure size in mm (WWxHH)')
-    parser.add_argument( '--clip', type=float, nargs=4, metavar=BOUNDS)
+    parser.add_argument('--group1-arrows', type=bool)
 
     group2 = parser.add_mutually_exclusive_group()
     group2.add_argument('--group2-infile', type=str)
     group2.add_argument('--group2-table', type=str)
+    parser.add_argument('--group2-arrows', type=bool)
 
     group3 = parser.add_mutually_exclusive_group()
     group3.add_argument('--group3-infile', type=str)
     group3.add_argument('--group3-table', type=str)
+    parser.add_argument('--group3-arrows', type=bool)
+
+    parser.add_argument('-o', '--outfile', metavar='<file>')
+    parser.add_argument(
+            '--size', type=plt_size, help='Figure size in mm (WWxHH)')
+    parser.add_argument( '--clip', type=float, nargs=4, metavar=BOUNDS)
     return parser.parse_args()
 
 
@@ -141,8 +145,8 @@ def add_lines(ax, group):
     for g in group.to_dict()['way'].values():
         for geom in getattr(g, 'geoms', [g]):
             x, y = zip(*geom.coords)
-            narrs = geom.length / 16
-            #arrowplot(ax, np.array(x), np.array(y), narrs=narrs)
+            narrs = geom.length / 25
+            arrowplot(ax, np.array(x), np.array(y), narrs=narrs)
 
 def main():
     args = parse_args()
@@ -160,13 +164,13 @@ def main():
 
     if group1 is not None:
         group1.plot(ax=ax, color=ORANGE)
-        add_lines(ax, group1)
+        args.group1_arrows and add_lines(ax, group1)
     if group2 is not None:
         group2.plot(ax=ax, color=PURPLE)
-        add_lines(ax, group2)
+        args.group2_arrows and add_lines(ax, group1)
     if group3 is not None:
         group3.plot(ax=ax, color=GREEN)
-        add_lines(ax, group3)
+        args.group3_arrows and add_lines(ax, group1)
 
     ax.axis('off')
     ax.margins(0, 0)
