@@ -3,7 +3,12 @@ SET plpgsql.extra_errors TO 'all';
 
 -- detect_bends detects bends using the inflection angles. No corrections.
 drop function if exists detect_bends;
-create function detect_bends(line geometry, dbgname text default null, OUT bends geometry[]) as $$
+create function detect_bends(
+  line geometry,
+  dbgname text default null,
+  dbgstagenum integer default null,
+  OUT bends geometry[]
+) as $$
 declare
   pi constant real default radians(180);
   p geometry;
@@ -66,6 +71,25 @@ begin
   -- the last line may be lost if there is no "final" inflection angle. Add it.
   if (select count(1) >= 2 from st_dumppoints(bend)) then
     bends = bends || bend;
+  end if;
+
+  if dbgname is not null then
+    for i in 1..array_length(bends, 1) loop
+      insert into wm_debug(stage, name, gen, nbend, way) values(
+        'bbends',
+        dbgname,
+        dbgstagenum,
+        i,
+        bends[i]
+      );
+      insert into wm_debug(stage, name, gen, nbend, way) values(
+        'bbends-polygon',
+        dbgname,
+        dbgstagenum,
+        i,
+        st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])))
+      );
+    end loop;
   end if;
 end
 $$ language plpgsql;
@@ -403,17 +427,7 @@ begin
         );
       end if;
 
-      bends = detect_bends(lines[i]);
-
-      if dbgname is not null then
-        insert into wm_debug(stage, name, gen, nbend, way) values(
-          'bbends',
-          dbgname,
-          stagenum,
-          generate_subscripts(bends, 1),
-          unnest(bends)
-        );
-      end if;
+      bends = detect_bends(lines[i], dbgname, stagenum);
 
       bends = fix_gentle_inflections(bends);
 
