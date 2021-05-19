@@ -1,0 +1,51 @@
+#!/bin/bash
+set -euo pipefail
+
+name=wm-mj
+
+_psql() {
+    env \
+        PGPASSWORD=osm \
+        PGHOST=127.0.0.1 \
+        PGUSER=osm \
+        PGDATABASE=osm \
+        psql "$@"
+}
+
+_wait_for_postgres() {
+    >&2 echo -n "Waiting for postgres"
+    for _ in $(seq 240); do
+      if _psql -qc '\q' 2>/dev/null; then
+          >&2 echo " up"
+          exit 0
+      fi
+      >&2 echo -n .
+      sleep 1
+    done
+    >&2 echo " down"
+    exit 1
+}
+
+case ${1:-} in
+    start)
+        docker run -d --rm \
+            -p 5432:5432 \
+            -e POSTGRES_DBNAME=osm \
+            -e POSTGRES_USER=osm \
+            -e POSTGRES_PASSWORD=osm \
+            --name "$name" \
+            postgis/postgis:13-3.1-alpine
+        _wait_for_postgres
+        ;;
+    stop)
+        docker stop "$name"
+        ;;
+    "" | --)
+        [[ $# -gt 1 ]] && shift
+        _psql "$@"
+        ;;
+    *)
+        >&2 echo "Unknown command: '$*'"
+        exit 1
+        ;;
+esac
