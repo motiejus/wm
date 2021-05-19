@@ -179,7 +179,6 @@ declare
   a geometry;
   b geometry;
   bend geometry;
-  this geometry;
   multi geometry;
 begin
   pi = radians(180);
