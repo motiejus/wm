@@ -14,13 +14,12 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{gensymb}
+\usepackage{units}
 \usepackage{varwidth}
 \usepackage{tabularx}
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{minted}
-\usetikzlibrary{er,positioning}
-\definecolor{mypurple}{RGB}{117,112,179}
 \input{version.inc}
 \input{vars.inc}
 
@@ -228,18 +227,20 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 \subsection{Radians and Degrees}
 
 This document contains a few constant angles expressed in radians.
-Table~\ref{tab:radians} summarizes some of the values used in this document and
-the implementation.
+Table~\ref{table:radians} summarizes some of the values used in this document
+and the implementation.
 
 \begin{table}[h]
+    \centering
     \begin{tabular}{|c|c|c|c|c|c|c|}
         \hline
         Degrees & $0^\circ$ & $30^\circ$      & $45^\circ$      & $90^\circ$      & $180^\circ$ & $360^\circ$ \\
         \hline
-        Radians & $0$       & $\frac{\pi}{6}$ & $\frac{\pi}{4}$ & $\frac{\pi}{2}$ & $\pi$       & $2\pi$ \\
+        Radians & $0$       & $\nicefrac{\pi}{6}$ & $\nicefrac{\pi}{4}$ & $\nicefrac{\pi}{2}$ & $\pi$       & $2\pi$ \\
         \hline
     \end{tabular}
-    \label{tab:radians}
+    \caption{Popular degree and radian values}
+    \label{table:radians}
 \end{table}
 
 \subsection{Automated tests}
