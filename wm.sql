@@ -117,6 +117,9 @@ begin
         select geom from st_dumppoints(bends[i]) order by path[1] asc limit 3
       ) into phead;
 
+      -- if the bend got too short, stop processing it
+      exit when array_length(phead, 1) < 3;
+
       -- if inflection angle between ptail[1:3] "large", stop processing this bend
       exit when abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle;
 
