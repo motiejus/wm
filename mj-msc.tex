@@ -359,10 +359,26 @@ vertices to the next bend instead of one.
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
-    \caption{Gentle inflection at the end of the bend when multiple vertices is moved.}
+    \caption{Gentle inflection at the end of the bend when multiple vertices is moved}
     \label{fig:inflection-1-gentle-inflection}
 \end{figure}
 
+To find and fix the gentle bends' inflections requires to run the algorithm in
+both directions; if implemented as documented, the steps will fail to match
+some bends that should be mutated. This implementation does it in the following way:
+
+\begin{enumerate}
+    \item Run the algorithm from beginning to the end.
+    \item \label{rev1} Reverse the line and each bend.
+    \item Run the algorithm again.
+    \item \label{rev2} Reverse the line and each bend.
+    \item Return result.
+\end{enumerate}
+
+The current implementation is the most straight-forward, but not optimal:
+reversing of lines and bends could be avoided by walking backwards the lines.
+In this case, steps \ref{rev1} and \ref{rev2} could be remove. That would save
+both memory and computation time.
 
 \section{Self-line Crossing When Cutting a Bend}
 

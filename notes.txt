@@ -1,11 +1,3 @@
-Gentle inflection at the end of the bend
-----------------------------------------
-
-The article does not specify how many vertices should be included when
-calculating the end-of-bend inflection. We chose the iterative approach -- as
-long as the angle is "right" and the distance is (greedily) decreasing, keep
-going.
-
 Self-line crossing when cutting a bend
 --------------------------------------
 
