@@ -1,5 +1,5 @@
---\set ON_ERROR_STOP on
---SET plpgsql.extra_errors TO 'all';
+\set ON_ERROR_STOP on
+SET plpgsql.extra_errors TO 'all';
 
 -- detect_bends detects bends using the inflection angles. No corrections.
 drop function if exists detect_bends;
