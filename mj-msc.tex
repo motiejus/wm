@@ -294,9 +294,12 @@ valuable characterization of the river.
 Sometimes low-water rivers in slender slopes have many bends next to each
 other. In low resolutions (either in small-DPI screens or paper, or when the
 river is sufficiently zoomed out, or both), the small bends will amalgamate to
-a unintelligible blob. Figure~\onpage{fig:amalgamate1} and
-figure~\onpage{fig:amalgamate2} are real-world examples where a river, normally
-1 or 2 pixels wide, creates a few pixels wide blob due to a number of bends.
+a unintelligible blob. Figure~\onpage{fig:pixel-amalgamation} illustrates two
+real-world examples where a bendy river, normally 1 or 2 pixels wide, creates a
+wide area, of which the shapes of the bend are unintelligible. In this example,
+classical algorithms would remove these bends altogether. A cartographer would
+retain a few of those distinctive bends, but would increase the distance
+between the bends, remove some of the bends, or both.
 
 \begin{figure}[h]
     \includegraphics[width=\textwidth]{amalgamate1}
@@ -304,9 +307,9 @@ figure~\onpage{fig:amalgamate2} are real-world examples where a river, normally
     \label{fig:pixel-amalgamation}
 \end{figure}
 
-
-Therefore, a more robust
-generalization algorithm is worthwhile for lookout.
+For the reasons discussed in this section, the "classical" {\DP} and {\VW} are
+not well suited for natural river generalization, and a more robust line
+generalization algorithm is worthwhile for to look for.
 
 \subsubsection{Modern approaches}
 
@@ -519,6 +522,12 @@ This type of illustration works quite well, since polygons created from bends
 are almost never overlapping, and discriminating different backgrounds is
 easier than discriminating different line shapes or colors.
 
+\subsection{Merging pieces of the river into one}
+
+NOTE: explain how different river segments are merged into a single line. This
+is not explained in the {\WM} paper, but is a necessary prerequisite. This is
+implemented in \texttt{aggregate-rivers.sql}.
+
 \subsection{Definition of a Bend}
 \label{sec:definition-of-a-bend}
 
@@ -694,7 +703,6 @@ takes to run this piece of the algorithm drops by $80\%$.
 
 \subsection{Attributes of a Single Bend}
 
-
 \textsc{Compactness Index} is "the ratio of the area of the polygon over the
 circle whose circumference length is the same as the length of the
 circumference of the polygon" \cite{wang1998line}. Given a bend, its
@@ -780,25 +788,49 @@ The smaller the distance $d$, the more similar the bends are.
 
 \subsection{Elimination Operator}
 
+NOTE: not implemented.
+
 \subsection{Combination Operator}
+
+NOTE: not implemented.
 
 \subsection{Exaggeration Operator}
 
+NOTE: not implemented.
+
 \section{Program Implementation}
 
+NOTE: this should provide a higher-level overview of the written code:
+
+\begin{itemize}
+    \item State machine (which functions call when).
+    \item Algorithmic complexity.
+    \item Expected runtime given the number of bends/vertices, some performance
+        experiments.
+\end{itemize}
+
 \section{Results of Experiments}
+
+NOTE: this can only be filled after the algorithm implementation is complete.
 
 \section{Conclusions}
 \label{sec:conclusions}
 
+NOTE: write when all the sections before this are be complete.
+
 \section{Related Work and future suggestions}
 \label{sec:related_work}
+
+NOTE: write after section~\ref{sec:conclusions} is complete.
 
 \printbibliography
 
 \begin{appendices}
 
 \section{Code listings}
+
+This section contains code listings of a subset of files tightly related to the
+    {\WM} algorithm.
 
 \subsection{Re-generating this paper}
 \label{sec:code-regenerate}
@@ -810,8 +842,11 @@ Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
 
 \inputcode{bash}{extract-and-generate}
 
-\subsection{Algorithm code listings}
+\subsection{\texttt{ST\_SimplifyWV}}
 \inputcode{postgresql}{wm.sql}
+
+\subsection{\texttt{aggregate\_rivers}}
+\inputcode{postgresql}{aggregate-rivers.sql}
 
 \end{appendices}
 \end{document}
