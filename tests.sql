@@ -16,11 +16,13 @@ create table figures (name text, way geometry);
 insert into figures (name, way) values ('fig3',ST_GeomFromText('LINESTRING(0 0,12 0,13 4,20 2,20 0,32 0,33 10,38 16,43 15,44 10,44 0,60 0)'));
 insert into figures (name, way) values ('fig3-1',ST_GeomFromText('LINESTRING(0 0,12 0,13 4,20 2,20 0,32 0,33 10,38 16,43 15,44 10,44 0)'));
 insert into figures (name, way) values ('fig5',ST_GeomFromText('LINESTRING(0 39,19 52,27 77,26 104,41 115,49 115,65 103,65 75,53 45,63 15,91 0,91 0)'));
+insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(129 45,131 56,130 82,128 99,147 104,149 89,147 68,141 52)'));
 
 drop table if exists bends;
 create table bends (way geometry);
 insert into bends select unnest(detect_bends((select way from figures where name='fig3')));
 insert into bends select unnest(detect_bends((select way from figures where name='fig5')));
+insert into bends select unnest(detect_bends((select way from figures where name='inflection-1')));
 
 do $$
 declare

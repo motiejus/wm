@@ -70,7 +70,59 @@ $$ language plpgsql;
 
 -- fix_gentle_inflections moves bend endpoints following "Gentle Inflection at
 -- End of a Bend" section.
+--
+-- The text does not specify how many vertices can be "adjusted"; it can
+-- equally be one or many. This function is adjusting many, as long as the
+-- commulative inflection angle is less than pi/6 (30 deg).
 create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
+declare
+  prev_bend geometry;
+  bend geometry;
+  p geometry;
+  p1 geometry;
+  p2 geometry;
+  p3 geometry;
 begin
+  foreach bend in array bends loop
+    if prev_bend is null  then
+      prev_bend = bend;
+      continue;
+    end if;
+
+    -- Predicate: two bends will always share an edge. Assuming (A,B,C,D,E,F)
+    -- is a bend:
+    --           C________D
+    --           /        \
+    -- \________/          \_______/
+    -- A       B           E       F
+    --
+    -- Then edges (A,B) and (E,F) are shared with the neighboring bends.
+    --
+    --
+    -- Assume this curve:
+    --
+    --        A______B
+    --     ---'      `---.___. E
+    --               C   D   |
+    --     _I                |
+    --      '---.________    |
+    --          H       G'---+ F
+    --
+    -- After processing the curve following the definition of a bend, the bend
+    -- [A-G] would be detected. Assuming inflection point G and H are "small",
+    -- the bend would be extended by two edges to [A,I].
+    for p in (select geom from st_dumppoints(prev_bend) order by path[1] desc) loop
+      p3 = p2;
+      p2 = p1;
+      p1 = p;
+      if p3 is null then
+        continue;
+      end if;
+
+      -- (p2, p1) is shared with the current bend.
+    end loop;
+
+    prev_bend = bend;
+  end loop;
 end
 $$ language plpgsql;
