@@ -25,37 +25,43 @@ lang: lt-LT
 
 # Aktualumas
 
-- Aprašyti Wang & Müller praktiniais parametrais
-- Iš GDR10 sukurti GDR50 ir GDR250 analogus
-- Palyginti su GDR50 ir GDR250
+- Smulkesnių mastelių žemėlapių geografinis pagrindas yra kuriamas naudojant
+  generalizuotus duomenis (dažnai pagal GDR50 ir GDR250)
+- Nėra atvirai prieinamo sprendimo kartografinių linijų generalizacijai
 
 # Naujumas
 
-- Tinkamo algoritmo tiesiog nėra; čia bus vienintelė, nauja implementacija
+Šis darbas pasiūlys iki šiol neegzistuojantį atvirą sprendimą kartografinei
+linijų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
 
-# Progresas: programavimo etapai
+# Etapai: programavimo
 
-Užduotis                                                       Statusas
--------------------------------------------------------------  --------
-Įlinkių atpažinimas                                            Padaryta
-Silpnas pasislinkimas įlinkio gale                             Padaryta
-Įlinkio kirtimas kitu įlinkiu                                  Padaryta
-Patikrinimas su    Nemunu, Šalčia ir Visinčia                  Padaryta
-Matavimai: dydis ir forma                                      Padaryta
-Matavimas: izoliuoti, panaūs                                   Progrese
-Pašalinimo  operatorius                                        -
-Kombinavimo operatorius                                        -
-Padinimo operatorius                                           -
-Pritaikymas visoms Lietuvos upėms                              -
+::: nonincremental
+- Įlinkių atpažinimas
+- Silpnas pasislinkimas įlinkio gale
+- Įlinkio kirtimas kitu įlinkiu
+- Patikrinimas su Nemunu, Šalčia ir Visinčia
+- Linkių matavimai:
+  - dydis ir forma
+  - izoliuoti, panaūs
+- Pašalinimo operatorius
+- Kombinavimo operatorius
+- Padidinimo operatorius
+- Pritaikymas visoms Lietuvos upėms
+:::
 
-# Progresas: programavimo analizės ir darbo rašymo etapai
+# Etapai: analizės ir darbo rašymo
 
-Užduotis                                                       Statusas
--------------------------------------------------------------  --------
-Esamų algoritmų apžvalga                                       -
-Problemos aprašymas                                            -
-Pasirinkto generalizacijos sprendimo apibūdinimas              -
-Sukurtos implementacijos aptarimas                             -
+::: nonincremental
+- Esamų algoritmų apžvalga
+- Problemos aprašymas
+- Pasirinkto generalizacijos sprendimo apibūdinimas
+- Sukurtos implementacijos aptarimas
+  - privalumai
+  - trūkumai
+- Nauda praktikoje
+- Tolimesnių tyrimų kryptys
+:::
 
 # Demonstracija
 
