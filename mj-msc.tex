@@ -207,7 +207,7 @@ as well as more modern ones, which only theorize, but do not provide an
 implementation.
 
 \subsubsection{{\DP}, {\VW} and Chaikin's}
-\label{sec:dp-vw-chaikin}
+\label{sec:dp-vwchaikin}
 
 {\DP}\cite{douglas1973algorithms} and {\VW}\cite{visvalingam1993line} are
 "classical" line simplification computer graphics algorithms. They are
@@ -270,12 +270,12 @@ simplification for scale 1:\numprint{50000} and especially for
 \begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-dp-64-50k}
+        \includegraphics[width=\textwidth]{salvis-dp64-50k}
         \caption{Using {\DP}.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-vw-64-50k}
+        \includegraphics[width=\textwidth]{salvis-vw64-50k}
         \caption{Using {\VW}.}
     \end{subfigure}
     \caption{Simplified using classical algorithms (1:\numprint{50000}).}
@@ -291,15 +291,15 @@ generalization, illustrated in Figure~\ref{fig:salvis-generalized-chaikin-50k}.
 \begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-dp-64-chaikin-50k}
+        \includegraphics[width=\textwidth]{salvis-dpchaikin64-50k}
         \caption{{\DP} and Chaikin's.}
-        \label{fig:salvis-dp-64-chaikin-50k}
+        \label{fig:salvis-dpchaikin64-50k}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-vw-64-chaikin-50k}
+        \includegraphics[width=\textwidth]{salvis-vwchaikin64-50k}
         \caption{{\VW} and Chaikin's.}
-        \label{fig:salvis-vw-64-chaikin-50k}
+        \label{fig:salvis-vwchaikin64-50k}
     \end{subfigure}
     \caption{Simplified and smoothened river (1:\numprint{50000}).}
     \label{fig:salvis-generalized-chaikin-50k}
@@ -308,18 +308,18 @@ generalization, illustrated in Figure~\ref{fig:salvis-generalized-chaikin-50k}.
 \begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-overlaid-dp-64-chaikin-50k}
+        \includegraphics[width=\textwidth]{salvis-overlaid-dpchaikin64-50k}
 
         \caption{Original (fig.~\ref{fig:salvis-50k}) and simplified
-        (fig.~\ref{fig:salvis-dp-64-chaikin-50k}).}
+        (fig.~\ref{fig:salvis-dpchaikin64-50k}).}
 
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-overlaid-vw-64-chaikin-50k}
+        \includegraphics[width=\textwidth]{salvis-overlaid-vwchaikin64-50k}
 
         \caption{Original (fig.~\ref{fig:salvis-50k}) and simplified
-            (fig.~\ref{fig:salvis-vw-64-chaikin-50k}.)}
+            (fig.~\ref{fig:salvis-vwchaikin64-50k}.)}
 
     \end{subfigure}
     \caption{Zoomed-in simplified and smoothened river and original.}
@@ -499,7 +499,7 @@ wider cartographic society than proprietary ones.
 
 \subsubsection{Unfitness of Line Simplification Algorithms}
 
-Section~\ref{sec:dp-vw-chaikin} illustrates the current gaps with line
+Section~\ref{sec:dp-vwchaikin} illustrates the current gaps with line
 simplification algorithms for real rivers. To sum up, we highlight the
 following cartographic problems from our examples:
 
@@ -1432,9 +1432,9 @@ sharp edges for others.
 \subsubsection{Large-scale (1:\numprint{250000})}
 \label{sec:analyzed-large-scale}
 
-As visible in Figure~\ref{fig:salvis-wm-250k-10x}, for large-scale map, some of the
+As visible in Figure~\ref{fig:salvis-wm220-10x}, for large-scale map, some of the
 resulting bends look significantly exaggerated. Why is that?
-Figure~\ref{fig:salvis-wm-250k-overlaid-zoom} zooms in the large-scale
+Figure~\ref{fig:salvis-wm220-overlaid-zoom} zooms in the large-scale
 simplification and overlays the original.
 
 \begin{figure}[ht]
@@ -1447,18 +1447,18 @@ simplification and overlays the original.
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \centering
-        \includegraphics[width=.2\textwidth]{salvis-wm-250k-10x}
+        \includegraphics[width=.2\textwidth]{salvis-wm220-10x}
         \caption{Simplified.}
     \end{subfigure}
     \caption{GDB10LT simplified with {\WM} for 1:\numprint{250000}.}
-    \label{fig:salvis-wm-250k-10x}
+    \label{fig:salvis-wm220-10x}
 \end{figure}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.8\textwidth]{salvis-wm-overlaid-250k-zoom}
     \caption{10x zoomed-in {\WM} for 1:\numprint{250000}.}
-    \label{fig:salvis-wm-250k-overlaid-zoom}
+    \label{fig:salvis-wm220-overlaid-zoom}
 \end{figure}
 
 A conglomeration of bends is visible, especially in top--right side of the
@@ -1538,7 +1538,7 @@ exaggerated by our implementation.
 \subsubsection{Large-scale (1:\numprint{250000})}
 \label{sec:national-large-scale}
 
-Figure~\ref{fig:salvis-wm-250k} illustrates the original grpk250LT and the
+Figure~\ref{fig:salvis-wm220} illustrates the original grpk250LT and the
 {\WM}--simplified version. As section~\ref{sec:analyzed-large-scale} explains,
 the algorithm tries to exaggerate many bends to a great size. However, grpk250LT
 takes the opposite approach --- only the very basic shapes of the largest bends
@@ -1555,11 +1555,11 @@ desired in section~\ref{sec:future-suggestions}.
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{salvis-wm-220}
+        \includegraphics[width=\textwidth]{salvis-wm220}
         \caption{{\WM}-simplified GDB10LT.}
     \end{subfigure}
     \caption{grpk250LT and {\WM}--simplified GDB10LT.}
-    \label{fig:salvis-wm-250k}
+    \label{fig:salvis-wm220}
 \end{figure}
 
 
@@ -1571,41 +1571,41 @@ needed for small-scale maps (1:\numprint{250000}), we will limit the comparison
 in this section to 1:\numprint{50000}.
 
 \begin{figure}[h!]
-    \includegraphics[width=\textwidth]{salvis-wm-dp-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-dp64-50k}
 
 
     \caption{{\DP} (green), {\WM} (orange) and original (black dotted) at
     1:\numprint{50000}.}
 
-    \label{fig:salvis-wm-dp-50k}
+    \label{fig:salvis-wm75-dp64-50k}
 \end{figure}
 
 \begin{figure}[h!]
-    \includegraphics[width=\textwidth]{salvis-wm-dp-chaikin-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-dpchaikin64-50k}
 
     \caption{Chaikin--smoothened {\DP} (green), {\WM} (orange) and original
     (black dotted) at 1:\numprint{50000}.}
 
-    \label{fig:salvis-wm-dp-chaikin-50k}
+    \label{fig:salvis-wm75-dpchaikin64-50k}
 \end{figure}
 
 
 \begin{figure}[h!]
-    \includegraphics[width=\textwidth]{salvis-wm-vw-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-vw64-50k}
 
     \caption{{\VW} (green), {\WM} (orange) and original (black dotted) at
     1:\numprint{50000}.}
 
-    \label{fig:salvis-wm-vw-50k}
+    \label{fig:salvis-wm75-vw64-50k}
 \end{figure}
 
 \begin{figure}[h!]
-    \includegraphics[width=\textwidth]{salvis-wm-vw-chaikin-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-vwchaikin64-50k}
 
     \caption{Chaikin--smoothened {\VW} (green), {\WM} (orange) and original
     (black dotted) at 1:\numprint{50000}.}
 
-    \label{fig:salvis-wm-vw-chaikin-50k}
+    \label{fig:salvis-wm75-vwchaikin64-50k}
 \end{figure}
 
 

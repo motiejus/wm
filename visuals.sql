@@ -129,18 +129,18 @@ begin
     geom1 = st_simplify((select way from wm_visuals where name='salvis-grpk10'), i);
     geom2 = st_simplifyvw((select way from wm_visuals where name='salvis-grpk10'), i*i);
     insert into wm_visuals(name, way) values
-      ('salvis-dp-'         || i, geom1),
-      ('salvis-dp-chaikin-' || i, st_chaikinsmoothing(geom1, 5)),
-      ('salvis-vw-'         || i, geom2),
-      ('salvis-vw-chaikin-' || i, st_chaikinsmoothing(geom2, 5));
+      ('salvis-dp'        || i, geom1),
+      ('salvis-dpchaikin' || i, st_chaikinsmoothing(geom1, 5)),
+      ('salvis-vw'        || i, geom2),
+      ('salvis-vwchaikin' || i, st_chaikinsmoothing(geom2, 5));
   end loop;
 
   -- more than 220 doesn't work, because there is an exaggerated bend near
   -- Šalčia-Visinčia crossing, and it "exaggerates" to the
   -- other river.
   foreach i in array array[75, 220] loop
-    geom3 = st_simplifywm((select way from wm_visuals where name='salvis-grpk10'), i, 50, 'salvis-wm-' || i);
+    geom3 = st_simplifywm((select way from wm_visuals where name='salvis-grpk10'), i, 50, 'salvis-wm' || i);
     insert into wm_visuals(name, way) values
-      ('salvis-wm-'          || i, geom3);
+      ('salvis-wm'          || i, geom3);
   end loop;
 end $$ language plpgsql;
