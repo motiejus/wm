@@ -5,7 +5,13 @@
 \usepackage[utf8]{inputenc}
 \usepackage [autostyle,english=american]{csquotes}
 \MakeOuterQuote{"}
-\usepackage[maxbibnames=99,style=numeric,sorting=none,alldates=iso]{biblatex}
+\usepackage[
+    maxbibnames=99,
+    style=numeric,
+    sorting=none,
+    alldates=iso,
+    seconds=true
+]{biblatex}
 \addbibresource{bib.bib}
 \usepackage[
     pdfusetitle,
@@ -611,7 +617,7 @@ example reference for anyone willing to start using the algorithm.
   arrow/.style={thick,->,>=stealth},
 }
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
   \centering
   \begin{tikzpicture}[node distance=1.5cm,auto]
     \node (start) [startstop] {Read \textsc{linestring}};
