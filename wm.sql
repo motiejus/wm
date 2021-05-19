@@ -41,9 +41,8 @@ begin
     p3 = p2;
     p2 = p1;
     p1 = p;
-    if p3 is null then
-      continue;
-    end if;
+    continue when p3 is null;
+
     cur_sign = sign(pi - st_angle(p1, p2, p2, p3));
 
     if bend is null then
@@ -169,10 +168,12 @@ declare
   j int4;
   pi real;
   angle real;
-  p geometry;
+  p0 geometry;
   p1 geometry;
   p2 geometry;
   p3 geometry;
+  s2 real;
+  s3 real;
   bend geometry;
 begin
   pi = radians(180);
@@ -183,28 +184,43 @@ begin
     p1 = null;
     p2 = null;
     p3 = null;
-    for p in (select geom from st_dumppoints(bends[i]) order by path[1] asc) loop
+    for p0 in (select geom from st_dumppoints(bends[i]) order by path[1] asc) loop
       p3 = p2;
       p2 = p1;
-      p1 = p;
-      if p3 is null then
-        continue;
-      end if;
+      p1 = p0;
+      continue when p3 is null;
+
       angle = angle + abs(pi - st_angle(p1, p2, p3));
     end loop;
 
-    if abs(angle) > pi then
-      raise notice 'maybe self-crossing bend %: %', st_astext(bends[i]), round(degrees(abs(angle)));
-      -- sum of inflection angles for this bend is >180, so it may be self-crossing.
-      -- now try to find another bend in this line that crosses this one.
-      for j in 1..array_length(bends, 1) loop
-        continue when i = j;
+    continue when abs(angle) <= pi;
 
+    -- sum of inflection angles for this bend is >180, so it may be self-crossing.
+    -- now try to find another bend in this line that crosses this one.
+    p0 = st_pointn(bends[i], 1);
+    p1 = st_pointn(bends[i], -1);
+    --this = st_makeline(st_pointn(bends[i], 1), st_pointn(bends[i], -1));
 
+    -- go through each bend in this line, and see if has a potential to cross bends[i].
+    -- optimization: we care only about bends which beginning and end start at different
+    -- sides of the plane, separated by endpoints p0 and p1.
+    for j in 1..array_length(bends, 1) loop
+      continue when i = j;
 
-      end loop;
+      p2 = st_pointn(bends[j], 1);
+      p3 = st_pointn(bends[j], -1);
 
-    end if;
+      -- https://stackoverflow.com/questions/1560492
+      s2 = (st_x(p0)-st_x(p1)*(st_y(p2)-st_y(p1))-(st_y(p0)-st_y(p1))*(st_x(p2)-st_x(p1)));
+      s3 = (st_x(p0)-st_x(p1)*(st_y(p3)-st_y(p1))-(st_y(p0)-st_y(p1))*(st_x(p3)-st_x(p1)));
+      continue when sign(s2) = sign(s3);
+
+      -- bend j may be crossing bend i, and it has a chance to be "important" --
+      -- p2 and p3 are in different sides of the plane as delimited by p0 and p1.
+      -- now does it really cross the line (p0, p1)?
+
+    end loop;
+
   end loop;
 
 end
