@@ -418,14 +418,14 @@ following the rules of the article.
     \centering
     \begin{subfigure}[b]{.4\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-before}
-        \caption{Bend's baseline is crossing another bend}
+        \caption{Bend's baseline (dotted) is crossing a neighboring bend}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.4\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-after}
-        \caption{Self-crossing removed}
+        \caption{Self-crossing removed following the algorithm}
     \end{subfigure}
-    \caption{Originally Figure 6: self-line crossing}
+    \caption{Originally Figure 6: simple case of self-line crossing}
     \label{fig:fig6-selfcrossing}
 \end{figure}
 
@@ -438,18 +438,20 @@ figure~\onpage{fig:selfcrossing-1-non-neighbor}.
     \centering
     \begin{subfigure}[b]{.4\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-before}
-        \caption{Bend's baseline is crossing a non-neighboring bend}
+        \caption{Bend's baseline (dotted) is crossing a non-neighboring bend}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.4\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-after}
-        \caption{Self-crossing removed}
+        \caption{Self-crossing removed following the algorithm}
     \end{subfigure}
     \caption{Self-crossing with non-neighboring bend}
     \label{fig:selfcrossing-1-non-neighbor}
 \end{figure}
 
-Naively implemented, checking every bend with every bend is costs $O(n^2)$.
+Naively implemented, checking every bend with every bend is costs $O(n^2)$. In
+other words, the time it takes to run the algorithm grows quadratically with
+the with the number of vertices.
 
 It is possible to optimize this step and skip checking some of the bends. Only
 bends whose sum of inner angles is $\pi$ can ever self-cross. If the value is
