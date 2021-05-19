@@ -359,7 +359,7 @@ begin
   for i in 1..array_length(attrs, 1) loop
     if dbgname is not null then
       insert into wm_debug (stage, name, gen, nbend, way, props) values(
-        'ebendattrs', dbgname, dbggen, i, bend,
+        'ebendattrs', dbgname, dbggen, i, bends[i],
         jsonb_build_object(
           'adjsize', attrs[i].adjsize,
           'baselinelength', attrs[i].baselinelength,
@@ -706,6 +706,8 @@ begin
   for i in 1..array_length(lines, 1) loop
     mutated = true;
     gen = 1;
+
+    raise notice 'dbgname: %, gen: %', dbgname, gen;
     while mutated loop
       if dbgname is not null then
         insert into wm_debug (stage, name, gen, nbend, way) values(
@@ -736,15 +738,16 @@ begin
 
         if st_geometrytype(lines[i]) != 'ST_LineString' then
           -- For manual debugging:
-          --insert into wm_manual(name, way)
-          --select 'non-linestring-' || a.path[1], a.geom
-          --from st_dump(lines[i]) a
-          --order by a.path[1];
-          raise 'Got % (in %) instead of ST_LineString. '
+          insert into wm_manual(name, way)
+          select 'non-linestring-' || a.path[1], a.geom
+          from st_dump(lines[i]) a
+          order by a.path[1];
+          raise notice 'Got % (in %) instead of ST_LineString. '
           'Does the exaggerated bend intersect with the line? '
           'If so, try increasing intersect_patience.',
           st_geometrytype(lines[i]), dbgname;
-          --exit lineloop;
+          raise notice 'exiting lineloop, gen:%', gen;
+          exit lineloop;
         end if;
         gen = gen + 1;
         continue;

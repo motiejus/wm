@@ -66,6 +66,7 @@ begin
 end $$ language plpgsql;
 
 
+delete from wm_debug where name like 'salvis%';
 delete from wm_visuals where name like 'salvis%';
 insert into wm_visuals(name, way) values('salvis', (
     with multismall as (
@@ -93,6 +94,7 @@ do $$
   declare sclong geometry;
   declare scshort geometry;
 begin
+  delete from wm_debug where name like 'fig6-%' or name like 'selfcrossing-1%';
   delete from wm_visuals where name like 'fig6-%' or name like 'selfcrossing-1%';
 
   select way from wm_debug where name='fig6' and stage='bbends' and gen=1 into fig6b1 limit 1 offset 0;
@@ -125,7 +127,7 @@ begin
   end loop;
   --foreach i in array array[75, 375] loop
   foreach i in array array[75] loop
-    geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i, 50, 'salvis-' || i);
+    geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i, 50, 'salvis-wm-' || i);
     insert into wm_visuals(name, way) values
       ('salvis-wm-'          || i, geom3);
   end loop;
