@@ -238,6 +238,7 @@ begin
       --   remove bends from bends[j+1] to bends[i] inclusive.
       --   j := i+1
       -- elif j > i:
+      --   bends[i-1] = st_removepoint(bends[i-1], -1)
       --   bends[i] = bends[i][1]
       --   bends[i] = append(bends[i], multi[2][2..n])
       --   remove bends from bends[i+1] to bends[j] inclusive.
@@ -247,7 +248,6 @@ begin
       raise notice 'bends[j]: %', st_astext(bends[j]);
       raise notice 'a: %, b: %', st_astext(a), st_astext(b);
       raise notice 'multi: %', st_astext(multi);
-      insert into debug select x.path[1], x.geom from st_dump(multi) x;
 
       raise notice '';
       prev_length = array_length(bends, 1);
@@ -257,7 +257,12 @@ begin
         bends = bends[1:j] || bends[i+1:prev_length];
         j = i;
       else
-        bends[i] = st_makeline(st_pointn(bends[i], 1), st_removepoint(st_geometryn(multi, 2), 0));
+        bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
+        bends[i] = st_makeline(
+          st_pointn(bends[i], 1),
+          st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
+        );
+        insert into debug select x.path[1], x.geom from st_dump(bends[i-1]) x;
         bends = bends[1:i] || bends[j+1:prev_length];
       end if;
       j = j - prev_length + array_length(bends, 1);
