@@ -194,6 +194,11 @@ begin
       -- distance from head's 1st vertex should be larger than from 2nd vertex
       exit when st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]);
 
+      -- bend with smaller baseline wins when two neighboring bends can
+      -- have gentle inflections.
+      exit when st_distance(st_pointn(bends[i], 1), st_pointn(bends[i], -1)) <
+        st_distance(st_pointn(bends[i-1], 1), st_pointn(bends[i-1], -1));
+
       -- Detected a gentle inflection.
       -- Move head of the tail to the tail of head
       bends[i] = st_removepoint(bends[i], 0);
