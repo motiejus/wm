@@ -1,0 +1,51 @@
+Problema: linijų generalizacija atviro kodo GIS sistemose yra prastai
+išvystyta. Šiuo metu, naudojant atvirą programinę įrangą, linijoms
+generalizuoti yra prieinami du algoritmai: Chaikin ir Visvalingam-Whyatt.
+Tačiau, kadangi abu algoritmai nebuvo pritaikyti ar kurti kartografinei
+generalizacijai, rezultatas išeina prastas: linijos kampuotos, prarandamas
+geografinė teisybė.
+
+Darbo tikslas: sukurti geresnę linijų generalizacijos schemą už šiuo metu
+prieinamas.
+
+Pavyzdžiai: Visinčios ir Šalčios upės intakai.
+
+Mokslinis aktualumas: WM algoritmas yra teorinis; mano darbo paskirtis --
+teorinį modelį aprašyti praktiniais parametrais. Pvz., jei kalbama apie vingio
+išlinkimą, tai vienas iš tikslų -- nustatyti parametrus. Pvz., mastelio 10k ->
+50k -> 250k. Tada galima paimti GDR50LT rinkinį ir palyginti, kaip gavosi. 50k
+naudojamas kariškių.
+
+Turinys:
+- Pavadinimas: Wang & Müller linijų generalizacijos algoritmo implementacija ir
+analizė Lietuvos upėms.
+- Įvadinė (?)
+- Problema
+  - esamų algoritmų apžvalga.
+  - GDR50 ir GDR250 sudarymo principai.
+- Naujumas (?)
+- Tikslas/uždaviniai:
+    1. Detalizuoti Wang & Müller generalizacijos teorinę realizaciją postgis
+    priemonėmis.
+    2. Nustatyti parametrų reikšmes 50k, 250k masteliams.
+    3. Eksperimentiniu būdu nustatyti, ar generalizacijos algoritmas gali būti
+    panaudotas tiesiogiai iš 10k į 250k mastelį, ar reikia tarpinio 1:50k?
+    4. Palyginti WM rezultatą (iš GDR10) su GDR50 ir GDR250:
+      - iš Andriaus: taikyti GDR generalizacijos metodai?
+      - grafinis palyginimas.
+      - galbūt duoti kartografijos ekspertams.
+- Pritaikomumas: GDR50 ir GDR250 yra tiesiogiai pritaikomi žemėlapiams. Jei
+  algoritmas yra geresnis, žemėlapių kartografinis pagrindas gali būti
+  geresnis.
+- Literatūros apžvalga (?)
+- Metodika:
+  - implementacijos paaiškinimas: tai, kas neparašyta straipsnyje, bet su kuo
+    neišvengiamai susiduriama praktiškai rašant kodą.
+  - geriausių parametrų radimo metodika, paaiškintas eksperimentinis būdas.
+  - jei spėsime: ekspertinis GDR50, GDR250 ir Wang & Müller vertinimas.
+- Rezultatai:
+  - kartografiniai kūriniai:
+    - Nemuno kilpos (1:250000).
+    - Visinčia ir Šalčia (1:25000, 1:50000).
+    - Žeimena ir Lakaja (1:50000 ?).
+    - Lietuvos kontūras.
