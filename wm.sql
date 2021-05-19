@@ -170,9 +170,35 @@ $$ language plpgsql;
 create or replace function self_crossing(INOUT bends geometry[]) as $$
 declare
   pi real;
+  angle real;
+  p geometry;
+  p1 geometry;
+  p2 geometry;
+  p3 geometry;
+  bend geometry;
 begin
+  pi = radians(180);
 
+  -- go through the bends and find one where sum of inflection angle is >180
+  foreach bend in array bends loop
+    angle = 0;
+    p3 = null;
+    p2 = null;
+    p1 = null;
+    for p in (select geom from st_dumppoints(bend) order by path[1] asc) loop
+      p3 = p2;
+      p2 = p1;
+      p1 = p;
+      if p3 is null then
+        continue;
+      end if;
+      angle = angle + abs(pi - st_angle(p1, p2, p3));
+    end loop;
 
+    if abs(angle) > pi then
+      raise notice 'maybe self-crossing bend %: %', st_astext(bend), round(degrees(abs(angle)));
+    end if;
+  end loop;
 
 end
 $$ language plpgsql;

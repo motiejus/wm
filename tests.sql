@@ -47,7 +47,7 @@ drop table if exists inflections, demo_inflections;
 create table inflections (name text, ways geometry[]);
 insert into inflections select name, fix_gentle_inflections(ways) from bends;
 create table demo_inflections (name text, i bigint, way geometry);
-insert into demo_inflections select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from inflections a;
+insert into demo_inflections select name, generate_subscripts(ways, 1), unnest(ways) from inflections;
 
 do $$
 declare
@@ -67,3 +67,10 @@ begin
   perform assert_equals('LINESTRING(114 20,133 20,145 15,145 0,136 5,123 7,114 7)', st_astext(vinflections[2]));
   perform assert_equals('LINESTRING(123 7,114 7,111 2)', st_astext(vinflections[3]));
 end $$ language plpgsql;
+
+-- SELF-LINE CROSSING
+drop table if exists selfcrossing, demo_selfcrossing;
+create table selfcrossing (name text, ways geometry[]);
+insert into selfcrossing select name, self_crossing(ways) from inflections;
+create table demo_selfcrossing (name text, i bigint, way geometry);
+insert into demo_selfcrossing select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;
