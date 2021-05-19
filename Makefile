@@ -202,37 +202,33 @@ salvis-wm-gdr50-ne_QUADRANT = tl
 salvis-wm-220_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-220_WIDTHDIV = 2
 
-label_wm 		 = Wang--Müller
-label_vw 		 = Visvalingam--Whyatt
-label_dp 		 = Douglas \& Peucker
-label_vw-chaikin = $(label_vw) and Chaikin
-label_dp-chaikin = $(label_dp) and Chaikin
+label_wm-75 = Wang--Müller
+label_vw-64 = Visvalingam--Whyatt
+label_dp-64 = Douglas \& Peucker
+label_vw-64-chaikin = $(label_vw-64) and Chaikin
+label_dp-64-chaikin = $(label_dp-64) and Chaikin
+legend_   = lower left
+legend_tr = lower right
+legend_tl = lower right
 
 define wm_vwdp50k
-RIVERS += salvis-wm-$(1)-50k$(2)
-salvis-wm-$(1)-50k$(2)_1SELECT    = wm_visuals where name='salvis-$(1)-64'
-salvis-wm-$(1)-50k$(2)_2SELECT    = wm_visuals where name='salvis-wm-75'
-salvis-wm-$(1)-50k$(2)_3SELECT    = wm_visuals where name='salvis'
-salvis-wm-$(1)-50k$(2)_1COLOR     = green
-salvis-wm-$(1)-50k$(2)_1LABEL     = $(label_$(1))
-salvis-wm-$(1)-50k$(2)_2COLOR     = orange
-salvis-wm-$(1)-50k$(2)_2LABEL     = $(label_wm)
-salvis-wm-$(1)-50k$(2)_3LINESTYLE = dotted
-salvis-wm-$(1)-50k$(2)_3LABEL     = GRPK 1:\numprint{10000}
-salvis-wm-$(1)-50k$(2)_3LABEL     = GRPK 1:10000
-ifneq ($(2),,)
-salvis-wm-$(1)-50k$(2)_QUADRANT   = $(2)
-endif
-ifneq ($(2),,)
-salvis-wm-$(1)-50k$(2)_LEGEND     = lower left
-else
-salvis-wm-$(1)-50k$(2)_LEGEND     = lower right
-endif
+RIVERS += salvis-$(1)-$(2)-50k$(3)
+salvis-$(1)-$(2)-50k$(3)_1SELECT    = wm_visuals where name='salvis-$(1)'
+salvis-$(1)-$(2)-50k$(3)_2SELECT    = wm_visuals where name='salvis-$(2)'
+salvis-$(1)-$(2)-50k$(3)_3SELECT    = wm_visuals where name='salvis'
+salvis-$(1)-$(2)-50k$(3)_1COLOR     = green
+salvis-$(1)-$(2)-50k$(3)_1LABEL     = $(label_$(1))
+salvis-$(1)-$(2)-50k$(3)_2COLOR     = orange
+salvis-$(1)-$(2)-50k$(3)_2LABEL     = $(label_$(2))
+salvis-$(1)-$(2)-50k$(3)_3LINESTYLE = dotted
+salvis-$(1)-$(2)-50k$(3)_3LABEL     = GRPK 1:\numprint{10000}
+salvis-$(1)-$(2)-50k$(3)_QUADRANT   = $(3)
+salvis-$(1)-$(2)-50k$(3)_LEGEND     = $(legend_$(3))
 endef
-$(foreach x,vw dp vw-chaikin dp-chaikin,\
-	$(eval $(call wm_vwdp50k,$(x),)) \
-	$(eval $(call wm_vwdp50k,$(x),tl)) \
-	$(eval $(call wm_vwdp50k,$(x),tr)) \
+$(foreach x,vw-64 dp-64 vw-chaikin-64 dp-chaikin-64,\
+	$(eval $(call wm_vwdp50k,$(x),wm-75,)) \
+	$(eval $(call wm_vwdp50k,$(x),wm-75,tl)) \
+	$(eval $(call wm_vwdp50k,$(x),wm-75,tr)) \
 )
 
 define FIG_template
