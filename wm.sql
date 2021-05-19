@@ -103,7 +103,11 @@ $$ language plpgsql;
 --
 -- The implementation could be significantly optimized to avoid `st_reverse`
 -- and array reversals, trading for complexity in fix_gentle_inflections1.
-create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
+create or replace function fix_gentle_inflections(
+  INOUT bends geometry[],
+  dbgname text default null,
+  dbgstagenum integer default null
+) as $$
 declare
   len int4;
   bends1 geometry[];
@@ -119,6 +123,25 @@ begin
   for i in 1..len loop
     bends[i] = st_reverse(bends1[len-i+1]);
   end loop;
+
+  if dbgname is not null then
+    for i in 1..array_length(bends, 1) loop
+      insert into wm_debug(stage, name, gen, nbend, way) values(
+        'cinflections',
+        dbgname,
+        dbgstagenum,
+        i,
+        bends[i]
+      );
+      insert into wm_debug(stage, name, gen, nbend, way) values(
+        'cinflections-polygon',
+        dbgname,
+        dbgstagenum,
+        i,
+        st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])))
+      );
+    end loop;
+  end if;
 end
 $$ language plpgsql;
 
@@ -428,18 +451,7 @@ begin
       end if;
 
       bends = detect_bends(lines[i], dbgname, stagenum);
-
-      bends = fix_gentle_inflections(bends);
-
-      if dbgname is not null then
-        insert into wm_debug(stage, name, gen, nbend, way) values(
-          'cinflections',
-          dbgname,
-          stagenum,
-          generate_subscripts(bends, 1),
-          unnest(bends)
-        );
-      end if;
+      bends = fix_gentle_inflections(bends, dbgname, stagenum);
 
       select * from self_crossing(bends) into bends, mutated;
 

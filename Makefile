@@ -84,6 +84,9 @@ fig5-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
 		--group1-table=wm_debug \
 		--group1-where="name='fig5' AND stage='cinflections' AND gen=1" \
+		--group2-cmap=1 \
+		--group2-table=wm_debug \
+		--group2-where="name='fig5' AND stage='cinflections-polygon' AND gen=1" \
 		--outfile=$@
 
 .faux_test: tests.sql wm.sql .faux_db
