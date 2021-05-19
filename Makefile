@@ -161,7 +161,7 @@ mj-msc-gray.pdf: mj-msc.pdf
 .PHONY: clean
 clean: ## Clean the current working directory
 	-./db stop
-	-rm -r .faux_test .faux_aggregate-rivers .faux_db \
+	-rm -r .faux_test .faux_aggregate-rivers .faux_test-integration .faux_db \
 		version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
 		_minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
@@ -187,6 +187,6 @@ refresh-rivers: aggregate-rivers.sql $(OSM) .faux_db ## Refresh rivers.sql from 
 	(\
 		echo '-- Generated at $(shell TZ=UTC date +"%FT%TZ") on $(shell whoami)@$(shell hostname -f)'; \
 		echo '-- Select: $(WHERE)'; \
-		docker exec -ti wm-mj pg_dump --clean -Uosm osm -t wm_rivers | tr -d '\r' \
+		docker exec wm-mj pg_dump --clean -Uosm osm -t wm_rivers | tr -d '\r' \
 	) > rivers.sql.tmp
 	mv rivers.sql.tmp rivers.sql
