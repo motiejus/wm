@@ -22,6 +22,7 @@
 \usepackage{varwidth}
 \usepackage{tabularx}
 \usepackage{float}
+\usepackage{numprint}
 \usepackage{tikz}
 \usepackage{fancyvrb}
 \usepackage{layouts}
@@ -103,6 +104,7 @@ Currently available line simplification algorithms are rooted in mathematics
 
 \newpage
 \listoffigures
+\listoftables
 
 \newpage
 
@@ -202,7 +204,7 @@ thus convenient to analyze for both small and large scale generalization.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{salvis-25k}
-    \caption{Example rivers for visual tests (1:25000).}
+    \caption{Example rivers for visual tests (1:{\numprint{25000}}).}
     \label{fig:salvis-25}
 \end{figure}
 
@@ -210,23 +212,23 @@ thus convenient to analyze for both small and large scale generalization.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-50k}
-        \caption{Example scaled 1:50000.}
+        \caption{Example scaled 1:\numprint{50000}.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \centering
         \includegraphics[width=.2\textwidth]{salvis-250k}
-        \caption{Example scaled 1:250000.}
+        \caption{Example scaled 1:\numprint{250000}.}
     \end{subfigure}
     \caption{Down-scaled original river.}
     \label{fig:salvis-50-250}
 \end{figure}
 
-Same rivers, unprocessed, but with higher density (scales 1:50000 and 1:250000)
-are depicted in figure~\onpage{fig:salvis-50-250}. Some river features are so
-compact that a reasonably thin line depicting the river is touching itself,
-creating a thicker line. As a result, generalization for this river for a
-smaller scale is worthy.
+Same rivers, unprocessed, but with higher density (scales 1:\numprint{50000}
+and 1:\numprint{250000}) are depicted in figure~\onpage{fig:salvis-50-250}.
+Some river features are so compact that a reasonably thin line depicting the
+river is touching itself, creating a thicker line. As a result, generalization
+for this river for a smaller scale is worthy.
 
 \begin{figure}[h]
     \centering
@@ -239,7 +241,7 @@ smaller scale is worthy.
         \includegraphics[width=\textwidth]{salvis-visvalingam-64-50k}
         \caption{Using {\VW}}
     \end{subfigure}
-    \caption{Generalized using classical algorithms (1:50000).}
+    \caption{Generalized using classical algorithms (1:\numprint{50000}).}
     \label{fig:salvis-generalized-50k}
 \end{figure}
 
@@ -261,7 +263,7 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
         \includegraphics[width=\textwidth]{salvis-visvalingam-64-chaikin-50k}
         \caption{{\VW} + Chaikin's}
     \end{subfigure}
-    \caption{Generalized and smoothened river (1:50000).}
+    \caption{Generalized and smoothened river (1:\numprint{50000}).}
     \label{fig:salvis-generalized-chaikin-50k}
 \end{figure}
 
@@ -573,14 +575,14 @@ table~\ref{table:scale-halfcirlce-diameter}.
 \newcolumntype{d}[1]{D{.}{.}{#1} }
 \begin{table}[h]
     \centering
-    \begin{tabular}{|c @{:}r | D{.}{.}{1} |}
+    \begin{tabular}{|c @{:}l | D{.}{.}{1} |}
         \hline
         \multicolumn{2}{|c|}{Scale} & \multicolumn{1}{c|}{$D(m)$} \\ \hline
-        1 & 10000                   & 15                          \\ \hline
-        1 & 15000                   & 22.5                        \\ \hline
-        1 & 25000                   & 37.5                        \\ \hline
-        1 & 50000                   & 50                          \\ \hline
-        1 & 250000                  & 250                         \\ \hline
+        1 & \numprint{10000}        & 15                          \\ \hline
+        1 & \numprint{15000}        & 22.5                        \\ \hline
+        1 & \numprint{25000}        & 37.5                        \\ \hline
+        1 & \numprint{50000}        & 50                          \\ \hline
+        1 & \numprint{250000}       & 250                         \\ \hline
     \end{tabular}
     \caption{{\WM} parameter $D$ (half-circle diameter) for popular scales.}
     \label{table:scale-halfcirlce-diameter}
