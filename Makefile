@@ -20,7 +20,9 @@ test-integration: .faux_filter-rivers
 .PHONY: clean
 clean:
 	-./db stop
-	-rm .faux_test .faux_filter-rivers .faux_import-osm .faux.db \
+	-rm -r .faux_test .faux_filter-rivers .faux_import-osm .faux.db \
+		version.tex test-figures.pdf _minted-mj-msc \
+		$(shell git ls-files -o mj-msc*) \
 		$(SLIDES)
 
 .PHONY: clean-tables
