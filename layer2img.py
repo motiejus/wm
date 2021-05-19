@@ -26,25 +26,15 @@ def parse_args():
             description='Convert a geometry to an image')
     parser.add_argument('--group1-select')
     parser.add_argument('--group1-linestyle')
-
-    simplify = parser.add_mutually_exclusive_group()
-    simplify.add_argument('--group1-simplifydp', type=int)
-    simplify.add_argument('--group1-simplifyvw', type=int)
-    parser.add_argument('--group1-chaikin', type=bool)
+    parser.add_argument('--group1-color', default=BLACK)
 
     parser.add_argument('--group2-select')
     parser.add_argument('--group2-linestyle')
-    simplify = parser.add_mutually_exclusive_group()
-    simplify.add_argument('--group2-simplifydp', type=int)
-    simplify.add_argument('--group2-simplifyvw', type=int)
-    parser.add_argument('--group2-chaikin', type=bool)
+    parser.add_argument('--group2-color', default=ORANGE)
 
     parser.add_argument('--group3-select')
     parser.add_argument('--group3-linestyle')
-    simplify = parser.add_mutually_exclusive_group()
-    simplify.add_argument('--group3-simplifydp', type=int)
-    simplify.add_argument('--group3-simplifyvw', type=int)
-    parser.add_argument('--group3-chaikin', type=bool)
+    parser.add_argument('--group3-color', default=GREEN)
 
     parser.add_argument('--widthdiv',
                         default=1, type=float, help='Width divisor')
@@ -95,9 +85,9 @@ def main():
     group1 = read_layer(args.group1_select, width, args.quadrant)
     group2 = read_layer(args.group2_select, width, args.quadrant)
     group3 = read_layer(args.group3_select, width, args.quadrant)
-    c1 = plot_args(group1, BLACK, args.group1_linestyle)
-    c2 = plot_args(group2, ORANGE, args.group2_linestyle)
-    c3 = plot_args(group3, GREEN, args.group3_linestyle)
+    c1 = plot_args(group1, args.group1_color, args.group1_linestyle)
+    c2 = plot_args(group2, args.group2_color, args.group2_linestyle)
+    c3 = plot_args(group3, args.group3_color, args.group3_linestyle)
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()

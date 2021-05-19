@@ -90,6 +90,7 @@ $(1).pdf: layer2img.py Makefile $(2)
 		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
 		$$(if $$($(1)_QUADRANT),--quadrant=$$($(1)_QUADRANT)) \
 		$$(foreach i,1 2 3, \
+			$$(if $$($(1)_$$(i)COLOR),--group$$(i)-color="$$($(1)_$$(i)COLOR)") \
 			$$(if $$($(1)_$$(i)SELECT),--group$$(i)-select="$$($(1)_$$(i)SELECT)") \
 			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
@@ -161,6 +162,8 @@ selfcrossing-1-after_2LINESTYLE = invisible
 isolated-1-before_WIDTHDIV = 2
 isolated-1-before_1SELECT = wm_debug where name='isolated-1' AND stage='bbends' AND gen=1
 isolated-1-before_2SELECT = wm_debug where name='isolated-1' AND stage='gexaggeration' AND gen=1
+isolated-1-before_2LINESTYLE = dotted
+isolated-1-before_2COLOR = black
 
 salvis-25k_1SELECT = wm_visuals where name='salvis'
 salvis-25k_WIDTHDIV = 1
