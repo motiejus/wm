@@ -32,15 +32,15 @@ FIGURES = \
 
 RIVERS = \
 		 salvis-25k \
-		 salvis-50k \
+		 salvis-2x50k \
 		 salvis-250k-10x \
 		 salvis-grpk250-2x \
-		 salvis-dp64-50k \
-		 salvis-vw64-50k \
-		 salvis-dpchaikin64-50k \
-		 salvis-vwchaikin64-50k \
-		 salvis-overlaid-dpchaikin64-50k \
-		 salvis-overlaid-vwchaikin64-50k \
+		 salvis-dp64-2x50k \
+		 salvis-vw64-2x50k \
+		 salvis-dpchaikin64-2x50k \
+		 salvis-vwchaikin64-2x50k \
+		 salvis-overlaid-dpchaikin64-2x50k \
+		 salvis-overlaid-vwchaikin64-2x50k \
 		 salvis-wm220-10x \
 		 salvis-wm220-2x \
 		 salvis-wm-overlaid-250k-zoom \
@@ -149,20 +149,20 @@ legend_tr = lower right
 legend_tl = lower center
 
 define wm_vwdp50k
-RIVERS += salvis-$(1)-$(2)-$(3)-50k$(4)
-salvis-$(1)-$(2)-$(3)-50k$(4)_1SELECT    = wm_visuals where name='salvis-$(1)'
-salvis-$(1)-$(2)-$(3)-50k$(4)_1COLOR     = orange
-salvis-$(1)-$(2)-$(3)-50k$(4)_1LABEL     = $(label_$(1))
-salvis-$(1)-$(2)-$(3)-50k$(4)_2SELECT    = wm_visuals where name='salvis-$(2)'
-salvis-$(1)-$(2)-$(3)-50k$(4)_2COLOR     = green
-salvis-$(1)-$(2)-$(3)-50k$(4)_2LABEL     = $(label_$(2))
+RIVERS += salvis-$(1)-$(2)-$(3)-1x50k$(4)
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_1SELECT    = wm_visuals where name='salvis-$(1)'
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_1COLOR     = orange
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_1LABEL     = $(label_$(1))
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_2SELECT    = wm_visuals where name='salvis-$(2)'
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_2COLOR     = green
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_2LABEL     = $(label_$(2))
 $(if $(3),
-salvis-$(1)-$(2)-$(3)-50k$(4)_3SELECT    = wm_visuals where name='salvis-$(3)'
-salvis-$(1)-$(2)-$(3)-50k$(4)_3LINESTYLE = dotted
-salvis-$(1)-$(2)-$(3)-50k$(4)_3LABEL     = $(label_$(3))
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_3SELECT    = wm_visuals where name='salvis-$(3)'
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_3LINESTYLE = dotted
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_3LABEL     = $(label_$(3))
 ,)
-salvis-$(1)-$(2)-$(3)-50k$(4)_QUADRANT   = $(4)
-salvis-$(1)-$(2)-$(3)-50k$(4)_LEGEND     = $(legend_$(4))
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_QUADRANT   = $(4)
+salvis-$(1)-$(2)-$(3)-1x50k$(4)_LEGEND     = $(legend_$(4))
 endef
 $(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
 	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,)) \
@@ -179,32 +179,32 @@ $(eval $(call wm_vwdp50k,wm75,grpk10,,tl))
 salvis-25k_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-25k_WIDTHDIV = 1
 
-salvis-50k_1SELECT = wm_visuals where name='salvis-grpk10'
-salvis-50k_WIDTHDIV = 2
+salvis-2x50k_1SELECT = wm_visuals where name='salvis-grpk10'
+salvis-2x50k_WIDTHDIV = 2
 
-salvis-dp64-50k_1SELECT = wm_visuals where name='salvis-dp64'
-salvis-dp64-50k_WIDTHDIV = 2
+salvis-dp64-2x50k_1SELECT = wm_visuals where name='salvis-dp64'
+salvis-dp64-2x50k_WIDTHDIV = 2
 
-salvis-vw64-50k_1SELECT = wm_visuals where name='salvis-vw64'
-salvis-vw64-50k_WIDTHDIV = 2
+salvis-vw64-2x50k_1SELECT = wm_visuals where name='salvis-vw64'
+salvis-vw64-2x50k_WIDTHDIV = 2
 
-salvis-dpchaikin64-50k_2SELECT = wm_visuals where name='salvis-dpchaikin64'
-salvis-dpchaikin64-50k_WIDTHDIV = 2
+salvis-dpchaikin64-2x50k_2SELECT = wm_visuals where name='salvis-dpchaikin64'
+salvis-dpchaikin64-2x50k_WIDTHDIV = 2
 
-salvis-vwchaikin64-50k_2SELECT = wm_visuals where name='salvis-vwchaikin64'
-salvis-vwchaikin64-50k_WIDTHDIV = 2
+salvis-vwchaikin64-2x50k_2SELECT = wm_visuals where name='salvis-vwchaikin64'
+salvis-vwchaikin64-2x50k_WIDTHDIV = 2
 
-salvis-overlaid-dpchaikin64-50k_1SELECT = wm_visuals where name='salvis-dpchaikin64'
-salvis-overlaid-dpchaikin64-50k_2SELECT = wm_visuals where name='salvis-grpk10'
-salvis-overlaid-dpchaikin64-50k_1COLOR = orange
-salvis-overlaid-dpchaikin64-50k_WIDTHDIV = 2
-salvis-overlaid-dpchaikin64-50k_QUADRANT = tl
+salvis-overlaid-dpchaikin64-2x50k_1SELECT = wm_visuals where name='salvis-dpchaikin64'
+salvis-overlaid-dpchaikin64-2x50k_2SELECT = wm_visuals where name='salvis-grpk10'
+salvis-overlaid-dpchaikin64-2x50k_1COLOR = orange
+salvis-overlaid-dpchaikin64-2x50k_WIDTHDIV = 2
+salvis-overlaid-dpchaikin64-2x50k_QUADRANT = tl
 
-salvis-overlaid-vwchaikin64-50k_1SELECT = wm_visuals where name='salvis-vwchaikin64'
-salvis-overlaid-vwchaikin64-50k_2SELECT = wm_visuals where name='salvis-grpk10'
-salvis-overlaid-vwchaikin64-50k_1COLOR = orange
-salvis-overlaid-vwchaikin64-50k_WIDTHDIV = 2
-salvis-overlaid-vwchaikin64-50k_QUADRANT = tl
+salvis-overlaid-vwchaikin64-2x50k_1SELECT = wm_visuals where name='salvis-vwchaikin64'
+salvis-overlaid-vwchaikin64-2x50k_2SELECT = wm_visuals where name='salvis-grpk10'
+salvis-overlaid-vwchaikin64-2x50k_1COLOR = orange
+salvis-overlaid-vwchaikin64-2x50k_WIDTHDIV = 2
+salvis-overlaid-vwchaikin64-2x50k_QUADRANT = tl
 
 salvis-wm220_1SELECT = wm_visuals where name='salvis-wm220'
 salvis-wm220_WIDTHDIV = 2

@@ -246,9 +246,9 @@ simplification.
 \begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-50k}
+        \includegraphics[width=\textwidth]{salvis-2x50k}
         \caption{Example scaled 1:\numprint{50000}.}
-        \label{fig:salvis-50k}
+        \label{fig:salvis-2x50k}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
@@ -270,60 +270,60 @@ simplification for scale 1:\numprint{50000} and especially for
 \begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-dp64-50k}
+        \includegraphics[width=\textwidth]{salvis-dp64-2x50k}
         \caption{Using {\DP}.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-vw64-50k}
+        \includegraphics[width=\textwidth]{salvis-vw64-2x50k}
         \caption{Using {\VW}.}
     \end{subfigure}
     \caption{Simplified using classical algorithms (1:\numprint{50000}).}
-    \label{fig:salvis-generalized-50k}
+    \label{fig:salvis-generalized-1x50k}
 \end{figure}
 
-Figure~\ref{fig:salvis-generalized-50k} illustrates the same river bend, but
+Figure~\ref{fig:salvis-generalized-1x50k} illustrates the same river bend, but
 simplified using {\DP} and {\VW} algorithms. The resulting lines are jagged,
 and thus the resulting line looks unlike a real river. To smoothen the jaggedness,
 traditionally, Chaikin's\cite{chaikin1974algorithm} is applied after
-generalization, illustrated in Figure~\ref{fig:salvis-generalized-chaikin-50k}.
+generalization, illustrated in Figure~\ref{fig:salvis-generalized-chaikin-1x50k}.
 
 \begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-dpchaikin64-50k}
+        \includegraphics[width=\textwidth]{salvis-dpchaikin64-2x50k}
         \caption{{\DP} and Chaikin's.}
-        \label{fig:salvis-dpchaikin64-50k}
+        \label{fig:salvis-dpchaikin64-2x50k}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-vwchaikin64-50k}
+        \includegraphics[width=\textwidth]{salvis-vwchaikin64-2x50k}
         \caption{{\VW} and Chaikin's.}
-        \label{fig:salvis-vwchaikin64-50k}
+        \label{fig:salvis-vwchaikin64-2x50k}
     \end{subfigure}
     \caption{Simplified and smoothened river (1:\numprint{50000}).}
-    \label{fig:salvis-generalized-chaikin-50k}
+    \label{fig:salvis-generalized-chaikin-1x50k}
 \end{figure}
 
 \begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-overlaid-dpchaikin64-50k}
+        \includegraphics[width=\textwidth]{salvis-overlaid-dpchaikin64-2x50k}
 
-        \caption{Original (fig.~\ref{fig:salvis-50k}) and simplified
-        (fig.~\ref{fig:salvis-dpchaikin64-50k}).}
+        \caption{Original (fig.~\ref{fig:salvis-2x50k}) and simplified
+        (fig.~\ref{fig:salvis-dpchaikin64-2x50k}).}
 
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-overlaid-vwchaikin64-50k}
+        \includegraphics[width=\textwidth]{salvis-overlaid-vwchaikin64-2x50k}
 
-        \caption{Original (fig.~\ref{fig:salvis-50k}) and simplified
-            (fig.~\ref{fig:salvis-vwchaikin64-50k}.)}
+        \caption{Original (fig.~\ref{fig:salvis-2x50k}) and simplified
+            (fig.~\ref{fig:salvis-vwchaikin64-2x50k}.)}
 
     \end{subfigure}
     \caption{Zoomed-in simplified and smoothened river and original.}
-    \label{fig:salvis-overlaid-generalized-chaikin-50k}
+    \label{fig:salvis-overlaid-generalized-chaikin-1x50k}
 \end{figure}
 
 \begin{figure}[b!]
@@ -334,7 +334,7 @@ generalization, illustrated in Figure~\ref{fig:salvis-generalized-chaikin-50k}.
 \end{figure}
 
 The resulting simplified and smoothened example
-(Figure~\onpage{fig:salvis-generalized-chaikin-50k}) yields a more
+(Figure~\onpage{fig:salvis-generalized-chaikin-1x50k}) yields a more
 aesthetically pleasing result; however, it obscures natural river features.
 
 Given the absence of rocks, the only natural features that influence the river
@@ -1394,36 +1394,36 @@ Our generalized results are viewed from the following angles:
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--1x50k}
     \caption{2x zoomed-in {\WM} for 1:\numprint{50000}.}
-    \label{fig:salvis-wm75-grpk10--50k}
+    \label{fig:salvis-wm75-grpk10--1x50k}
 \end{figure}
 
-As one can see in Figure~\ref{fig:salvis-wm75-grpk10--50k}, the illustrations deliver
+As one can see in Figure~\ref{fig:salvis-wm75-grpk10--1x50k}, the illustrations deliver
 what was promised by the algorithm, but with a few caveats. Left side of the
 figure looks reasonably well simplified: long bends remain slightly curved,
 small bends are removed or slightly exaggerated.
 
-Figure's~\ref{fig:salvis-wm75-grpk10--50k} left part is clipped to
-Figure~\ref{fig:salvis-wm75-grpk10--50ktl}. As one can see, some bends were well
+Figure's~\ref{fig:salvis-wm75-grpk10--1x50k} left part is clipped to
+Figure~\ref{fig:salvis-wm75-grpk10--1x50ktl}. As one can see, some bends were well
 exaggerated, and some bends were eliminated.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--50ktl}
-    \caption{Left part of Figure~\ref{fig:salvis-wm75-grpk10--50k}.}
-    \label{fig:salvis-wm75-grpk10--50ktl}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--1x50ktl}
+    \caption{Left part of Figure~\ref{fig:salvis-wm75-grpk10--1x50k}.}
+    \label{fig:salvis-wm75-grpk10--1x50ktl}
 \end{figure}
 
-Top--right side (clipped in Figure~\ref{fig:salvis-wm75-grpk10--50ktl}) some jagged
+Top--right side (clipped in Figure~\ref{fig:salvis-wm75-grpk10--1x50ktl}) some jagged
 and sharp bends appear. These will become more pronounced in even larger-scale
 simplification in the next section.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--50ktr}
-    \caption{Top--right part of Figure~\ref{fig:salvis-wm75-grpk10--50k}.}
-    \label{fig:salvis-wm75-grpk10--50ktr}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--1x50ktr}
+    \caption{Top--right part of Figure~\ref{fig:salvis-wm75-grpk10--1x50k}.}
+    \label{fig:salvis-wm75-grpk10--1x50ktr}
 \end{figure}
 
 To sum up, mid-scale simplification works well for some geometries, but creates
@@ -1526,12 +1526,12 @@ all three shapes: grpk50LT, {\WM}--simplified GDB10LT, and the original GDB10LT.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10-50ktr}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10-1x50ktr}
     \caption{Top--right side of Figure~\ref{fig:salvis-wm75-grpk50-grpk10}.}
-    \label{fig:salvis-wm75-grpk50-grpk10-50ktr}
+    \label{fig:salvis-wm75-grpk50-grpk10-1x50ktr}
 \end{figure}
 
-Although figures are almost identical, Figure~\ref{fig:salvis-wm75-grpk50-grpk10-50ktr}
+Although figures are almost identical, Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50ktr}
 illustrates two small bends that have been removed in grpk50LT, but have been
 exaggerated by our implementation.
 
@@ -1571,41 +1571,41 @@ needed for small-scale maps (1:\numprint{250000}), we will limit the comparison
 in this section to 1:\numprint{50000}.
 
 \begin{figure}[h!]
-    \includegraphics[width=\textwidth]{salvis-wm75-dp64-grpk10-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-dp64-grpk10-1x50k}
 
 
     \caption{{\DP} (green), {\WM} (orange) and original (black dotted) at
     1:\numprint{50000}.}
 
-    \label{fig:salvis-wm75-dp64-grpk10-50k}
+    \label{fig:salvis-wm75-dp64-grpk10-1x50k}
 \end{figure}
 
 \begin{figure}[h!]
-    \includegraphics[width=\textwidth]{salvis-wm75-dpchaikin64-grpk10-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-dpchaikin64-grpk10-1x50k}
 
     \caption{Chaikin--smoothened {\DP} (green), {\WM} (orange) and original
     (black dotted) at 1:\numprint{50000}.}
 
-    \label{fig:salvis-wm75-dpchaikin64-grpk10-50k}
+    \label{fig:salvis-wm75-dpchaikin64-grpk10-1x50k}
 \end{figure}
 
 
 \begin{figure}[h!]
-    \includegraphics[width=\textwidth]{salvis-wm75-vw64-grpk10-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-vw64-grpk10-1x50k}
 
     \caption{{\VW} (green), {\WM} (orange) and original (black dotted) at
     1:\numprint{50000}.}
 
-    \label{fig:salvis-wm75-vw64-grpk10-50k}
+    \label{fig:salvis-wm75-vw64-grpk10-1x50k}
 \end{figure}
 
 \begin{figure}[h!]
-    \includegraphics[width=\textwidth]{salvis-wm75-vwchaikin64-grpk10-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-vwchaikin64-grpk10-1x50k}
 
     \caption{Chaikin--smoothened {\VW} (green), {\WM} (orange) and original
     (black dotted) at 1:\numprint{50000}.}
 
-    \label{fig:salvis-wm75-vwchaikin64-grpk10-50k}
+    \label{fig:salvis-wm75-vwchaikin64-grpk10-1x50k}
 \end{figure}
 
 
