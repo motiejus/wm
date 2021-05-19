@@ -80,6 +80,12 @@ This repository is frozen and will not accept contributions. Please fork it.
 If fork has improved the algorithm substantially, feel free to ping me, I will
 link to it in this README.
 
+Credit
+------
+
+[Nacionalinė Žemės Tarnyba](http://nzt.lt/) for the river data sets.
+
+
 License
 -------
 
