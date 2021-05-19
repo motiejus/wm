@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+NAME=wm-mj-build
+
+if [[ -z "$(docker images -q --filter "reference=$NAME")" ]]; then
+    docker build -t "$NAME" - < Dockerfile
+fi
+
+exec docker run --rm \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v ${PWD}:/x \
+    -w /x \
+    "$NAME" "$@"
