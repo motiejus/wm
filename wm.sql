@@ -86,7 +86,10 @@ begin
 
       dbgpolygon = null;
       if st_npoints(bends[i]) >= 3 then
-          dbgpolygon = st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])));
+          dbgpolygon = st_makepolygon(
+            st_addpoint(bends[i],
+              st_startpoint(bends[i]))
+          );
       end if;
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'bbends-polygon',
@@ -100,8 +103,8 @@ begin
 end
 $$ language plpgsql;
 
--- wm_fix_gentle_inflections moves bend endpoints following "Gentle Inflection at
--- End of a Bend" section.
+-- wm_fix_gentle_inflections moves bend endpoints following "Gentle Inflection
+-- at End of a Bend" section.
 --
 -- The text does not specify how many vertices can be "adjusted"; it can
 -- equally be one or many. This function is adjusting many, as long as the
@@ -144,7 +147,10 @@ begin
 
       dbgpolygon = null;
       if st_npoints(bends[i]) >= 3 then
-          dbgpolygon = st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])));
+        dbgpolygon = st_makepolygon(
+          st_addpoint(bends[i],
+            st_startpoint(bends[i]))
+        );
       end if;
 
       insert into wm_debug(stage, name, gen, nbend, way) values(
@@ -160,7 +166,7 @@ end
 $$ language plpgsql;
 
 -- wm_fix_gentle_inflections1 fixes gentle inflections of an array of lines in
--- one direction. This is an implementation detail of wm_fix_gentle_inflections.
+-- one direction. An implementation detail of wm_fix_gentle_inflections.
 drop function if exists wm_fix_gentle_inflections1;
 create function wm_fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
@@ -471,7 +477,10 @@ begin
     -- remove last vertex of the previous bend and
     -- first vertex of the next bend, because bends always
     -- share a line segment together
-    tmpbendattrs.bend = st_removepoint(bendattrs[i-1].bend, st_npoints(bendattrs[i-1].bend)-1);
+    tmpbendattrs.bend = st_removepoint(
+      bendattrs[i-1].bend,
+      st_npoints(bendattrs[i-1].bend)-1
+    );
     bendattrs[i-1] = tmpbendattrs;
     tmpbendattrs.bend = st_removepoint(bendattrs[i+1].bend, 0);
     bendattrs[i+1] = tmpbendattrs;
@@ -515,7 +524,8 @@ begin
       skip_next = false;
     else
       this = bendattrs[i].curvature * isolation_threshold;
-      if bendattrs[i-1].curvature < this and bendattrs[i+1].curvature < this then
+      if bendattrs[i-1].curvature < this and
+         bendattrs[i+1].curvature < this then
         res.isolated = true;
         bendattrs[i] = res;
         skip_next = true;
@@ -567,7 +577,7 @@ begin
   for i in 1..array_length(lines, 1) loop
     npoints = npoints + st_numpoints(lines[i]);
   end loop;
-  secs = npoints / 800;
+  secs = npoints / 150;
 end
 $$ language plpgsql;
 
