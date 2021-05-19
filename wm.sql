@@ -409,16 +409,20 @@ $$ language plpgsql;
 -- wm_exaggerate exaggerates a given bend. Must be a simple linestring.
 drop function if exists wm_exaggerate;
 create function wm_exaggerate(
-  bend geometry,
-  size real,
-  desired_size real
-) returns geometry as $$
+  INOUT bend geometry,
+  size float,
+  desired_size float
+) as $$
 declare
-  step constant float default 1.5; -- line length multiplier per step
+  scale constant float default 2; -- per-step scaling factor
   midpoint geometry; -- midpoint of the baseline
   splitbend geometry; -- bend split across farthest point
   bendm geometry; -- bend with coefficients to prolong the lines
+  points geometry[];
 begin
+  if size = 0 then
+    raise 'unable to exaggerate a zero-area bend';
+  end if;
   midpoint = st_lineinterpolatepoint(st_makeline(
       st_pointn(bend, 1),
       st_pointn(bend, -1)
@@ -431,15 +435,28 @@ begin
     );
 
     -- Convert bend to LINESTRINGM, where M is the fraction by how
-    -- much the point will be prolonged.
-    -- Currently using linear interpolation; can be updated to gaussian
-    -- or so (then interpolate manually instead of relying on st_addmeasure)
-    bendm = st_linemerge(st_union(
-        st_addmeasure(st_geometryn(splitbend, 1), 0, frac),
-        st_addmeasure(st_geometryn(splitbend, 2), frac, 0)
-    ));
+    -- much the point will be prolonged:
+    -- 1. draw a line between midpoint and the point on the bend.
+    -- 2. multiply the line length by M. Midpoint stays intact.
+    -- 3. the new set of lines form a new bend.
 
+    -- Uses linear interpolation; can be updated to gaussian or similar;
+    -- then interpolate manually instead of relying on st_addmeasure.
+    bendm = st_union(
+      st_addmeasure(st_geometryn(splitbend, 1), 1, scale),
+      st_addmeasure(st_geometryn(splitbend, 2), scale, 1)
+    );
 
+    points = array((
+        select st_scale(
+          st_makepoint(st_x(geom), st_y(geom)),
+          st_makepoint(st_m(geom), st_m(geom)),
+          midpoint
+        )
+        from st_dumppoints(bendm)
+        order by path[1], path[2]
+      ));
+    bend = st_makeline(points);
 
     size = wm_adjsize(bend);
   end loop;

@@ -188,3 +188,16 @@ begin
   perform assert_equals(fig8gen2, st_astext(eliminations[2]));
   perform assert_equals(fig8gen3, st_astext(eliminations[3]));
 end $$ language plpgsql;
+
+-- testing wm_exaggerate in isolation
+do $$
+declare
+  fig3b2 geometry;
+  bend geometry;
+  size float;
+begin
+  select way from wm_debug where name='fig3' and stage='bbends' and gen=1 and nbend=2 into fig3b2;
+  size = wm_adjsize(fig3b2);
+  --bend = wm_exaggerate(fig3b2, size, 50.);
+  --insert into wm_debug(stage, name, gen, nbend, way) values('manual', 'fig3', 1, 1, bend);
+end $$ language plpgsql;
