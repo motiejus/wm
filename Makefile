@@ -153,9 +153,11 @@ RIVERS += salvis-$(1)-$(2)-$(3)-1x50k$(4)
 salvis-$(1)-$(2)-$(3)-1x50k$(4)_1SELECT    = wm_visuals where name='salvis-$(1)'
 salvis-$(1)-$(2)-$(3)-1x50k$(4)_1COLOR     = orange
 salvis-$(1)-$(2)-$(3)-1x50k$(4)_1LABEL     = $(label_$(1))
+$(if $(2),
 salvis-$(1)-$(2)-$(3)-1x50k$(4)_2SELECT    = wm_visuals where name='salvis-$(2)'
 salvis-$(1)-$(2)-$(3)-1x50k$(4)_2COLOR     = green
 salvis-$(1)-$(2)-$(3)-1x50k$(4)_2LABEL     = $(label_$(2))
+,)
 $(if $(3),
 salvis-$(1)-$(2)-$(3)-1x50k$(4)_3SELECT    = wm_visuals where name='salvis-$(3)'
 salvis-$(1)-$(2)-$(3)-1x50k$(4)_3LINESTYLE = dotted
@@ -172,9 +174,9 @@ $(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
 $(eval $(call wm_vwdp50k,wm75,grpk50,grpk10))
 $(eval $(call wm_vwdp50k,wm75,grpk50,grpk10,tr))
 
-$(eval $(call wm_vwdp50k,wm75,grpk10,,))
-$(eval $(call wm_vwdp50k,wm75,grpk10,,tr))
-$(eval $(call wm_vwdp50k,wm75,grpk10,,tl))
+$(eval $(call wm_vwdp50k,wm75,,grpk10,))
+$(eval $(call wm_vwdp50k,wm75,,grpk10,tr))
+$(eval $(call wm_vwdp50k,wm75,,grpk10,tl))
 
 salvis-25k_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-25k_WIDTHDIV = 1

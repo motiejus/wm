@@ -1394,37 +1394,37 @@ Our generalized results are viewed from the following angles:
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--1x50k}
+    \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50k}
     \caption{2x zoomed-in {\WM} for 1:\numprint{50000}.}
-    \label{fig:salvis-wm75-grpk10--1x50k}
+    \label{fig:salvis-wm75--grpk10-1x50k}
 \end{figure}
 
-As one can see in Figure~\ref{fig:salvis-wm75-grpk10--1x50k}, the illustrations deliver
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50ktl}
+    \caption{Left part of Figure~\ref{fig:salvis-wm75--grpk10-1x50k}.}
+    \label{fig:salvis-wm75--grpk10-1x50ktl}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50ktr}
+    \caption{Top--right part of Figure~\ref{fig:salvis-wm75--grpk10-1x50k}.}
+    \label{fig:salvis-wm75--grpk10-1x50ktr}
+\end{figure}
+
+As one can see in Figure~\ref{fig:salvis-wm75--grpk10-1x50k}, the illustrations deliver
 what was promised by the algorithm, but with a few caveats. Left side of the
 figure looks reasonably well simplified: long bends remain slightly curved,
 small bends are removed or slightly exaggerated.
 
-Figure's~\ref{fig:salvis-wm75-grpk10--1x50k} left part is clipped to
-Figure~\ref{fig:salvis-wm75-grpk10--1x50ktl}. As one can see, some bends were well
+Figure's~\ref{fig:salvis-wm75--grpk10-1x50k} left part is clipped to
+Figure~\ref{fig:salvis-wm75--grpk10-1x50ktl}. As one can see, some bends were well
 exaggerated, and some bends were eliminated.
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--1x50ktl}
-    \caption{Left part of Figure~\ref{fig:salvis-wm75-grpk10--1x50k}.}
-    \label{fig:salvis-wm75-grpk10--1x50ktl}
-\end{figure}
-
-Top--right side (clipped in Figure~\ref{fig:salvis-wm75-grpk10--1x50ktl}) some jagged
+Top--right side (clipped in Figure~\ref{fig:salvis-wm75--grpk10-1x50ktl}) some jagged
 and sharp bends appear. These will become more pronounced in even larger-scale
 simplification in the next section.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--1x50ktr}
-    \caption{Top--right part of Figure~\ref{fig:salvis-wm75-grpk10--1x50k}.}
-    \label{fig:salvis-wm75-grpk10--1x50ktr}
-\end{figure}
 
 To sum up, mid-scale simplification works well for some geometries, but creates
 sharp edges for others.
@@ -1487,8 +1487,8 @@ future research and improvement:
 
 \subsubsection{Background}
 
-There are a few datasets used in this comparison: GDB10LT, grpk50LT and
-grpk250LT. They are vector datasets, which include rivers. They can be
+There are a few datasets used in this comparison: GDB10LT, GRPK50 and
+GRPK250. They are vector datasets, which include rivers. They can be
 downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
 
 \begin{description}
@@ -1496,9 +1496,9 @@ downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
     \item[GDB10LT] is dataset of highest detail. Suited for maps of scale
         1:\numprint{10000}.
 
-    \item[grpk50LT] is suited for maps of scale 1:\numprint{50000}.
+    \item[GRPK50] is suited for maps of scale 1:\numprint{50000}.
 
-    \item[grpk250LT] offers least detail, and is suited for maps of
+    \item[GRPK250] offers least detail, and is suited for maps of
         scale 1:\numprint{250000}.
 
 \end{description}
@@ -1506,41 +1506,42 @@ downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
 During the analysis, we ran {\WM} on GDB10LT for 2 destination scales:
 1:\numprint{50000} and 1:\numprint{250000}.\footnote{parameter calculation is
 detailed in section~\ref{sec:bend-scaling-and-dimensions}.} This section
-compares the resulting {\WM}--generalized rivers to grpk50LT and grpk250LT.
+compares the resulting {\WM}--generalized rivers to GRPK50 and GRPK250.
 
 \subsubsection{Medium-scale (1:\numprint{50000})}
 
 For our research location, the national dataset GDB10LT is almost equivalent to
-grpk50LT, with a few nuances. Figure~\ref{fig:salvis-wm75-grpk50-grpk10} illustrates
-all three shapes: grpk50LT, {\WM}--simplified GDB10LT, and the original GDB10LT.
+GRPK50, with a few nuances. Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50k}
+illustrates all three shapes: GRPK50, {\WM}--simplified GDB10LT, and the
+original GDB10LT.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10-1x50k}
 
-    \caption{2x zoomed-in grpk50LT (green), {\WM}--simplified GDB10LT (orange)
-    and original GDB10LT (dotted black).}
+    \caption{GRPK10, GRPK50 and {\WM} for 1:\numprint{50000}.}
 
-    \label{fig:salvis-wm75-grpk50-grpk10}
+    \label{fig:salvis-wm75-grpk50-grpk10-1x50k}
 \end{figure}
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10-1x50ktr}
-    \caption{Top--right side of Figure~\ref{fig:salvis-wm75-grpk50-grpk10}.}
+    \caption{Top--right side of Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50k}.}
     \label{fig:salvis-wm75-grpk50-grpk10-1x50ktr}
 \end{figure}
 
-Although figures are almost identical, Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50ktr}
-illustrates two small bends that have been removed in grpk50LT, but have been
-exaggerated by our implementation.
+Although figures are almost identical,
+Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50ktr} illustrates two small bends
+that have been removed in GRPK50, but have been exaggerated by our
+implementation.
 
 \subsubsection{Large-scale (1:\numprint{250000})}
 \label{sec:national-large-scale}
 
-Figure~\ref{fig:salvis-wm220} illustrates the original grpk250LT and the
+Figure~\ref{fig:salvis-wm220} illustrates the original GRPK250 and the
 {\WM}--simplified version. As section~\ref{sec:analyzed-large-scale} explains,
-the algorithm tries to exaggerate many bends to a great size. However, grpk250LT
+the algorithm tries to exaggerate many bends to a great size. However, GRPK250
 takes the opposite approach --- only the very basic shapes of the largest bends
 are retained. Time and customers will tell, which approach is more appropriate,
 after the current {\WM} implementation receives some time and attention, as
@@ -1550,7 +1551,7 @@ desired in section~\ref{sec:future-suggestions}.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-grpk250-2x}
-        \caption{grpk250LT.}
+        \caption{GRPK250.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
@@ -1558,7 +1559,7 @@ desired in section~\ref{sec:future-suggestions}.
         \includegraphics[width=\textwidth]{salvis-wm220}
         \caption{{\WM}-simplified GDB10LT.}
     \end{subfigure}
-    \caption{grpk250LT and {\WM}--simplified GDB10LT.}
+    \caption{GRPK250 and {\WM}--simplified GDB10LT.}
     \label{fig:salvis-wm220}
 \end{figure}
 
@@ -1574,17 +1575,11 @@ in this section to 1:\numprint{50000}.
     \includegraphics[width=\textwidth]{salvis-wm75-dp64-grpk10-1x50k}
 
 
-    \caption{{\DP} (green), {\WM} (orange) and original (black dotted) at
-    1:\numprint{50000}.}
-
     \label{fig:salvis-wm75-dp64-grpk10-1x50k}
 \end{figure}
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{salvis-wm75-dpchaikin64-grpk10-1x50k}
-
-    \caption{Chaikin--smoothened {\DP} (green), {\WM} (orange) and original
-    (black dotted) at 1:\numprint{50000}.}
 
     \label{fig:salvis-wm75-dpchaikin64-grpk10-1x50k}
 \end{figure}
@@ -1593,17 +1588,11 @@ in this section to 1:\numprint{50000}.
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{salvis-wm75-vw64-grpk10-1x50k}
 
-    \caption{{\VW} (green), {\WM} (orange) and original (black dotted) at
-    1:\numprint{50000}.}
-
     \label{fig:salvis-wm75-vw64-grpk10-1x50k}
 \end{figure}
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{salvis-wm75-vwchaikin64-grpk10-1x50k}
-
-    \caption{Chaikin--smoothened {\VW} (green), {\WM} (orange) and original
-    (black dotted) at 1:\numprint{50000}.}
 
     \label{fig:salvis-wm75-vwchaikin64-grpk10-1x50k}
 \end{figure}
