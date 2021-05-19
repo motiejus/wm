@@ -1118,15 +1118,24 @@ implementation. A single exaggeration increment is done as follows:
 
 \end{enumerate}
 
-Figure X illustrates the details of the exaggeration.
-Figure~\ref{fig:isolated-1-exaggerated} illustrates an exaggerated bend
-following the rules.
+Figure~\ref{fig:exaggerating-a-single-bend} illustrates the details of the
+exaggeration. Figure~\ref{fig:isolated-1-exaggerated} illustrates an
+exaggerated bend with the algorithm.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.5\textwidth]{isolated-1-exaggerated}
-    \caption{Example exaggerated figure.}
+    \caption{Example exaggerated isolated bend.}
     \label{fig:isolated-1-exaggerated}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \begin{tikzpicture}[scale=.5]
+      \draw (-8,0) -- (0,0) -- (2,3) -- (8,0) -- (16,0);
+  \end{tikzpicture}
+  \caption{Exaggerating a single bend}
+  \label{fig:exaggerating-a-single-bend}
 \end{figure}
 
 
