@@ -20,6 +20,7 @@
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{minted}
+\usepackage{fancyvrb}
 \input{version.inc}
 \input{vars.inc}
 
@@ -229,6 +230,8 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 
     \item[Baseline] is a line between bend's first and last vertex.
 
+    \item[Sum of inner angles] TBD.
+
 \end{description}
 
 \subsection{Radians and Degrees}
@@ -421,11 +424,35 @@ following the rules of the article.
     \hfill
     \begin{subfigure}[b]{.4\textwidth}
         \includegraphics[width=\textwidth]{fig6-self-crossing-after}
-        \caption{Bend's baseline is crossing another bend}
+        \caption{Self-crossing removed}
     \end{subfigure}
     \caption{Originally Figure 6: self-line crossing}
     \label{fig:fig6-self-crossing}
 \end{figure}
+
+The self-line-crossing may happen not by the neighboring bend, but by any other
+bend in the line. For example, the baseline of bend A<->B may cross different
+bends in between, as depicted in figure~\onpage{fig:ascii-selfcross}.
+
+\begin{figure}[h]
+    \centering
+    \begin{BVerbatim}
+    \  \
+    B\ |     _       __
+     | |    / \     /  \
+     | |___/   \___/A  |
+     \_________________|
+    \end{BVerbatim}
+    \caption{A baseline crossing non-neighboring in-between bends}
+    \label{fig:ascii-selfcross}
+\end{figure}
+
+Naively implemented, checking every bend with every bend is costs $O(n^2)$.
+
+It is possible to optimize this step and skip checking some of the bends. Only
+bends whose sum of inner angles is $\pi$ can ever self-cross. If the value is
+less than $\pi$, it cannot cross other bends. That way, only a fraction of
+bends need to be checked.
 
 \subsection{Attributes of a Single Bend}
 

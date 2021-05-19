@@ -99,7 +99,7 @@ $$ language plpgsql;
 --
 -- The text does not specify how many vertices can be "adjusted"; it can
 -- equally be one or many. This function is adjusting many, as long as the
--- commulative inflection angle small (see variable below).
+-- cumulative inflection angle small (see variable below).
 --
 -- The implementation could be significantly optimized to avoid `st_reverse`
 -- and array reversals, trading for complexity in fix_gentle_inflections1.
@@ -235,9 +235,7 @@ begin
     -- crosses an imaginary line of end-vertices
 
     -- go through each bend in the given line, and see if has a potential to
-    -- cross bends[i]. optimization: we care only about bends which beginning
-    -- and end start at different sides of the plane, separated by endpoints
-    -- of the vertex.
+    -- cross bends[i].
     j = 0;
     while j < array_length(bends, 1) loop
       j = j + 1;
@@ -251,17 +249,16 @@ begin
       continue when st_numgeometries(multi) = 2 and
         (st_contains(bends[j], a) or st_contains(bends[j], b));
 
-      -- stars are aligned, we are changing the bend
+      -- vertices, segments and stars are aligned, we are changing the bend
       mutated = true;
 
-      -- Sincere apologies to someone who will need to debug the block below.
-      -- To understand it, I suggest you take a pencil and paper, draw a
-      -- self-crossing bend (fig6 from the article works well), and figure out
-      -- what happens here, by hand.
+      -- To understand the block below, I suggest you take a pencil and paper,
+      -- draw a self-crossing bend (fig6 from the article works well), and
+      -- figure out what happens here, by hand.
       prev_length = array_length(bends, 1);
       if j < i then
         -- remove first vertex of the following bend, because the last
-        -- segment is always duplicated with the i-th bend.
+        -- segment is always duplicated with the i'th bend.
         bends[i+1] = st_removepoint(bends[i+1], 0);
         bends[j] = st_geometryn(multi, 1);
         bends[j] = st_setpoint(
