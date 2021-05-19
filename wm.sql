@@ -415,14 +415,3 @@ begin
   end if;
 end
 $$ language plpgsql;
-
-drop function if exists dbg_geomsummary;
-create function dbg_geomsummary(geoms geometry[], OUT output text) as $$
-  declare i int4;
-begin
-  output = format('len: %s;', array_length(geoms, 1));
-  for i in 1..array_length(geoms, 1) loop
-    output = output || format(' %s:%s;', i, st_astext(geoms[i]));
-  end loop;
-end
-$$ language plpgsql;

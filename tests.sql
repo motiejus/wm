@@ -10,8 +10,19 @@ begin
   end if;
 end $$ LANGUAGE plpgsql;
 
+drop function if exists dbg_geomsummary;
+create function dbg_geomsummary(geoms geometry[], OUT output text) as $$
+  declare i int4;
+begin
+  output = format('len: %s;', array_length(geoms, 1));
+  for i in 1..array_length(geoms, 1) loop
+    output = output || format(' %s:%s;', i, st_astext(geoms[i]));
+  end loop;
+end
+$$ language plpgsql;
+
 -- to preview this somewhat conveniently in QGIS:
--- stage || '_' || name || ' gen:' || coalesce(gen, 'Ø')|| ' nbend:'|| lpad(nbend, 2, '0')
+-- stage || '_' || name || ' gen:' || coalesce(gen, 'Ø') || ' nbend:' || lpad(nbend, 2, '0')
 drop table if exists debug_wm;
 create table debug_wm(stage text, name text, gen bigint, nbend bigint, way geometry, props json);
 
@@ -33,7 +44,8 @@ insert into figures (name, way) values ('fig6-combi',
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
 insert into figures (name, way) values ('multi-island',ST_GeomFromText('MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'));
 
--- Run ST_SimplifyWM in debug mode
+-- Run ST_SimplifyWM in debug mode, so `debug_wm` is populated. That table
+-- is used for geometric assertions later in the file.
 drop table if exists demo_wm;
 create table demo_wm (name text, i bigint, way geometry);
 insert into demo_wm (name, way) select name, ST_SimplifyWM(way, name) from figures;
