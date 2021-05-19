@@ -1,8 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-NAME=wm-mj-build
+# Prefix the 'make <...>' with this script to build the artifact in an isolated
+# container. This means host dependencies can only be Docker and a shell (to
+# run this script).
+#
+# Usage:
+#   ./in-container make help
+#   ./in-container make -j mj-msc-full.pdf
+#   ...
 
+NAME=wm-mj-build
 if [[ -z "$(docker images -q --filter "reference=$NAME")" ]]; then
     docker build -t "$NAME" - < Dockerfile
 fi
