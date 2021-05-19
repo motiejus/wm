@@ -2,13 +2,15 @@
 set -euo pipefail
 dir=$(mktemp -d)
 src=${1:-mj-msc-full.pdf}
-dst=${2:-mj-msc.pdf}
+
+readonly dst=mj-msc.pdf
+readonly log="$dir/make.log"
 echo "Extracting $src to $dir/" && pdfdetach -saveall -o "$dir" "$src"
 chmod a+x "$dir/db"
-echo "Generating $dir/$dst ..."
-make -j $(nproc) -C "$dir" "$dst" &> "$dir/make.log" || {
-    echo "Generation failed. Log extract:" && tail -20 "$dir/make.log"
+echo "Generating $dir/$dst, logs in $log ..."
+make -j "$(nproc)" -C "$dir" "$dst" &> "$log" || {
+    echo "Failed to generate. $log extract:" && tail -20 "$dir/make.log"
     exit 1
 }
 echo "Opening $dir/$dst ..." && xdg-open "$dir/$dst"
-echo "File has been closed. Removing $dir" && rm -fr "$dir"
+echo "$dir/$dst was closed. Removing $dir" && rm -fr "$dir"
