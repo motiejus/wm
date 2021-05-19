@@ -18,9 +18,7 @@ TEXTWIDTH_CM = 12.12364
 
 
 def color(string):
-    if not string:
-        string = 'black'
-    return COLORS[string]
+    return COLORS[string if string else 'black']
 
 
 def inch(cm):
