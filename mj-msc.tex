@@ -465,15 +465,14 @@ circle is meant. Given a bend, its compactness index is calculated as follows:
 
 \begin{enumerate}
 
-  \item From a non-crossing line, construct a polygon by joining first and last
-    vertices.
+  \item Construct a polygon by joining first and last vertices of the bend.
 
-  \item Calculate polygon area $P$.
+  \item Calculate area of the polygon $P$.
 
-  \item Calculate polygon perimeter $U$. The same value is the circumference of
-    the circle.
+  \item Calculate perimeter of the polygon $u$. The same value is the
+    circumference of the circle.
 
-  \item Given circle's perimeter $U$, circle's area $A$ is:
+  \item Given circle's perimeter $u$, circle's area $A$ is:
 
     \[
       A = \frac{u^2}{4\pi}
@@ -482,7 +481,7 @@ circle is meant. Given a bend, its compactness index is calculated as follows:
   \item Compactness index is $\nicefrac{P}{A}$:
 
     \[
-      cmp = \frac{P}{A} = \frac{P}{ \frac{u^2}{4\pi}} = \frac{4\pi P}{u^2}
+      cmp = \frac{P}{A} = \frac{P}{ \frac{u^2}{4\pi} } = \frac{4\pi P}{u^2}
     \]
 
 \end{enumerate}
