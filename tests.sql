@@ -59,11 +59,19 @@ create table wm_visuals (name text, way geometry);
 do $$
   declare fig6b1 geometry;
   declare fig6b2 geometry;
+
+  declare scb1 geometry;
+  declare scb2 geometry;
 begin
   select way from wm_debug where name='fig6' and stage='bbends' and gen=1 into fig6b1 limit 1 offset 0;
   select way from wm_debug where name='fig6' and stage='bbends' and gen=1 into fig6b2 limit 1 offset 2;
   insert into wm_visuals (name, way) values('fig6-baseline', st_makeline(st_startpoint(fig6b2), st_endpoint(fig6b2)));
   insert into wm_visuals (name, way) values('fig6-newline', st_makeline(st_endpoint(fig6b1), st_endpoint(fig6b2)));
+
+  --select way from wm_debug where name='selfcrossing-1' and stage='bbends' and gen=1 into scb1 limit 1 offset 0;
+  --select way from wm_debug where name='selfcrossing-1' and stage='bbends' and gen=1 into scb2 limit 1 offset 2;
+  --insert into wm_visuals (name, way) values('selfcrossing-1-baseline', st_makeline(st_startpoint(scb2), st_endpoint(scb2)));
+  --insert into wm_visuals (name, way) values('selfcrossing-1-newline', st_makeline(st_endpoint(scb1), st_endpoint(scb2)));
 end $$ language plpgsql;
 
 

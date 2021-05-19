@@ -16,8 +16,9 @@ FIGURES = test-figures \
 					fig5-gentle-inflection-after \
 					inflection-1-gentle-inflection-before \
 					inflection-1-gentle-inflection-after \
-					fig6-self-crossing-before \
-					fig6-self-crossing-after
+					fig6-selfcrossing-before \
+					fig6-selfcrossing-after \
+					selfcrossing-1-before
 
 #################################
 # The thesis, publishable version
@@ -92,14 +93,19 @@ inflection-1-gentle-inflection-after_1SELECT = wm_debug where name='inflection-1
 inflection-1-gentle-inflection-after_2SELECT = wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1
 inflection-1-gentle-inflection-after_2CMAP = 1
 
-fig6-self-crossing-before_WIDTHDIV = 4
-fig6-self-crossing-before_1SELECT = wm_debug where name='fig6' AND stage='bbends' AND gen=1
-fig6-self-crossing-before_2SELECT = wm_visuals where name='fig6-baseline'
-fig6-self-crossing-before_2LINESTYLE = dotted
-fig6-self-crossing-before_3SELECT = wm_visuals where name='fig6-newline'
-fig6-self-crossing-after_WIDTHDIV = 4
-fig6-self-crossing-after_1SELECT = wm_debug where name='fig6' AND stage='dcrossings' AND gen=1
+fig6-selfcrossing-before_WIDTHDIV = 4
+fig6-selfcrossing-before_1SELECT = wm_debug where name='fig6' AND stage='bbends' AND gen=1
+fig6-selfcrossing-before_2SELECT = wm_visuals where name='fig6-baseline'
+fig6-selfcrossing-before_2LINESTYLE = dotted
+fig6-selfcrossing-before_3SELECT = wm_visuals where name='fig6-newline'
+fig6-selfcrossing-after_WIDTHDIV = 4
+fig6-selfcrossing-after_1SELECT = wm_debug where name='fig6' AND stage='dcrossings' AND gen=1
 
+selfcrossing-1-before_WIDTHDIV = 4
+selfcrossing-1-before_1SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
+selfcrossing-1-before_2SELECT = wm_visuals where name='selfcrossing-1-baseline'
+selfcrossing-1-before_2LINESTYLE = dotted
+selfcrossing-1-before_3SELECT = wm_visuals where name='selfcrossing-1-newline'
 
 .faux_test-integration: tests-integration.sql wm.sql .faux_aggregate-rivers
 	./db -f $<
