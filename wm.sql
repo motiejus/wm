@@ -311,6 +311,7 @@ declare
   i integer;
   line geometry;
   lines geometry[];
+  bend geometry;
   bends geometry[];
   mutated boolean;
   l_type text;
@@ -324,15 +325,18 @@ begin
     raise 'Unsupported geometry type %', l_type;
   end if;
 
+
   i = 1;
-  mutated = true;
   foreach line in array lines loop
+    mutated = true;
     while mutated loop
       execute format('create table if not exists integ_%safigures (way geometry)', i);
       -- if anyone has suggestions how to insert a variable to a table without
       -- such hackery, I'll be glad to know
       execute format('insert into integ_%safigures select $1;', i) using (select unnest(array[line]));
+      raise notice 'inserting: %', st_astext(unnest(array[line]));
       bends = detect_bends(line);
+
       execute format('create table if not exists integ_%sbbends (i bigint, way geometry)', i);
       execute format('insert into integ_%sbbends (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
       bends = fix_gentle_inflections(bends);
@@ -342,8 +346,8 @@ begin
       execute format('create table if not exists integ_%sdselfcrossing (i bigint, way geometry)', i);
       execute format('insert into integ_%sdselfcrossing (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
       line = st_linemerge(st_union(bends));
-      i = i + 1;
     end loop;
+    i = i + 1;
   end loop;
 
   if l_type = 'ST_LineString' then

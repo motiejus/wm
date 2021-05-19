@@ -35,7 +35,8 @@ case ${1:-} in
             -e POSTGRES_USER=osm \
             -e POSTGRES_PASSWORD=osm \
             --name "$name" \
-            postgis/postgis:13-3.1-alpine
+            postgis/postgis:13-3.1-alpine \
+                -c log_statement=all
         _wait_for_postgres
         ;;
     stop)
