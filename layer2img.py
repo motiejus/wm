@@ -11,6 +11,7 @@ CMAP = 'tab20c'
 
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
 INCH_MM = 25.4
+INCH_CM = INCH_MM / 10
 BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
 
@@ -28,9 +29,9 @@ SCALES = {
 def wm_clip(string):
     if not string:
         return None
-    gdr, name = string.split(":")
+    name, gdr = string.split(":")
     if scale := SCALES.get(gdr):
-        return gdr, scale
+        return name, scale
     scales = ",".join(SCALES.keys())
     raise argparse.ArgumentTypeError("invalid scale. Expected %s" % scales)
 
@@ -51,7 +52,9 @@ def parse_args():
     parser.add_argument('--group3-linestyle')
 
     parser.add_argument('--wmclip',
-                        type=wm_clip, help="Clip. E.g. GDR10:nemunas-merkys")
+                        type=wm_clip,
+                        help="Clip for scale. E.g. salcia-visincia:GDR10",
+                        )
     parser.add_argument('--widthdiv',
                         default=1, type=float, help='Width divisor')
 
@@ -59,19 +62,20 @@ def parse_args():
     return parser.parse_args()
 
 
-def read_layer(select, width, maybe_wmclip):
+def read_layer(select, width_in, maybe_wmclip):
     if not select:
         return
     way = "way"
     if maybe_wmclip:
         name, scale = maybe_wmclip
-        way = "wm_clip(way, {name}, {scale}, {width})".format(
+        way = "st_intersection(way, wm_bbox('{name}', {scale}, {width}))".format(
                 name=name,
                 scale=scale,
-                width=width,
+                width=width_in * INCH_CM,
         )
     conn = psycopg2.connect(PSQL_CREDS)
     sql = "SELECT {way} as way1 FROM {select}".format(way=way, select=select)
+    print("sql: %s" % sql)
     return geopandas.read_postgis(sql, con=conn, geom_col='way1')
 
 
@@ -99,7 +103,7 @@ def main():
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
-    fig.set_figwidth(width)
+    #fig.set_figwidth(width)
 
     group1 is not None and group1.plot(ax=ax, **c1)
     group2 is not None and group2.plot(ax=ax, **c2)

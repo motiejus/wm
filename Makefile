@@ -10,16 +10,21 @@ SLIDES = slides-2021-03-29.pdf
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
 ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
 
-FIGURES = test-figures \
-					fig8-definition-of-a-bend \
-					fig5-gentle-inflection-before \
-					fig5-gentle-inflection-after \
-					inflection-1-gentle-inflection-before \
-					inflection-1-gentle-inflection-after \
-					fig6-selfcrossing-before \
-					fig6-selfcrossing-after \
-					selfcrossing-1-before \
-					selfcrossing-1-after
+FIGURES = \
+		  test-figures \
+		  fig8-definition-of-a-bend \
+		  fig5-gentle-inflection-before \
+		  fig5-gentle-inflection-after \
+		  inflection-1-gentle-inflection-before \
+		  inflection-1-gentle-inflection-after \
+		  fig6-selfcrossing-before \
+		  fig6-selfcrossing-after \
+		  selfcrossing-1-before \
+		  selfcrossing-1-after
+
+RIVERS = \
+		 salvis-gdr10 \
+		 salvis-gdr50
 
 # paper sizes in mm
 A4p = 210x297
@@ -75,8 +80,9 @@ mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib $(addsuffix .pdf,$(F
 ############################
 
 define FIG_template
-$(1).pdf: layer2img.py Makefile .faux_test
+$(1).pdf: layer2img.py Makefile $(2)
 	python ./layer2img.py --outfile=$(1).pdf \
+		$$(if $$($(1)_WMCLIP),--wmclip=$$($(1)_WMCLIP)) \
 		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
 		$$(foreach i,1 2 3, \
 			$$(if $$($(1)_$$(i)CMAP),--group$$(i)-cmap="$$($(1)_$$(i)CMAP)") \
@@ -84,7 +90,8 @@ $(1).pdf: layer2img.py Makefile .faux_test
 			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
-$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig))))
+$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig).faux_test)))
+$(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_test-rivers)))
 
 test-figures_1SELECT = wm_figures
 
@@ -127,6 +134,12 @@ selfcrossing-1-after_WIDTHDIV = 2
 selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='dcrossings' AND gen=1
 selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-after_2LINESTYLE = invisible
+
+salvis-gdr10_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-gdr10_WMCLIP = salcia-visincia:GDR10
+
+salvis-gdr50_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-gdr50_WMCLIP = salcia-visincia:GDR50
 
 
 .faux_test-rivers: tests-rivers.sql wm.sql .faux_db
