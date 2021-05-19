@@ -1,5 +1,19 @@
 \i wm.sql
 
+insert into wm_visuals(name, way) values('salcia-visincia',
+  st_closestpoint(
+    (select way from wm_rivers where name='Šalčia'),
+    (select way from wm_rivers where name='Visinčia')
+  )
+);
+
+insert into wm_visuals(name, way) values('nemunas-merkys',
+  st_closestpoint(
+    (select way from wm_rivers where name='Nemunas'),
+    (select way from wm_rivers where name='Merkys')
+  )
+);
+
 do $$
 declare
   npoints bigint;

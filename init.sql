@@ -1,4 +1,4 @@
--- This file initializes tables for unit and integration tests.
+-- This file initializes tables for unit and river tests.
 -- ST_SimplifyWM, when dbgname is non-empty, expects `wm_debug` table to be
 -- created.
 

@@ -41,8 +41,8 @@ mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES) ## Thesis for publish
 .PHONY: test
 test: .faux_test ## Unit tests (fast)
 
-.PHONY: test-integration
-test-integration: .faux_test-integration ## Integration tests (slow)
+.PHONY: test-rivers
+test-rivers: .faux_test-rivers ## Rivers tests (slow)
 
 .PHONY: slides
 slides: $(SLIDES)
@@ -113,7 +113,7 @@ selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='b
 selfcrossing-1-after_2LINESTYLE = invisible
 
 
-.faux_test-integration: tests-integration.sql wm.sql .faux_db
+.faux_test-rivers: tests-rivers.sql wm.sql .faux_db
 	./db -f $<
 	touch $@
 
@@ -161,7 +161,7 @@ mj-msc-gray.pdf: mj-msc.pdf
 .PHONY: clean
 clean: ## Clean the current working directory
 	-./db stop
-	-rm -r .faux_test .faux_aggregate-rivers .faux_test-integration .faux_db \
+	-rm -r .faux_test .faux_aggregate-rivers .faux_test-rivers .faux_db \
 		version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
 		_minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
@@ -169,7 +169,7 @@ clean: ## Clean the current working directory
 		$(SLIDES)
 
 .PHONY: clean-tables
-clean-tables: ## Remove tables created during unit or integration tests
+clean-tables: ## Remove tables created during unit or rivers tests
 	./db -c '\dt wm_*' | awk '/_/{print "drop table "$$3";"}' | ./db -f -
 	-rm .faux_db
 
