@@ -190,6 +190,7 @@ declare
 begin
   select way from wm_debug where name='fig3' and stage='bbends' and gen=1 and nbend=2 into fig3b2;
   size = wm_adjsize(fig3b2);
-  bend = wm_exaggerate_bend(fig3b2, size, 50.);
+  bend = wm_exaggerate_bend(fig3b2);
+  perform assert_equals('ST_LineString', st_geometrytype(bend));
   insert into wm_debug(stage, name, gen, nbend, way) values('manual', 'fig3', 1, 1, bend);
 end $$ language plpgsql;
