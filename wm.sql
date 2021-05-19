@@ -74,22 +74,24 @@ $$ language plpgsql;
 -- The text does not specify how many vertices can be "adjusted"; it can
 -- equally be one or many. This function is adjusting many, as long as the
 -- commulative inflection angle small (see variable below).
+--
+-- The implementation could be significantly optimized to avoid `st_reverse`
+-- and array reversals, trading for complexity in fix_gentle_inflections1.
 create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
 declare
   len int4;
   bends1 geometry[];
-  bends2 geometry[];
 begin
   len = array_length(bends, 1);
 
-  bends1 = fix_gentle_inflections1(bends);
+  bends = fix_gentle_inflections1(bends);
   for i in 1..len loop
-    bends2[i] = st_reverse(bends1[len-i+1]);
+    bends1[i] = st_reverse(bends[len-i+1]);
   end loop;
-  bends2 = fix_gentle_inflections1(bends2);
+  bends1 = fix_gentle_inflections1(bends1);
 
   for i in 1..len loop
-    bends[i] = st_reverse(bends2[len-i+1]);
+    bends[i] = st_reverse(bends1[len-i+1]);
   end loop;
 end
 $$ language plpgsql;
@@ -166,15 +168,3 @@ begin
   end loop;
 end
 $$ language plpgsql;
-
--- https://wiki.postgresql.org/wiki/Array_reverse
-create or replace function array_reverse(anyarray) returns anyarray as $$
-select array(
-    select $1[i]
-    from generate_series(
-        array_lower($1,1),
-        array_upper($1,1)
-    ) as s(i)
-    order by i desc
-);
-$$ language 'sql' strict immutable;
