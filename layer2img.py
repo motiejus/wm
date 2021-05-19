@@ -22,7 +22,7 @@ COLORS = {
 # see `NOTICE` in the LaTeX document; this is the width of the main text block.
 TEXTWIDTH_CM = 12.12364
 
-QUADRANTS = {'tr':1, 'br':2, 'bl':3, 'tl':4}
+QUADRANTS = {'tr':1, 'tl':2, 'bl':3, 'br':4}
 
 def color(string):
     return COLORS[string if string else 'black']

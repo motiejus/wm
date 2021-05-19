@@ -1394,36 +1394,36 @@ Our generalized results are viewed from the following angles:
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm-50k}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--50k}
     \caption{2x zoomed-in {\WM} for 1:\numprint{50000}.}
-    \label{fig:salvis-wm-50k}
+    \label{fig:salvis-wm75-grpk10--50k}
 \end{figure}
 
-As one can see in Figure~\ref{fig:salvis-wm-50k}, the illustrations deliver
+As one can see in Figure~\ref{fig:salvis-wm75-grpk10--50k}, the illustrations deliver
 what was promised by the algorithm, but with a few caveats. Left side of the
 figure looks reasonably well simplified: long bends remain slightly curved,
 small bends are removed or slightly exaggerated.
 
-Figure's~\ref{fig:salvis-wm-50k} left part is clipped to
-Figure~\ref{fig:salvis-wm-50k-nw}. As one can see, some bends were well
+Figure's~\ref{fig:salvis-wm75-grpk10--50k} left part is clipped to
+Figure~\ref{fig:salvis-wm75-grpk10--50ktl}. As one can see, some bends were well
 exaggerated, and some bends were eliminated.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm-50k-nw}
-    \caption{Left part of Figure~\ref{fig:salvis-wm-50k}.}
-    \label{fig:salvis-wm-50k-nw}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--50ktl}
+    \caption{Left part of Figure~\ref{fig:salvis-wm75-grpk10--50k}.}
+    \label{fig:salvis-wm75-grpk10--50ktl}
 \end{figure}
 
-Top--right side (clipped in Figure~\ref{fig:salvis-wm-50k-ne}) some jagged
+Top--right side (clipped in Figure~\ref{fig:salvis-wm75-grpk10--50ktl}) some jagged
 and sharp bends appear. These will become more pronounced in even larger-scale
 simplification in the next section.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm-50k-ne}
-    \caption{Top--right part of Figure~\ref{fig:salvis-wm-50k}.}
-    \label{fig:salvis-wm-50k-ne}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk10--50ktr}
+    \caption{Top--right part of Figure~\ref{fig:salvis-wm75-grpk10--50k}.}
+    \label{fig:salvis-wm75-grpk10--50ktr}
 \end{figure}
 
 To sum up, mid-scale simplification works well for some geometries, but creates
@@ -1511,23 +1511,23 @@ compares the resulting {\WM}--generalized rivers to grpk50LT and grpk250LT.
 \subsubsection{Medium-scale (1:\numprint{50000})}
 
 For our research location, the national dataset GDB10LT is almost equivalent to
-grpk50LT, with a few nuances. Figure~\ref{fig:salvis-wm-grpk50} illustrates
+grpk50LT, with a few nuances. Figure~\ref{fig:salvis-wm75-grpk50-grpk10} illustrates
 all three shapes: grpk50LT, {\WM}--simplified GDB10LT, and the original GDB10LT.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm-grpk50}
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10}
 
     \caption{2x zoomed-in grpk50LT (green), {\WM}--simplified GDB10LT (orange)
     and original GDB10LT (dotted black).}
 
-    \label{fig:salvis-wm-grpk50}
+    \label{fig:salvis-wm75-grpk50-grpk10}
 \end{figure}
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10-50ktr}
-    \caption{Top--right side of Figure~\ref{fig:salvis-wm-grpk50}.}
+    \caption{Top--right side of Figure~\ref{fig:salvis-wm75-grpk50-grpk10}.}
     \label{fig:salvis-wm75-grpk50-grpk10-50ktr}
 \end{figure}
 
@@ -1697,7 +1697,8 @@ paper on a warm pre-COVID summer evening. I got intrigued. He was also an early
 beta-tester of my implementation, and helped me understand where the initial
 algorithm descriptions were ambiguous.
 
-Many thanks to NŽT for providing the datasets with a very permissive license.
+Many thanks to NŽT\cite{nzt} for providing the datasets with a very permissive
+license.
 
 \printbibliography
 

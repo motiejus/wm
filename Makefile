@@ -43,11 +43,8 @@ RIVERS = \
 		 salvis-overlaid-vwchaikin64-50k \
 		 salvis-wm220-10x \
 		 salvis-wm220-2x \
-		 salvis-wm-50k \
-		 salvis-wm-50k-nw \
-		 salvis-wm-50k-ne \
 		 salvis-wm-overlaid-250k-zoom \
-		 salvis-wm-grpk50 \
+		 salvis-wm75-grpk50-grpk10 \
 		 salvis-wm75-grpk50-grpk10ne \
 		 salvis-wm220
 
@@ -140,6 +137,45 @@ salvis-grpk250-2x_WIDTHDIV = 2
 # 50K
 ################################################################################
 
+label_wm75 = Wang--Müller
+label_vw64 = Visvalingam--Whyatt
+label_dp64 = Douglas \& Peucker
+label_grpk10 = GRPK 1:\numprint{10000}
+label_grpk50 = GRPK 1:\numprint{50000}
+label_vw64chaikin = $(label_vw64) and Chaikin
+label_dp64chaikin = $(label_dp64) and Chaikin
+legend_   = lower left
+legend_tr = lower right
+legend_tl = lower center
+
+define wm_vwdp50k
+RIVERS += salvis-$(1)-$(2)-$(3)-50k$(4)
+salvis-$(1)-$(2)-$(3)-50k$(4)_1SELECT    = wm_visuals where name='salvis-$(1)'
+salvis-$(1)-$(2)-$(3)-50k$(4)_1COLOR     = orange
+salvis-$(1)-$(2)-$(3)-50k$(4)_1LABEL     = $(label_$(1))
+salvis-$(1)-$(2)-$(3)-50k$(4)_2SELECT    = wm_visuals where name='salvis-$(2)'
+salvis-$(1)-$(2)-$(3)-50k$(4)_2COLOR     = green
+salvis-$(1)-$(2)-$(3)-50k$(4)_2LABEL     = $(label_$(2))
+$(if $(3),
+salvis-$(1)-$(2)-$(3)-50k$(4)_3SELECT    = wm_visuals where name='salvis-$(3)'
+salvis-$(1)-$(2)-$(3)-50k$(4)_3LINESTYLE = dotted
+salvis-$(1)-$(2)-$(3)-50k$(4)_3LABEL     = $(label_$(3))
+,)
+salvis-$(1)-$(2)-$(3)-50k$(4)_QUADRANT   = $(4)
+salvis-$(1)-$(2)-$(3)-50k$(4)_LEGEND     = $(legend_$(4))
+endef
+$(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
+	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,)) \
+	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tl)) \
+	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tr)) \
+)
+$(eval $(call wm_vwdp50k,wm75,grpk50,grpk10))
+$(eval $(call wm_vwdp50k,wm75,grpk50,grpk10,tr))
+
+$(eval $(call wm_vwdp50k,wm75,grpk10,,))
+$(eval $(call wm_vwdp50k,wm75,grpk10,,tr))
+$(eval $(call wm_vwdp50k,wm75,grpk10,,tl))
+
 salvis-25k_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-25k_WIDTHDIV = 1
 
@@ -170,62 +206,8 @@ salvis-overlaid-vwchaikin64-50k_1COLOR = orange
 salvis-overlaid-vwchaikin64-50k_WIDTHDIV = 2
 salvis-overlaid-vwchaikin64-50k_QUADRANT = tl
 
-salvis-wm-50k_1SELECT = wm_visuals where name='salvis-wm75'
-salvis-wm-50k_2SELECT = wm_visuals where name='salvis-grpk10'
-salvis-wm-50k_1COLOR = orange
-
-salvis-wm-50k-nw_1SELECT = wm_visuals where name='salvis-wm75'
-salvis-wm-50k-nw_2SELECT = wm_visuals where name='salvis-grpk10'
-salvis-wm-50k-nw_1COLOR = orange
-salvis-wm-50k-nw_QUADRANT = tr
-
-salvis-wm-50k-ne_1SELECT = wm_visuals where name='salvis-wm75'
-salvis-wm-50k-ne_2SELECT = wm_visuals where name='salvis-grpk10'
-salvis-wm-50k-ne_1COLOR = orange
-salvis-wm-50k-ne_QUADRANT = tl
-
-salvis-wm-grpk50_1SELECT = wm_visuals where name='salvis-wm75'
-salvis-wm-grpk50_2SELECT = wm_visuals where name='salvis-grpk50'
-salvis-wm-grpk50_3SELECT = wm_visuals where name='salvis-grpk10'
-salvis-wm-grpk50_1COLOR = orange
-salvis-wm-grpk50_2COLOR = green
-salvis-wm-grpk50_3LINESTYLE = dotted
-
-
 salvis-wm220_1SELECT = wm_visuals where name='salvis-wm220'
 salvis-wm220_WIDTHDIV = 2
-
-label_wm75 = Wang--Müller
-label_vw64 = Visvalingam--Whyatt
-label_dp64 = Douglas \& Peucker
-label_grpk10 = GRPK 1:\numprint{10000}
-label_grpk50 = GRPK 1:\numprint{50000}
-label_vw64chaikin = $(label_vw64) and Chaikin
-label_dp64chaikin = $(label_dp64) and Chaikin
-legend_   = lower left
-legend_tr = lower right
-legend_tl = lower center
-
-define wm_vwdp50k
-RIVERS += salvis-$(1)-$(2)-$(3)-50k$(4)
-salvis-$(1)-$(2)-$(3)-50k$(4)_1SELECT    = wm_visuals where name='salvis-$(1)'
-salvis-$(1)-$(2)-$(3)-50k$(4)_2SELECT    = wm_visuals where name='salvis-$(2)'
-salvis-$(1)-$(2)-$(3)-50k$(4)_3SELECT    = wm_visuals where name='salvis-$(3)'
-salvis-$(1)-$(2)-$(3)-50k$(4)_1COLOR     = orange
-salvis-$(1)-$(2)-$(3)-50k$(4)_1LABEL     = $(label_$(1))
-salvis-$(1)-$(2)-$(3)-50k$(4)_2COLOR     = green
-salvis-$(1)-$(2)-$(3)-50k$(4)_2LABEL     = $(label_$(2))
-salvis-$(1)-$(2)-$(3)-50k$(4)_3LINESTYLE = dotted
-salvis-$(1)-$(2)-$(3)-50k$(4)_3LABEL     = $(label_$(3))
-salvis-$(1)-$(2)-$(3)-50k$(4)_QUADRANT   = $(4)
-salvis-$(1)-$(2)-$(3)-50k$(4)_LEGEND     = $(legend_$(4))
-endef
-$(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
-	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,)) \
-	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tl)) \
-	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tr)) \
-)
-$(eval $(call wm_vwdp50k,wm75,grpk50,grpk10,tr))
 
 define FIG_template
 $(1).pdf: layer2img.py Makefile $(2)
@@ -240,7 +222,6 @@ $(1).pdf: layer2img.py Makefile $(2)
 			$$(if $$($(1)_$$(i)LINESTYLE),--g$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
-
 
 $(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
 $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
@@ -291,8 +272,6 @@ mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
 
 .PHONY: allfigs
 allfigs: $(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
-
-
 
 .faux_db_pre: db init.sql
 	bash db start
