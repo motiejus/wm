@@ -16,6 +16,23 @@ declare
 begin
   pi = radians(180);
 
+  -- the last vertex is iterated over twice, because the algorithm uses 3 vertices
+  -- to calculate the angle between them.
+  --
+  -- Given 3 vertices p1, p2, p3:
+  --
+  --         p1___ ...
+  --          /
+  -- ..._____/
+  --    p3   p2
+  --
+  -- This loop will use p1 as the head vertex, p2 will be the measured angle,
+  -- and p3 will be trailing. The line that will be added to the bend will
+  -- always be [p3,p2].
+  -- So once the p1 becomes the last vertex, the loop terminates, and the
+  -- [p2,p1] line will not have a chance to be added. So the loop adds the last
+  -- vertex twice, so it has a chance to become p2, and be added to the bend.
+  --
   for p in (
     (select (dp).geom from st_dumppoints(line) as dp order by (dp).path[1] asc)
     union all
