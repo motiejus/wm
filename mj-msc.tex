@@ -24,6 +24,7 @@
 \usepackage{float}
 \usepackage{numprint}
 \usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows,positioning}
 \usepackage{fancyvrb}
 \usepackage{layouts}
 %\usepackage{charter}
@@ -599,6 +600,43 @@ appendix~\ref{sec:code-regenerate}. The visualization code serves as a good
 example reference for anyone willing to start using the algorithm.
 
 \subsection{Implementation workflow}
+
+\tikzset{
+  startstop/.style={trapezium,text centered,minimum height=2em,
+    trapezium left angle=70,trapezium right angle=110,draw=black,fill=red!20},
+  proc/.style={rectangle,minimum height=2em,text centered,draw=black,
+    fill=orange!20},
+  decision/.style={diamond,minimum height=2em,text centered,aspect=3,
+    draw=black,fill=green!20},
+  arrow/.style={thick,->,>=stealth},
+}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[node distance=2cm,auto]
+    \node (start) [startstop] {Read \textsc{linestring}};
+    \node (detect) [proc,below of=start] {Detect bends};
+    \node (inflections) [proc,below of=detect] {Fix gentle inflections};
+    \node (selfcrossing) [proc,below of=inflections] {Eliminate self-crossing};
+    \node (mutated1) [decision,below of=selfcrossing] {Mutated?};
+    \node (bendattrs) [proc,below of=mutated1] {Compute bend attributes};
+    \node (exaggeration) [proc,below of=bendattrs] {Exaggeration};
+    \node (mutated2) [decision,below of=exaggeration] {Mutated?};
+
+    \coordinate [right of=mutated1,node distance=5cm] (mutated1yes) {};
+    \coordinate [right of=mutated2,node distance=5cm] (mutated2yes) {};
+
+    \draw [arrow] (start) -- (detect);
+    \draw [arrow] (detect) -- (inflections);
+    \draw [arrow] (inflections) -- (selfcrossing);
+    \draw [arrow] (selfcrossing) -- (mutated1);
+    \draw [arrow] (mutated1) -| node [near start] {Yes} (mutated1yes) |- (detect);
+    \draw [arrow] (mutated1) -- node[anchor=west] {No} (bendattrs);
+    \draw [arrow] (bendattrs) -- (exaggeration);
+    \draw [arrow] (mutated2) -| node [near start] {Yes} (mutated2yes) |- (detect);
+
+  \end{tikzpicture}
+\end{figure}
 
 TODO: list most of the functions defined in the algorithm and draw how they
 interact. Similar to "Flow chart of the prototype system" in the original
