@@ -1496,20 +1496,29 @@ compares the resulting {\WM}--generalized rivers to GDR50LT and GDR250LT.
 \subsubsection{Medium-scale (1:\numprint{50000})}
 
 For our research location, the national dataset GDB10LT is almost equivalent to
-GDR50LT. Figure~\ref{fig:salvis-gdr50-overlaid} illustrates it. Therefore, the
-comparison between {\WM}--simplified GDB10LT and GDR50LT is equivalent to the
-comparison between {\WM}--simplified GDB10LT and non--simplified GDR50LT, which
-was covered in section~\ref{sec:analyzed-medium-scale}.
+GDR50LT, with a few nuances. Figure~\ref{fig:salvis-wm-gdr50} illustrates
+all three shapes: GDR50LT, {\WM}--simplified GDB10LT, and the original GDB10LT.
 
-\begin{figure}[ht]
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-gdr50-overlaid}
+    \includegraphics[width=\textwidth]{salvis-wm-gdr50}
 
     \caption{2x zoomed-in GDR50LT (green), {\WM}--simplified GDB10LT (orange)
     and original GDB10LT (black).}
 
-    \label{fig:salvis-gdr50-overlaid}
+    \label{fig:salvis-wm-gdr50}
 \end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{salvis-wm-gdr50-ne}
+    \caption{Top--right side of figure~\ref{fig:salvis-wm-gdr50}.}
+    \label{fig:salvis-wm-gdr50-ne}
+\end{figure}
+
+Although figures are almost identical, figure~\ref{fig:salvis-wm-gdr50-ne}
+illustrates two small bends that have been removed in GDR50LT, but have been
+exaggerated by our implementation.
 
 \subsubsection{Large-scale (1:\numprint{250000})}
 

@@ -45,7 +45,8 @@ RIVERS = \
 		 salvis-wm-50k-nw \
 		 salvis-wm-50k-ne \
 		 salvis-wm-overlaid-250k-zoom \
-		 salvis-gdr50-overlaid
+		 salvis-wm-gdr50 \
+		 salvis-wm-gdr50-ne
 
 #################################
 # The thesis, publishable version
@@ -221,11 +222,19 @@ salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis'
 salvis-wm-overlaid-250k-zoom_1COLOR = orange
 
-salvis-gdr50-overlaid_1SELECT = wm_visuals where name='salvis-wm-75'
-salvis-gdr50-overlaid_2SELECT = wm_visuals where name='salvis-gdr50'
-salvis-gdr50-overlaid_3SELECT = wm_visuals where name='salvis'
-salvis-gdr50-overlaid_1COLOR = orange
-salvis-gdr50-overlaid_2COLOR = green
+salvis-wm-gdr50_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-gdr50_2SELECT = wm_visuals where name='salvis-gdr50'
+salvis-wm-gdr50_3SELECT = wm_visuals where name='salvis'
+salvis-wm-gdr50_1COLOR = orange
+salvis-wm-gdr50_2COLOR = green
+
+salvis-wm-gdr50-ne_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-gdr50-ne_2SELECT = wm_visuals where name='salvis-gdr50'
+salvis-wm-gdr50-ne_3SELECT = wm_visuals where name='salvis'
+salvis-wm-gdr50-ne_1COLOR = orange
+salvis-wm-gdr50-ne_2COLOR = green
+salvis-wm-gdr50-ne_QUADRANT = 1
+
 
 .faux_db_pre: db init.sql
 	bash db start
