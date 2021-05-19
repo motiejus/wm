@@ -147,14 +147,10 @@ begin
       exit when array_length(phead, 1) < 3;
 
       -- if inflection angle between ptail[1:3] "large", stop processing this bend
-      if abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle then
-        exit;
-      end if;
+      exit when abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle;
 
       -- distance from head's first vertex should be larger than from second vertex
-      if st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]) then
-        exit;
-      end if;
+      exit when st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]);
 
       -- detected a gentle inflection. Move head of the tail to the tail of head
       bends[i] = st_removepoint(bends[i], 0);
