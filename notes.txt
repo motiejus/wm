@@ -40,11 +40,6 @@ inflection angles (AB in our examples) must be crossed with all the other bends
 to detect a possible line-crossing. This is O(N*M), where N is the total number
 of line segments, and M is the number of qualifying bends. It is expensive.
 
-This may be simplified: if other bend's endpoints (A' and B') are in the same
-sub-plane as divided by AB, then the bend can be skipped from checking if it
-intersects with AB. Some intersections may be missed (see the last example),
-but they will be eliminated by joining A and B anyway.
-
 Also, there is another way to remove self-crossing, without removing most of
 the bend. E.g. from:
 
@@ -69,4 +64,4 @@ To:
    \__________|
 
 But perhaps it doesn't look quite as natural. I will trust the original
-article to do the right thing here.
+article to do the right thing here and remove the bend altogether.
