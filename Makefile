@@ -182,7 +182,6 @@ $(eval $(call wm_vwdp50kblack,wm75,,grpk10,1))
 $(eval $(call wm_vwdp50kblack,wm75,,grpk10,1,tr))
 $(eval $(call wm_vwdp50kblack,wm75,,grpk10,1,tl))
 
-
 salvis-25k_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-25k_WIDTHDIV = 1
 

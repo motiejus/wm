@@ -1392,21 +1392,21 @@ Our generalized results are viewed from the following angles:
 \subsubsection{Medium-scale (1:\numprint{50000})}
 \label{sec:analyzed-medium-scale}
 
-\begin{figure}[h!]
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50k}
     \caption{2x zoomed-in {\WM} for 1:\numprint{50000}.}
     \label{fig:salvis-wm75--grpk10-1x50k}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50ktl}
     \caption{Left part of Figure~\ref{fig:salvis-wm75--grpk10-1x50k}.}
     \label{fig:salvis-wm75--grpk10-1x50ktl}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50ktr}
     \caption{Top--right part of Figure~\ref{fig:salvis-wm75--grpk10-1x50k}.}
@@ -1429,6 +1429,8 @@ simplification in the next section.
 To sum up, mid-scale simplification works well for some geometries, but creates
 sharp edges for others.
 
+\clearpage
+
 \subsubsection{Large-scale (1:\numprint{250000})}
 \label{sec:analyzed-large-scale}
 
@@ -1450,7 +1452,7 @@ simplification and overlays the original.
         \includegraphics[width=.2\textwidth]{salvis-wm220-10x}
         \caption{Simplified.}
     \end{subfigure}
-    \caption{GDB10LT simplified with {\WM} for 1:\numprint{250000}.}
+    \caption{GRPK10 simplified with {\WM} for 1:\numprint{250000}.}
     \label{fig:salvis-wm220-10x}
 \end{figure}
 
@@ -1464,6 +1466,8 @@ simplification and overlays the original.
 A conglomeration of bends is visible, especially in top--right side of the
 illustration. We assume this was caused by two bends significantly exaggerated,
 leaving no space to exaggerate for those between the two.
+
+\clearpage
 
 \subsubsection{Discussion}
 
@@ -1487,13 +1491,13 @@ future research and improvement:
 
 \subsubsection{Background}
 
-There are a few datasets used in this comparison: GDB10LT, GRPK50 and
+There are a few datasets used in this comparison: GRPK10, GRPK50 and
 GRPK250. They are vector datasets, which include rivers. They can be
 downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
 
 \begin{description}
 
-    \item[GDB10LT] is dataset of highest detail. Suited for maps of scale
+    \item[GRPK10] is dataset of highest detail. Suited for maps of scale
         1:\numprint{10000}.
 
     \item[GRPK50] is suited for maps of scale 1:\numprint{50000}.
@@ -1503,17 +1507,19 @@ downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
 
 \end{description}
 
-During the analysis, we ran {\WM} on GDB10LT for 2 destination scales:
-1:\numprint{50000} and 1:\numprint{250000}.\footnote{parameter calculation is
-detailed in section~\ref{sec:bend-scaling-and-dimensions}.} This section
-compares the resulting {\WM}--generalized rivers to GRPK50 and GRPK250.
+During the analysis, we ran {\WM} on GRPK10 for 2 destination scales:
+1:\numprint{50000} and 1:\numprint{250000}.\footnote{How parameters are
+calculated is detailed in section~\ref{sec:bend-scaling-and-dimensions}.} This
+section compares the resulting {\WM}--generalized rivers to GRPK50 and GRPK250.
+
+\clearpage
 
 \subsubsection{Medium-scale (1:\numprint{50000})}
 
-For our research location, the national dataset GDB10LT is almost equivalent to
+For our research location, the national dataset GRPK10 is almost equivalent to
 GRPK50, with a few nuances. Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50k}
-illustrates all three shapes: GRPK50, {\WM}--simplified GDB10LT, and the
-original GDB10LT.
+illustrates all three shapes: GRPK50, {\WM}--simplified GRPK10, and the
+original GRPK10.
 
 \begin{figure}[h!]
     \centering
@@ -1536,6 +1542,8 @@ Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50ktr} illustrates two small bends
 that have been removed in GRPK50, but have been exaggerated by our
 implementation.
 
+\clearpage
+
 \subsubsection{Large-scale (1:\numprint{250000})}
 \label{sec:national-large-scale}
 
@@ -1557,12 +1565,11 @@ desired in section~\ref{sec:future-suggestions}.
     \begin{subfigure}[b]{.49\textwidth}
         \centering
         \includegraphics[width=\textwidth]{salvis-wm220}
-        \caption{{\WM}-simplified GDB10LT.}
+        \caption{{\WM}-simplified GRPK10.}
     \end{subfigure}
-    \caption{GRPK250 and {\WM}--simplified GDB10LT.}
+    \caption{GRPK250 and {\WM}--simplified GRPK10.}
     \label{fig:salvis-wm220}
 \end{figure}
-
 
 \subsection{Comparison with {\DP} and {\VW}}
 
@@ -1573,30 +1580,31 @@ in this section to 1:\numprint{50000}.
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{salvis-wm75-dp64-grpk10-1x50k}
-
-
+    \caption{}
     \label{fig:salvis-wm75-dp64-grpk10-1x50k}
 \end{figure}
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{salvis-wm75-dpchaikin64-grpk10-1x50k}
-
+    \caption{}
     \label{fig:salvis-wm75-dpchaikin64-grpk10-1x50k}
 \end{figure}
 
+\clearpage
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{salvis-wm75-vw64-grpk10-1x50k}
-
+    \caption{}
     \label{fig:salvis-wm75-vw64-grpk10-1x50k}
 \end{figure}
 
 \begin{figure}[h!]
     \includegraphics[width=\textwidth]{salvis-wm75-vwchaikin64-grpk10-1x50k}
-
+    \caption{}
     \label{fig:salvis-wm75-vwchaikin64-grpk10-1x50k}
 \end{figure}
 
+\clearpage
 
 \subsection{Testing Results Online}
 \label{sec:testing-results-online}
@@ -1623,6 +1631,8 @@ produces poorly simplified results for some geometries.
     \caption{Another example from the on-line test tool.}
     \label{fig:openmap-wm-bad}
 \end{figure}
+
+\clearpage
 
 \section{Conclusions}
 \label{sec:conclusions}
