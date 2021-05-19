@@ -22,8 +22,8 @@ insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRI
 drop table if exists abends, bends;
 create table abends (name text, ways geometry[]);
 insert into abends select f.name, detect_bends(f.way) from figures f;
-create table bends (name text, way geometry);
-insert into bends select a.name, unnest(a.ways) from abends a;
+create table bends (name text, i bigint, way geometry);
+insert into bends select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from abends a;
 
 do $$
 declare
@@ -44,8 +44,8 @@ end $$ language plpgsql;
 drop table if exists ainflections, inflections;
 create table ainflections (name text, ways geometry[]);
 insert into ainflections select a.name, fix_gentle_inflections(a.ways) from abends a;
-create table inflections (name text, way geometry);
-insert into inflections select a.name, unnest(a.ways) from ainflections a;
+create table inflections (name text, i bigint, way geometry);
+insert into inflections select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from ainflections a;
 
 do $$
 declare
