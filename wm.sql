@@ -489,6 +489,7 @@ create function wm_exaggeration(
 declare
   desired_size constant float default pi()*(dhalfcircle^2)/8;
   tmpbendattr wm_t_bend_attrs;
+  tmpint geometry;
   i integer;
   n integer;
   last_id integer;
@@ -506,13 +507,12 @@ begin
       -- does tmpbendattrs.bend intersect with the previous or next
       -- intersect_patience bends? If they do, abort exaggeration for this one.
 
-      bendattrs[i] = tmpbendattr;
 
       -- Do close-by bends intersect with this one? Special
       -- handling first, because 2 vertices need to be removed before checking.
       n = st_npoints(bendattrs[i-1].bend);
       if n > 3 then
-        continue when st_overlaps(tmpbendattr.bend,
+        continue when st_intersects(tmpbendattr.bend,
           st_removepoint(st_removepoint(bendattrs[i-1].bend, n-1), n-2));
       end if;
 
@@ -522,16 +522,27 @@ begin
           st_removepoint(st_removepoint(bendattrs[i+1].bend, 0), 0));
       end if;
 
-      -- now loop over the next intersect_patience
       for n in -intersect_patience+1..intersect_patience-1 loop
         continue when n in (-1, 0, 1);
         continue when i+n < 1;
         continue when i+n > array_length(bendattrs, 1);
 
-        if st_overlaps(tmpbendattr.bend, bendattrs[i+n].bend) then
+        -- More special handling: if the neigbhoring bend has 3 vertices, the
+        -- neighbor's neighbor may just touch the tmpbendattr.bend; in this
+        -- case, the nearest vertex should be removed before comparing.
+        tmpint = bendattrs[i+n].bend;
+        if st_npoints(tmpint) > 2 then
+          if n = -2 and st_npoints(bendattrs[i+n+1].bend) = 3 then
+            tmpint = st_removepoint(tmpint, st_npoints(tmpint)-1);
+          elsif n = 2 and st_npoints(bendattrs[i+n-1].bend) = 3 then
+            tmpint = st_removepoint(tmpint, 0);
+          end if;
+        end if;
+
+        if st_intersects(tmpbendattr.bend, tmpint) then
           insert into wm_manual(name, way) values
             ('intersecter', tmpbendattr.bend),
-            ('intersectee', bendattrs[i+n].bend);
+            ('intersectee', tmpint);
           raise notice '[%] % intersects with %', dbggen, i, i+n;
           continue bendloop;
         end if;
@@ -539,6 +550,7 @@ begin
 
       -- no intersections within intersect_patience. Mutate bend.
       mutated = true;
+      bendattrs[i] = tmpbendattr;
 
       -- remove last vertex of the previous bend and
       -- first vertex of the next bend, because bends always
@@ -754,6 +766,7 @@ begin
     raise 'Unknown geometry type %', l_type;
   end if;
 
+  <<lineloop>>
   for i in 1..array_length(lines, 1) loop
     mutated = true;
     gen = 1;
@@ -794,23 +807,20 @@ begin
         end loop;
         lines[i] = st_linemerge(st_union(bends));
         if st_geometrytype(lines[i]) != 'ST_LineString' then
-          raise 'Got % instead of ST_LineString. '
-          'Does the exaggerated bend intersect? '
-          'If so, try increasing intersect_patience.',
-          st_geometrytype(lines[i]);
-
           insert into wm_manual(name, way)
           select 'non-linestring-' || a.path[1], a.geom
           from st_dump(lines[i]) a
           order by a.path[1];
-          exit;
+          raise 'Got % (in %) instead of ST_LineString. '
+          'Does the exaggerated bend intersect with the line? '
+          'If so, try increasing intersect_patience.',
+          st_geometrytype(lines[i]), dbgname;
+          --exit lineloop;
         end if;
         gen = gen + 1;
         continue;
       end if;
-
     end loop;
-
   end loop;
 
   if l_type = 'ST_LineString' then
