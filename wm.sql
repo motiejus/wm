@@ -222,18 +222,26 @@ begin
       p2 = st_pointn(bends[j], 1);
       p3 = st_pointn(bends[j], -1);
 
+      raise notice 'j: %, i: %', j, i;
+
       -- are p2 and p3 on the different sides of line(p0,p1)? vector
       -- multiplication; https://stackoverflow.com/questions/1560492/
       s2 = (st_x(p0)-st_x(p1)*(st_y(p2)-st_y(p1))-
             (st_y(p0)-st_y(p1))*(st_x(p2)-st_x(p1)));
       s3 = (st_x(p0)-st_x(p1)*(st_y(p3)-st_y(p1))-
             (st_y(p0)-st_y(p1))*(st_x(p3)-st_x(p1)));
+      raise notice 'sign(s2): %, sign(s3): %', sign(s2), sign(s3);
       continue when sign(s2) = sign(s3);
 
       -- do end vertices of bend[i] cross bend[j]?
       a = st_pointn(bends[i], 1);
       b = st_pointn(bends[i], -1);
       multi = st_split(bends[j], st_makeline(a, b));
+      insert into debug (i, way) values (0, st_geometryn(multi, 1));
+      raise notice 'bends[i]: %', st_astext(bends[i]);
+      raise notice 'bends[j]: %', st_astext(bends[j]);
+      raise notice 'a: %, b: %', st_astext(a), st_astext(b);
+      raise notice 'multi: %', st_astext(multi);
       continue when st_numgeometries(multi) = 1;
       continue when st_numgeometries(multi) = 2 and
         (st_contains(bends[j], a) or st_contains(bends[j], b));
@@ -251,11 +259,6 @@ begin
       --   bends[i] = append(bends[i], multi[2][2..n])
       --   remove bends from bends[i+1] to bends[j] inclusive.
 
-      raise notice 'j: %, i: %', j, i;
-      raise notice 'bends[i]: %', st_astext(bends[i]);
-      raise notice 'bends[j]: %', st_astext(bends[j]);
-      raise notice 'a: %, b: %', st_astext(a), st_astext(b);
-      raise notice 'multi: %', st_astext(multi);
 
       raise notice '';
       prev_length = array_length(bends, 1);
@@ -271,7 +274,7 @@ begin
           st_pointn(bends[i], 1),
           st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
         );
-        insert into debug select x.path[1], x.geom from st_dump(bends[i-1]) x;
+        --insert into debug select x.path[1], x.geom from st_dump(bends[i-1]) x;
         bends = bends[1:i] || bends[j+1:prev_length];
       end if;
       j = j - prev_length + array_length(bends, 1);
