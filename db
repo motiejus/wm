@@ -30,13 +30,14 @@ case ${1:-} in
     start)
         _psql -qc '\q' 2>/dev/null && exit 0
         docker run -d --rm \
-            -p 127.0.0.1:5432:5432 \
+            --net=host \
             -e POSTGRES_DBNAME=osm \
             -e POSTGRES_USER=osm \
             -e POSTGRES_PASSWORD=osm \
             --name "$name" \
             postgis/postgis:13-3.1-alpine \
-                -c log_statement=all
+                -c log_statement=all \
+                -c listen_addresses=127.0.0.1
         _wait_for_postgres
         ;;
     stop)
