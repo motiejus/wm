@@ -379,8 +379,8 @@ begin
 end;
 $$ language plpgsql;
 
--- splits a line by a point in a more robust way than st_split
--- (see https://trac.osgeo.org/postgis/ticket/2192)
+-- sm_st_split a line by a point in a more robust way than st_split.
+-- See https://trac.osgeo.org/postgis/ticket/2192
 drop function if exists wm_st_split;
 create function wm_st_split(
   input geometry,
