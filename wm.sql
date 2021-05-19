@@ -194,8 +194,10 @@ begin
       -- distance from head's 1st vertex should be larger than from 2nd vertex
       exit when st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]);
 
-      -- bend with smaller baseline wins when two neighboring bends can
-      -- have gentle inflections.
+      -- Between two bends, bend with smaller baseline wins when two
+      -- neighboring bends can have gentle inflections. This is a heuristic
+      -- that can be safely removed, but in practice has shown to avoid
+      -- creating some very bendy lines.
       exit when st_distance(st_pointn(bends[i], 1), st_pointn(bends[i], -1)) <
         st_distance(st_pointn(bends[i-1], 1), st_pointn(bends[i-1], -1));
 
