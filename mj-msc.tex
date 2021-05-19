@@ -205,7 +205,7 @@ thus convenient to analyze for both small and large scale generalization.
         \includegraphics[width=.2\textwidth]{salvis-250k}
         \caption{Example scaled 1:250000.}
     \end{subfigure}
-    \caption{Down-scaled original river (1:50000 and 1:250000).}
+    \caption{Down-scaled original river.}
     \label{fig:salvis-50-250}
 \end{figure}
 
@@ -339,12 +339,12 @@ This section defines vocabulary and terms as defined in the rest of the paper.
     \item[Vertex] is a point on a plane, can be expressed by a pair of $(x,y)$
         coordinates.
 
-    \item[Line Segment (or Segment)] joins two vertices by a straight line. A
-        segment can be expressed by two coordinate pairs: $(x_1, y_1)$ and
-        $(x_2, y_2)$. Line Segment and Segment are used interchangeably
+    \item[Line Segment] or \textsc{segment} joins two vertices by a straight
+        line. A segment can be expressed by two coordinate pairs: $(x_1, y_1)$
+        and $(x_2, y_2)$. Line Segment and Segment are used interchangeably
         throughout the paper.
 
-    \item[Line], or \textsc{linestring}, represents a single linear feature in
+    \item[Line] or \textsc{linestring}, represents a single linear feature in
         the real world. For example, a river or a coastline.
 
         Geometrically, A line is a series of connected line segments, or,
@@ -354,21 +354,29 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 
     \item[Bend] is a subset of a line that humans perceive as a curve. The
         geometric definition is complex and is discussed in
-        section~\onpage{sec:definition-of-a-bend}.
+        section~\ref{sec:definition-of-a-bend}.
 
     \item[Baseline] is a line between bend's first and last vertex.
 
     \item[Sum of inner angles] TBD.
 
     \item[Algorithmic Complexity] also called \textsc{big o notation}, is a
-        relative measure to explain how long will the algorithm run depending
-        on it's input. For example, given $n$ objects and time complexity of
-        $O(n)$, the time it takes to execute the algorithm is proportional to
-        $n$. Conversely, if complexity is $O(n^2)$, then the time it takes to
-        execute the algorithm is quadratic. $O$ notation was first suggested by
+        relative measure to explain how long will the algorithm runs depending
+        on it's input. It is widely used in computing science when discussing
+        the efficiency of a given algorithm.
+
+        For example, given $n$ objects and time complexity of $O(log(n))$, the
+        time it takes to execute the algorithm is logarithmic to $n$.
+        Conversely, if complexity is $O(n^2)$, then the time it takes to
+        execute the algorithm is quadratic depending on the input. Importantly,
+        if the input size doubles, the time it takes to run the algorithm
+        quadruples.
+
+        $O$ notation was first suggested by
         Bachmann\cite{bachmann1894analytische} and
-        Laundau\cite{landau2000handbuch} in late XIX'th century, and adopted
-        for computer science by Donald Knuth\cite{knuth1976big} in 1970s.
+        Landau\cite{landau2000handbuch} in late XIX'th century, and clarified
+        and popularized for computing science by Donald
+        Knuth\cite{knuth1976big} in the 1970s.
 
 \end{description}
 
