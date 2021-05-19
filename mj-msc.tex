@@ -103,12 +103,12 @@
 
     \vfill
 
-    Šiuo metu prieinami linijų supaprastinimo algoritmai yra kilę iš
-    matematikos ir geometrijos, bei yra netinkami lankstiems geografiniams
-    objektams, tokiems kaip upės ir pakrantės. {\WirM} ištyrė, kaip kartografai
-    vykdo upių generalizaciją, ir sukūrė algoritmą. Mes realizavome šį
+    Šiuo metu esami linijų supaprastinimo algoritmai yra kilę iš matematikos ir
+    geometrijos, bet nėra tinkami lankstiems geografiniams objektams, tokiems
+    kaip upės ir pakrantės, atvaizduoti. {\WirM} ištyrė, kaip kartografai
+    atlieka upių generalizaciją, ir sukūrė algoritmą. Mes realizavome šį
     algoritmą ir išsamiai jį dokumentavome. Mūsų {\WM} realizacija ir
-    dokumentacija yra nemokami ir laisvai prieinami naudojant PostGIS
+    dokumentacija yra nemokamos ir laisvai prieinamos, naudojant PostGIS
     platformą.
 
 \end{abstract}
@@ -164,7 +164,7 @@ viewed as a task of finding a delicate balance between two competing goals:
 \end{itemize}
 
 Given the discussed complexities with natural features, a fine line between
-under-simplification (leaving object as-is) and over-simplification (making a
+under-simplification (leaving an object as-is) and over-simplification (making a
 straight line) needs to be found. Therein lies the complexity of simplification
 algorithms: all have different trade-offs.
 
@@ -265,7 +265,7 @@ Same rivers, unprocessed but in higher scales (1:\numprint{50000} and
 river features are so compact that a reasonably thin line depicting the river
 is touching itself, creating a thicker line. We can assume that some
 simplification for scale 1:\numprint{50000} and especially for
-1:\numprint{250000} are worthwhile.
+1:\numprint{250000} is worthwhile.
 
 \begin{figure}[ht]
     \centering
@@ -484,7 +484,7 @@ Lack of robust openly available generalization algorithm implementations poses
 a problem for map creation with free software: there is no high-quality
 simplification algorithm to create down-scaled maps, so any cartographic work,
 which uses line generalization as part of its processing, will be of sub-par
-quality. We believe that availability of high-quality open-source tools is an
+quality. We believe that the availability of high-quality open-source tools is an
 important foundation for future cartographic experimentation and development,
 thus it benefits the cartographic society as a whole.
 
@@ -785,7 +785,7 @@ code.
 Besides testing for specific cases, an automated test suite ensures future
 stability and longevity of the implementation itself: when new contributors
 start changing code, they have higher assurance they have not broken
-already-working code.
+an already-working code.
 
 \subsection{Reproducibility}
 \label{sec:reproducing-the-paper}
@@ -811,7 +811,7 @@ example reference for anyone willing to start using the algorithm.
 
 \section{Algorithm Implementation}
 
-Like alluded in section~\ref{sec:introduction}, {\WM} paper skims over
+As alluded in section~\ref{sec:introduction}, {\WM} paper skims over
 certain details which are important to implement the algorithm. This section
 goes through each algorithm stage, illustrating the intermediate steps and
 explaining the author's desiderata for a more detailed description.
@@ -912,7 +912,7 @@ purpose of each column in \textsc{wm\_debug} is described below:
 When debug mode is turned off (that is, \textsc{dbgname} is left unspecified),
 \textsc{wm\_debug} is empty and the algorithm runs slightly faster.
 
-\subsection{Merging Pieces of the River into One}
+\subsection{Merging Pieces of a River into One}
 
 Example river geometries were sourced from OpenStreetMap\cite{openstreetmap}
 and NŽT\cite{nzt}. Rivers in both data sources are stored in shorter line
@@ -988,7 +988,7 @@ table~\ref{table:scale-halfcirlce-diameter}.
 \subsection{Definition of a Bend}
 \label{sec:definition-of-a-bend}
 
-The original article describes a bend as:
+The original article describes a bend as follows:
 
 \begin{displaycquote}{wang1998line}
     A bend can be defined as that part of a line which contains a number of
@@ -1359,7 +1359,7 @@ of exaggeration operator:
 
 \end{description}
 
-Both functions are inter-change-able and can be found in listing~\ref{lst:wm.sql}.
+Both functions are interchangeable and can be found in listing~\ref{lst:wm.sql}.
 Figure~\ref{fig:isolated-1-exaggerated} illustrates an exaggerated bend using
 \textsc{wm\_exaggerate\_bend2}.
 
@@ -1371,9 +1371,9 @@ generalization, and suggests specific improvements.
 
 One of our goals is to compare the generalized lines with the official
 generalized dataset\cite{nzt}. Therefore, we have selected the target scales
-that the official sources offer too: 1:\numprint{50000} and
+that the official sources offer, too: 1:\numprint{50000} and
 1:\numprint{250000}. The \textsc{dhalfcircle} values for the subset are as
-follows:
+follow:
 
 \begin{table}[ht]
     \centering
@@ -1394,7 +1394,7 @@ Our generalized results are viewed from the following angles:
 \subsection{Generalization Results of Analyzed Rivers}
 \label{sec:generalization-results-of-analyzed-rivers}
 
-\subsubsection{Medium-scale (1:\numprint{50000})}
+\subsubsection{Medium-Scale (1:\numprint{50000})}
 \label{sec:analyzed-medium-scale}
 
 \begin{figure}[h!]
@@ -1427,7 +1427,7 @@ Figure's~\ref{fig:salvis-wm75--grpk10-1x50k} left part is clipped to
 Figure~\ref{fig:salvis-wm75--grpk10-1x50ktl}. As one can see, some bends were well
 exaggerated, and some bends were eliminated.
 
-Top--right side (clipped in Figure~\ref{fig:salvis-wm75--grpk10-1x50ktl}) some jagged
+Top--right side (clipped in Figure~\ref{fig:salvis-wm75--grpk10-1x50ktl}), some jagged
 and sharp bends appear. These will become more pronounced in even larger-scale
 simplification in the next section.
 
@@ -1436,7 +1436,7 @@ sharp edges for others.
 
 \clearpage
 
-\subsubsection{Large-scale (1:\numprint{250000})}
+\subsubsection{Large-Scale (1:\numprint{250000})}
 \label{sec:analyzed-large-scale}
 
 As visible in Figure~\ref{fig:salvis-wm220-10x}, for large-scale map, some of the
@@ -1470,7 +1470,7 @@ simplification and overlays the original.
 
 A conglomeration of bends is visible, especially in top--right side of the
 illustration. We assume this was caused by two bends significantly exaggerated,
-leaving no space to exaggerate for those between the two.
+leaving no space to exaggerate those between the two.
 
 \subsubsection{Discussion}
 
@@ -1495,17 +1495,17 @@ future research and improvement:
 \subsubsection{Background}
 
 There are a few datasets used in this comparison: GRPK10, GRPK50 and
-GRPK250. They are vector datasets, which include rivers. They can be
+GRPK250. They are vector datasets which include rivers. They can be
 downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
 
 \begin{description}
 
-    \item[GRPK10] is dataset of highest detail. Suited for maps of scale
+    \item[GRPK10] is a dataset of highest detail. Suited for maps of scale
         1:\numprint{10000}.
 
     \item[GRPK50] is suited for maps of scale 1:\numprint{50000}.
 
-    \item[GRPK250] offers least detail, and is suited for maps of
+    \item[GRPK250] offers the least detail, and is suited for maps of
         scale 1:\numprint{250000}.
 
 \end{description}
@@ -1515,7 +1515,7 @@ During the analysis, we ran {\WM} on GRPK10 for 2 destination scales:
 detailed in section~\ref{sec:bend-scaling-and-dimensions}.} This section
 compares the resulting {\WM}--generalized rivers to GRPK50 and GRPK250.
 
-\subsubsection{Medium-scale (1:\numprint{50000})}
+\subsubsection{Medium-Scale (1:\numprint{50000})}
 
 For our research location, the national dataset GRPK10 is almost equivalent to
 GRPK50, with a few nuances. Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50k}
@@ -1552,7 +1552,7 @@ implementation.
 
 \clearpage
 
-\subsubsection{Large-scale (1:\numprint{250000})}
+\subsubsection{Large-Scale (1:\numprint{250000})}
 \label{sec:national-large-scale}
 
 Figure~\ref{fig:salvis-wm220} illustrates the original GRPK250 and the
@@ -1582,7 +1582,7 @@ desired in section~\ref{sec:future-suggestions}.
 \subsection{Comparison with {\DP} and {\VW}}
 
 It is time to visually compare our implementation with the classical
-algorithms: {\DP}, {\VW} and Chaikin. Since we have established more work is
+algorithms: {\DP}, {\VW} and Chaikin. Since we have established that more work is
 needed for small-scale maps (1:\numprint{250000}), we will limit the comparison
 in this section to 1:\numprint{50000}.
 
@@ -1675,9 +1675,9 @@ implementation:
         limits are necessary.
 
     \item Research when bends should be marked as \textsc{isolated}. As is
-        seen from examples, the current criteria is not robust enough.
+        seen from examples, the current criteria are not robust enough.
 
-    \item Once the points above yield a satisfactory result, efficiency of the
+    \item Once the points above yield a satisfactory result, the efficiency of the
         algorithm could be improved to work on the lines in "streaming" fashion
         (more details in section~\ref{sec:algorithm-implementation-process}).
 
@@ -1716,7 +1716,7 @@ This section contains code listings of the {\WM} algorithm.
 \subsection{Re-Generating This Paper}
 \label{sec:code-regenerate}
 
-Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
+As explained in section~\ref{sec:reproducing-the-paper}, illustrations in
     this paper are generated from a small list of sample geometries. To observe
     the source geometries or regenerate this paper, run this script (assuming
     the name of this document is \textsc{mj-msc-full.pdf}).
