@@ -248,9 +248,7 @@ declare
   p3 geometry;
 begin
   angle = 0;
-  for p0 in (
-    select geom from st_dumppoints(bend) order by path[1] asc
-  ) loop
+  for p0 in (select geom from st_dumppoints(bend) order by path[1] asc) loop
     p3 = p2;
     p2 = p1;
     p1 = p0;

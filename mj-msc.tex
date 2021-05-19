@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper]{report}
 
 \usepackage[T1]{fontenc}
 %\usepackage[bitstream-charter]{mathdesign}
@@ -73,7 +73,7 @@ Current open-source line generalization solutions have their roots in
 
 \newpage
 
-\section{Introduction}
+\chapter{Introduction}
 \label{sec:introduction}
 
 When creating small-scale maps, often the detail of the data source is greater
@@ -113,13 +113,13 @@ Given the discussed complexities, a fine line between under-generalization
 found. Therein lies the complexity of generalization algorithms: all have
 different trade-offs.
 
-\section{Literature review}
+\chapter{Literature review}
 \label{sec:literature-review}
 
 A number of cartographic line generalization algorithms have been researched.
 The "classical" ones are {\DP} and {\VW}.
 
-\subsection{{\DP} and {\VW}}
+\section{{\DP} and {\VW}}
 
 \cite{douglas1973algorithms} and \cite{visvalingam1993line} are "classical"
 line generalization computer graphics algorithms. They are relatively simple to
@@ -147,7 +147,7 @@ generalization.
 
 <TODO: expand on deficiencies>
 
-\subsection{Modern approaches}
+\section{Modern approaches}
 
 Due to their simplicity and ubiquity, {\DP} and {\VW} have been established as
 go-to algorithms for line generalization. During recent years, alternatives
@@ -176,7 +176,7 @@ open-source tools is an important foundation for future cartographic
 experimentation and development, thus it it benefits the cartographic society
 as a whole.
 
-\section{Methodology}
+\chapter{Methodology}
 \label{sec:methodology}
 
 The original \cite{wang1998line} leaves something to be desired for a practical
@@ -187,7 +187,7 @@ In this paper we describe {\WM} in a detail that is more useful for algorithm:
 each section will be expanded, with more elaborate and exact illustrations for
 every step of the algorithm.
 
-\subsection{Automated tests}
+\section{Automated tests}
 
 As part of the algorithm realization, an automated test suite has been
 developed. Shapes to test each function have been hand-crafted and expected
@@ -208,43 +208,43 @@ line direction.
 
 The full test suite can be executed with a single command, and completes in a
 few seconds. Having an easily accessible test suite boosts confidence that no
-unexpected bugs have been created while modifying the algorithm.
+unexpected bugs have snug in while modifying the algorithm.
 
-\section{Description of the implementation}
+\chapter{Description of the implementation}
 
-\subsection{Definition of a Bend}
+\section{Definition of a Bend}
 
-\subsection{Gentle Inflection at End of a Bend}
+\section{Gentle Inflection at End of a Bend}
 
-\subsection{Self-line Crossing When Cutting a Bend}
+\section{Self-line Crossing When Cutting a Bend}
 
-\subsection{Attributes of a Single Bend}
+\section{Attributes of a Single Bend}
 
-\subsection{Shape of a Bend}
+\section{Shape of a Bend}
 
-\subsection{The Context of a Bend: Isolated and Similar Bends}
+\section{The Context of a Bend: Isolated and Similar Bends}
 
-\subsection{Elimination Operator}
+\section{Elimination Operator}
 
-\subsection{Combination Operator}
+\section{Combination Operator}
 
-\subsection{Exaggeration Operator}
+\section{Exaggeration Operator}
 
-\section{Program Implementation}
+\chapter{Program Implementation}
 
-\section{Results of Experiments}
+\chapter{Results of Experiments}
 
-\section{Conclusions}
+\chapter{Conclusions}
 \label{sec:conclusions}
 
-\section{Related Work and future suggestions}
+\chapter{Related Work and future suggestions}
 \label{sec:related_work}
 
 \printbibliography
 
 \begin{appendices}
 
-\section{Code listings}
+\chapter{Code listings}
 
 We strongly believe in the ability to reproduce the results is critical for any
     scientific work. To make it possible for this paper, all source files and
