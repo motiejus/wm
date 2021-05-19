@@ -84,9 +84,10 @@ def main():
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
-    fig.set_figwidth(8.27 / args.widthdiv)
     if args.size:
         fig.set_size_inches(args.size)
+    else:
+        fig.set_figwidth(8.27 / args.widthdiv)
     if c := args.clip:
         ax.set_xlim(left=c[0], right=c[2])
         ax.set_ylim(bottom=c[1], top=c[3])

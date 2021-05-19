@@ -21,6 +21,17 @@ FIGURES = test-figures \
 					selfcrossing-1-before \
 					selfcrossing-1-after
 
+A4p = 210x297
+A4l = 297x210
+A5p = 148x210
+A5l = 148x210
+A6p = 105x148
+A6l = 148x105
+A7p = 74x105
+A7l = 105x74
+A8p = 52x74
+A8l = 74x52
+
 #################################
 # The thesis, publishable version
 #################################
@@ -85,33 +96,32 @@ fig5-gentle-inflection-after_1SELECT = wm_debug where name='fig5' AND stage='cin
 fig5-gentle-inflection-after_2SELECT = wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1
 fig5-gentle-inflection-after_2CMAP = 1
 
-inflection-1-gentle-inflection-before_WIDTHDIV = 2
+inflection-1-gentle-inflection-before_SIZE = A5
 inflection-1-gentle-inflection-before_1SELECT = wm_debug where name='inflection-1' AND stage='bbends' AND gen=1
 inflection-1-gentle-inflection-before_2SELECT = wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1
 inflection-1-gentle-inflection-before_2CMAP = 1
-inflection-1-gentle-inflection-after_WIDTHDIV = 2
+inflection-1-gentle-inflection-after_SIZE = A5
 inflection-1-gentle-inflection-after_1SELECT = wm_debug where name='inflection-1' AND stage='cinflections' AND gen=1
 inflection-1-gentle-inflection-after_2SELECT = wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1
 inflection-1-gentle-inflection-after_2CMAP = 1
 
-fig6-selfcrossing-before_WIDTHDIV = 4
+fig6-selfcrossing-before_SIZE = A7
 fig6-selfcrossing-before_1SELECT = wm_debug where name='fig6' AND stage='bbends' AND gen=1
 fig6-selfcrossing-before_2SELECT = wm_visuals where name='fig6-baseline'
 fig6-selfcrossing-before_2LINESTYLE = dotted
 fig6-selfcrossing-before_3SELECT = wm_visuals where name='fig6-newline'
-fig6-selfcrossing-after_WIDTHDIV = 4
+fig6-selfcrossing-after_SIZE = A7
 fig6-selfcrossing-after_1SELECT = wm_debug where name='fig6' AND stage='dcrossings' AND gen=1
 
-selfcrossing-1-before_WIDTHDIV = 4
+selfcrossing-1-before_SIZE = A7
 selfcrossing-1-before_1SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-before_2SELECT = wm_visuals where name='selfcrossing-1-baseline'
 selfcrossing-1-before_2LINESTYLE = dotted
 selfcrossing-1-before_3SELECT = wm_visuals where name='selfcrossing-1-newline'
-selfcrossing-1-after_WIDTHDIV = 4
+selfcrossing-1-after_SIZE = A7
 selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='dcrossings' AND gen=1
 selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-after_2LINESTYLE = invisible
-
 
 .faux_test-rivers: tests-rivers.sql wm.sql .faux_db
 	./db -f $<
