@@ -18,12 +18,14 @@ after a few bends have been skipped. E.g. ends of A<->B cross the line, but
        /  |     | |___,---,___/A  |
       /   |     \_________________|
       \   |
-       \  |
-       /  /
-  ----/  /
- / ,____/
-/ B|
+       \  |    \  |
+       /  /    B\ |     _       __
+  ----/  /      | |    / \     /  \
+ / ,____/       | |___/   \___/A  |
+/ B|            \_________________|
    |
+
+
 
 If a bend with 180+ deg inflection is found, its line between inflection angles
 (AB in our examples) must be crossed with all the other bends to detect a
@@ -31,6 +33,7 @@ possible line-crossing. This is O(N*M), where N is the total number of line
 segments, and M is the number of qualifying bends. In other words, can be very
 computationally expensive.
 
-This may be slightly computationally simplified: if other bend's
-endpoints (A' and B') are in different sub-planes as divided by AB, then the
-crossing exists, and more expensive st_split can be used.
+This may be simplified: if other bend's endpoints (A' and B') are in the same
+sub-plane as divided by AB, then the bend can be skipped from checking if it
+intersects with AB. Some intersections may be missed (see the example), but
+they will be eliminated by just joining A and B.
