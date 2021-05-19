@@ -24,6 +24,7 @@
 \input{vars.inc}
 
 \newcommand{\onpage}[1]{\ref{#1} on page~\pageref{#1}}
+\newcommand{\titlecite}[1]{\citetitle{#1} \cite{#1}}
 \newcommand{\DP}{Douglas \& Peucker}
 \newcommand{\VW}{Visvalingam--Whyatt}
 \newcommand{\WM}{Wang--M{\"u}ller}
@@ -155,18 +156,23 @@ go-to algorithms for line generalization. During recent years, alternatives
 have emerged. These modern replacements fall into roughly two categories:
 
 \begin{itemize}
+
     \item Cartographic knowledge was encoded to an algorithm (bottom-up
-        approach). One among these are \cite{wang1998line}.
+        approach). One among these are \titlecite{wang1998line}, also known
+        as {\WM}'s algorithm.
+
     \item Mathematical shape transformation which yields a more cartographic
-        result. E.g. \cite{jiang2003line}, \cite{dyken2009simultaneous},
-        \cite{mustafa2006dynamic}, \cite{nollenburg2008morphing}.
+        result. E.g. \titlecite{jiang2003line},
+        \titlecite{dyken2009simultaneous}, \titlecite{mustafa2006dynamic},
+        \titlecite{nollenburg2008morphing}.
+
 \end{itemize}
 
 Authors of most of the aforementioned articles have implemented the
 generalization algorithm, at least to generate the visuals in the articles.
 However, I wasn't able to find code for any of those to evaluate with my
-desired data set, or use as a basis for my own maps. \cite{wang1998line} is
-available in a commercial product.
+desired data set, or use as a basis for my own maps. {\WM} \cite{wang1998line}
+is available in a commercial product.
 
 Lack of robust openly available generalization algorithm implementations poses
 a problem for map creation with free software: there is not a similar
@@ -180,14 +186,14 @@ as a whole.
 \section{Methodology}
 \label{sec:methodology}
 
-The original \cite{wang1998line} leaves something to be desired for a practical
-implementation: it is not straightforward to implement the algorithm from the
-paper alone.
+The original {\WM}'s algorithm \cite{wang1998line} leaves something to be
+desired for a practical implementation: it is not straightforward to implement
+the algorithm from the paper alone.
 
 Explanations in this document are meant to expand, rather than substitute, the
-original description in \cite{wang1998line}. Therefore familiarity with the
-original paper is assumed, and, for some sections, having it close-by is
-necessary to meaningfully follow this document.
+original description in {\WM}. Therefore familiarity with the original paper is
+assumed, and, for some sections, having it close-by is necessary to
+meaningfully follow this document.
 
 In this paper we describe {\WM} in a detail that is more useful for algorithm:
 each section will be expanded, with more elaborate and exact illustrations for
