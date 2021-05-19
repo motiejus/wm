@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 
 from matplotlib import rc
 
+#CMAP = 'Set3'
+CMAP = 'tab20c'
 INCH = 25.4  # mm
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
 BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
@@ -58,9 +60,9 @@ def main():
     group1 = read_layer(args.group1_table, args.group1_where)
     group2 = read_layer(args.group2_table, args.group2_where)
     group3 = read_layer(args.group3_table, args.group3_where)
-    c1 = {'cmap': 'coolwarm'} if args.group1_cmap else {'color': BLACK}
-    c2 = {'cmap': 'coolwarm'} if args.group2_cmap else {'color': ORANGE}
-    c3 = {'cmap': 'coolwarm'} if args.group3_cmap else {'color': GREEN}
+    c1 = {'cmap': CMAP} if args.group1_cmap else {'color': BLACK}
+    c2 = {'cmap': CMAP} if args.group2_cmap else {'color': ORANGE}
+    c3 = {'cmap': CMAP} if args.group3_cmap else {'color': GREEN}
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
