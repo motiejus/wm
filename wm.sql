@@ -262,6 +262,7 @@ $$ language plpgsql;
 
 
 drop function if exists bend_attrs;
+drop function if exists isolated_bends;
 drop type if exists t_bend_attrs;
 create type t_bend_attrs as (
   bend geometry,
@@ -269,7 +270,8 @@ create type t_bend_attrs as (
   cmp real,
   adjsize real,
   baselinelength real,
-  avg_curvature real
+  curvature real,
+  isolated boolean
 );
 create function bend_attrs(bends geometry[], dbgname text default null) returns setof t_bend_attrs as $$
 declare
@@ -287,7 +289,8 @@ begin
     res.cmp = 0;
     res.adjsize = 0;
     res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
-    res.avg_curvature = inflection_angle(bend) / st_length(bend);
+    res.curvature = inflection_angle(bend) / st_length(bend);
+    res.isolated = false;
     if st_numpoints(bend) >= 3 then
       polygon = st_makepolygon(st_addpoint(bend, st_startpoint(bend)));
       -- Compactness Index (cmp) is defined as "the ratio of the area of the
@@ -316,15 +319,35 @@ begin
           'cmp', res.cmp,
           'adjsize', res.adjsize,
           'baselinelength', res.baselinelength,
-          'avg_curvature', res.avg_curvature
+          'curvature', res.curvature
         )
       );
     end if;
-
     return next res;
-
   end loop;
 end;
+$$ language plpgsql;
+
+create function isolated_bends(INOUT bendattrs t_bend_attrs[], dbgname text default null) as $$
+declare
+  isolation_threshold constant real default 0.2; -- if neighbor's curvatures are within, it's isolated
+  this real;
+  res t_bend_attrs;
+  i int4;
+begin
+  i = 2;
+  while i < array_length(bendattrs, 1)-1 loop
+    this = bendattrs[i].curvature * isolation_threshold;
+    if bendattrs[i-1].curvature < this and bendattrs[i+1].curvature < this then
+      res = bendattrs[i];
+      res.isolated = true;
+      bendattrs[i] = res;
+      i = i + 2;
+    else
+      i = i + 1;
+    end if;
+  end loop;
+end
 $$ language plpgsql;
 
 -- ST_SimplifyWM simplifies a given geometry using Wang & Müller's
@@ -338,6 +361,7 @@ declare
   line geometry;
   lines geometry[];
   bends geometry[];
+  bend_attrs t_bend_attrs[];
   mutated boolean;
   l_type text;
 begin
@@ -408,6 +432,7 @@ begin
 
       -- self-crossing mutations are done, calculate bend properties
       perform bend_attrs(bends, dbgname);
+
     end loop;
 
   end loop;

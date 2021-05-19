@@ -1,5 +1,6 @@
 SOURCE ?= lithuania-latest.osm.pbf
-WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Žeimena' OR name='Lakaja'
+#WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Žeimena' OR name='Lakaja'
+WHERE ?= name='Žeimena' OR name='Lakaja'
 SLIDES = slides-2021-03-29.pdf
 
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
@@ -15,7 +16,7 @@ test-integration: .faux_filter-rivers
 .PHONY: clean
 clean:
 	-./db stop
-	-rm -r .faux_test .faux_filter-rivers .faux_import-osm .faux.db \
+	-rm -r .faux_test .faux_filter-rivers .faux_import-osm .faux_db \
 		version.tex test-figures.pdf _minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
 		$(SLIDES)
@@ -45,22 +46,22 @@ mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
 test-figures.pdf: layer2img.py .faux_test
 	python ./layer2img.py --group1-table=figures --group1-arrows=yes --outfile=$@
 
-.faux_test: tests.sql wm.sql .faux.db
+.faux_test: tests.sql wm.sql .faux_db
 	./db -f tests.sql
 	touch $@
 
-.faux_filter-rivers: .faux_import-osm
+.faux_filter-rivers: .faux_import-osm Makefile
 	./db -v where="$(WHERE)" -f aggregate-rivers.sql
 	touch $@
 
-.faux_import-osm: $(SOURCE) .faux.db
+.faux_import-osm: $(SOURCE) .faux_db
 	PGPASSWORD=osm osm2pgsql \
 			   -c --multi-geometry \
 			   -H 127.0.0.1 -d osm -U osm \
 			   $<
 	touch $@
 
-.faux.db:
+.faux_db:
 	./db start
 	touch $@
 
