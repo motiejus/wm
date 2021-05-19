@@ -35,8 +35,7 @@ analizė Lietuvos upėms.
       - grafinis palyginimas.
       - galbūt duoti kartografijos ekspertams.
 - Pritaikomumas: GDR50 ir GDR250 yra tiesiogiai pritaikomi žemėlapiams. Jei
-  algoritmas yra geresnis, žemėlapių kartografinis pagrindas gali būti
-  geresnis.
+  algoritmas yra geresnis, žemėlapių geografinis pagrindas gali būti geresnis.
 - Literatūros apžvalga (?)
 - Metodika:
   - implementacijos paaiškinimas: tai, kas neparašyta straipsnyje, bet su kuo

@@ -303,3 +303,42 @@ begin
   end if;
 end
 $$ language plpgsql;
+
+drop function if exists ST_SimplifyWM_DEBUG;
+create function ST_SimplifyWM_DEBUG(geom geometry) returns geometry as $$
+declare
+  i integer;
+  line geometry;
+  geoms geometry[];
+  bends geometry[];
+  mutated boolean;
+  l_type text;
+begin
+  l_type = st_geometrytype(geom);
+  if l_type = 'ST_LineString' then
+    geoms = array[geom];
+  elseif l_type = 'ST_MultiLineString' then
+    geoms = array((select a.geom from st_dump(geom) a order by path[1] desc));
+  else
+    raise 'Unknown geometry type %', l_type;
+  end if;
+
+  i = 1;
+  foreach line in array geoms loop
+    mutated = true;
+    while mutated loop
+      execute format('create table figures_%I (name text, i bigint, way geometry)', i);
+      execute format('insert into figures_%I select name, generate_subscripts(ways)
+      bends = detect_bends(line);
+      bends = fix_gentle_inflections(bends);
+      select * from self_crossing(bends) into bends, mutated;
+    end loop;
+  end loop;
+
+  if l_type = 'ST_LineString' then
+    return bends[1];
+  elseif l_type = 'ST_MultiLineString' then
+    return st_union(bends);
+  end if;
+end
+$$ language plpgsql;
