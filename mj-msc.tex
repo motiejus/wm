@@ -9,7 +9,7 @@
 \addbibresource{bib.bib}
 \usepackage[
     pdfusetitle,
-    pdfkeywords={Line Generalization,Cartographic Line Generalization,Wang--M{\"u}ller},
+    pdfkeywords={Line Generalization,Cartographic Line Generalization,Wang--Mueller},
     pdfborderstyle={/S/U/W 0} % /S/U/W 1 to enable reasonable decorations
 ]{hyperref}
 \usepackage{enumitem}
@@ -23,12 +23,12 @@
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{fancyvrb}
+\usepackage{layouts}
 %\usepackage{charter}
 %\usepackage{setspace}
 %\doublespacing
 
 \IfFileExists{./editorial-version}{\def \mjEditorial {}}{}
-
 \ifx \mjEditorial \undefined
 % requires minted
 \usepackage{minted}
@@ -42,8 +42,6 @@
 \input{version.inc}
 \input{vars.inc}
 
-% for layout debugging
-\usepackage{layouts}
 
 \newcommand{\onpage}[1]{\ref{#1} on page~\pageref{#1}}
 \newcommand{\titlecite}[1]{\citetitle{#1}\cite{#1}}
