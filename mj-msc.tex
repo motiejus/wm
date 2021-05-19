@@ -23,6 +23,8 @@
 \definecolor{mypurple}{RGB}{117,112,179}
 \input{version}
 
+\newcommand{\onpage}[1]{\ref{#1} on page~\pageref{#1}}
+
 \newcommand{\DP}{Douglas \& Peucker}
 \newcommand{\VW}{Visvalingam--Whyatt}
 \newcommand{\WM}{Wang--M{\"u}ller}
@@ -187,6 +189,8 @@ In this paper we describe {\WM} in a detail that is more useful for algorithm:
 each section will be expanded, with more elaborate and exact illustrations for
 every step of the algorithm.
 
+Algorithms discussed in this paper assume Euclidean geometry.
+
 \section{Automated tests}
 
 As part of the algorithm realization, an automated test suite has been
@@ -195,9 +199,9 @@ results have been manually calculated. The test suite executes parts of the
 algorithm against a predefined set of geometries, and asserts that the output
 matches the resulting hand-calculated geometry.
 
-The full set of test geometries is visualized in figure~\ref{fig:test-figures}
-on page~\pageref{fig:test-figures}. The figure includes arrows depicting
-line direction.
+The full set of test geometries is visualized in
+figure~\onpage{fig:test-figures}. The figure includes arrows depicting line
+direction.
 
 \begin{figure}[H]
     \centering
@@ -210,12 +214,37 @@ The full test suite can be executed with a single command, and completes in a
 few seconds. Having an easily accessible test suite boosts confidence that no
 unexpected bugs have snug in while modifying the algorithm.
 
+\section{Vocabulary and terminology}
+
+This section defines vocabulary and terms as defined in the rest of the paper.
+
+\begin{description}
+    \item[Vertex] is a point on a plane, can be expressed unambiguously by a
+        pair of $(x,y)$ coordinates.
+
+    \item[Line Segment (or Segment)] joins two vertices by a straight line. A
+        segment can be expressed by two coordinate pairs: $(x_1, y_1)$ and
+        $(x_2, y_2)$. Line Segment and Segment are used interchangeably.
+
+    \item[Line] represents a single linear feature in the real world. For
+        example, a river or a coastline. {\tt LINESTRING} in GIS terms.
+
+        Geometrically, A line is a series of connected line segments, or,
+        equivalently, a series of connected vertices. Each vertex connects to
+        two other vertices, except those vertices at either ends of the line:
+        these two connect to a single other vertex.
+
+    \item[Bend] is a subset of a line that humans perceive as "bend". The
+        geometric definition is complex and is discussed in
+        section~\onpage{sec:definition-of-a-bend}.
+\end{description}
+
 \chapter{Description of the implementation}
 
-Like alluded in section~\ref{sec:introduction}, \cite{wang1998line} paper skims
-over certain details, which are important to implement the algorithm. This
-section goes through each algorithm stage, illustrating the intermediate steps
-and explaining the author's desiderata for a detailed description.
+Like alluded in section~\onpage{sec:introduction}, \cite{wang1998line} paper
+skims over certain details, which are important to implement the algorithm.
+This section goes through each algorithm stage, illustrating the intermediate
+steps and explaining the author's desiderata for a detailed description.
 
 Step illustrations of the following sections are extracted from the automated
 test cases.
@@ -224,10 +253,11 @@ Bends are illustrated using the following algorithm:
 
 \begin{itemize}
     \item Join the first and last vertices of the line, creating a polygon.
-    \item Color the polygons using a diverging color scheme.
+    \item Color the polygons.
 \end{itemize}
 
 \section{Definition of a Bend}
+\label{sec:definition-of-a-bend}
 
 \begin{figure}[H]
     \centering
@@ -236,15 +266,14 @@ Bends are illustrated using the following algorithm:
     \label{fig:fig8-definition-of-a-bend}
 \end{figure}
 
-End vertices of all lines should also be part of the bend. That way, all
-vertices belong to 1 or 2 bends. This characteristic is not obvious when
+End line segments of all lines should also be part of the bend. That way, all
+line segments belong to 1 or 2 bends. This characteristic is not obvious when
 reading the introductory sections, but becomes unavoidable (there could be no
 other way) when reading the following sections in detail.
 
-Last vertex of each bend (except for the two end-line vertices) is also the
-first vertex of the next bend. This is apparent when looking at the
-illustration of the detected bends. However, the original {\WM} paper did not
-have such an explanation or illustration.
+First and last segments of each bend (except for the two end-line segments) is
+also the first vertex of the next bend. This is apparent when looking at the
+illustration of the detected bends.
 
 \section{Gentle Inflection at End of a Bend}
 
