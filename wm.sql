@@ -248,8 +248,6 @@ declare
   pi constant real default radians(180);
   i int4;
   j int4;
-  a geometry;
-  b geometry;
   multi geometry;
 begin
   mutated = false;
