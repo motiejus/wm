@@ -1,12 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 dir=$(mktemp -d)
-fname=${1:-mj-msc-all.pdf}
-echo "Extracting $fname to $dir/" && pdfdetach -saveall -o "$dir" "$fname"
-echo "Generating $dir/$fname ..."
-make -j $(nproc) -C "$dir" "$fname" &> "$dir/make.log" || {
+src=${1:-mj-msc-all.pdf}
+dst=${2:-mj-msc.pdf}
+echo "Extracting $src to $dir/" && pdfdetach -saveall -o "$dir" "$src"
+echo "Generating $dir/$dst ..."
+make -j $(nproc) -C "$dir" "$dst" &> "$dir/make.log" || {
     echo "Generation failed. Log extract:" && tail -20 "$dir/make.log"
     exit 1
 }
-echo "Opening $dir/$fname ..." && xdg-open "$dir/$fname"
+echo "Opening $dir/$dst ..." && xdg-open "$dir/$dst"
 echo "File has been closed. Removing $dir" && rm -fr "$dir"
