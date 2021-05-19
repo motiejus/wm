@@ -95,7 +95,7 @@ $(1).pdf: layer2img.py Makefile $(2)
 			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
-$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_visuals)))
+$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
 $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
 
 test-figures_1SELECT = wm_figures

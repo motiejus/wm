@@ -177,3 +177,22 @@ begin
   perform assert_equals('ST_LineString', st_geometrytype(bend));
   insert into wm_debug(stage, name, gen, nbend, way) values('manual', 'fig3', 1, 1, bend);
 end $$ language plpgsql;
+
+-- misc visuals
+do $$
+  declare fig6b1 geometry;
+  declare fig6b2 geometry;
+  declare sclong geometry;
+  declare scshort geometry;
+begin
+  select way from wm_debug where name='fig6' and stage='bbends' and gen=1 into fig6b1 limit 1 offset 0;
+  select way from wm_debug where name='fig6' and stage='bbends' and gen=1 into fig6b2 limit 1 offset 2;
+  insert into wm_visuals (name, way) values('fig6-baseline', st_makeline(st_startpoint(fig6b2), st_endpoint(fig6b2)));
+  insert into wm_visuals (name, way) values('fig6-newline', st_makeline(st_endpoint(fig6b1), st_endpoint(fig6b2)));
+
+  select way from wm_debug where name='selfcrossing-1' and stage='bbends' and gen=1 into sclong limit 1 offset 1;
+  select way from wm_debug where name='selfcrossing-1' and stage='bbends' and gen=1 into scshort limit 1 offset 4;
+  insert into wm_visuals (name, way) values('selfcrossing-1-baseline', st_makeline(st_startpoint(sclong), st_endpoint(sclong)));
+  insert into wm_visuals (name, way) values('selfcrossing-1-newline', st_makeline(st_startpoint(sclong), st_endpoint(scshort)));
+end $$ language plpgsql;
+
