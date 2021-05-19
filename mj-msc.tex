@@ -251,14 +251,14 @@ thus convenient to analyze for both small and large scale generalization.
 Figure~\onpage{fig:salvis-25} illustrates the original two rivers without any
 simplification.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{salvis-25k}
     \caption{Example rivers for visual tests (1:{\numprint{25000}}).}
     \label{fig:salvis-25}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-50k}
@@ -281,7 +281,7 @@ is touching itself, creating a thicker line. We can assume that some
 simplification for scale 1:\numprint{50000} and especially for
 1:\numprint{250000} are worthwhile.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-douglas-64-50k}
@@ -303,7 +303,7 @@ traditionally, Chaikin's\cite{chaikin1974algorithm} is applied after
 generalization, illustrated in
 figure~\onpage{fig:salvis-generalized-chaikin-50k}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-douglas-64-chaikin-50k}
@@ -318,7 +318,7 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \label{fig:salvis-generalized-chaikin-50k}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-overlaid-douglas-64-chaikin-50k}
@@ -363,7 +363,7 @@ classical algorithms would remove these bends altogether. A cartographer would
 retain a few of those distinctive bends, but would increase the distance
 between the bends, remove some of the bends, or both.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \includegraphics[width=\textwidth]{amalgamate1}
     \caption{Narrow bends amalgamating into large unintelligible blobs.}
     \label{fig:pixel-amalgamation}
@@ -449,7 +449,7 @@ Figure~\ref{fig:wang125} illustrates {\WM} algorithm from their original
 paper. Note how the long bends retain curvy, and how some small bends got
 exaggerated.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=.8\textwidth]{wang125}
 
@@ -543,7 +543,7 @@ matches the resulting hand-calculated geometry.
 
 The full set of test geometries is visualized in figure~\ref{fig:test-figures}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{test-figures}
     \caption{Geometries for automated test cases.}
@@ -758,7 +758,7 @@ diameter of the bend. A semi-circle of 1.5mm diameter is depicted in
 figure~\ref{fig:half-circle}. In other words, a bend of this size or larger,
 when adjusted to scale, will not be simplified.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}[x=1mm,y=1mm]
       \draw[] (-10, 0) -- (-.75,0) arc (225:-45:.75) -- (10, 0);
@@ -773,7 +773,7 @@ Assuming measurement units in projected coordinate system are meters (for
 example, \titlecite{epsg3857}), values of some popular scales is highlighted in
 table~\ref{table:scale-halfcirlce-diameter}.
 
-\begin{table}[h]
+\begin{table}[ht]
     \centering
     \begin{tabular}{ c  D{.}{.}{1} }
         Scale               & \multicolumn{1}{c}{$D(m)$}  \\ \hline
@@ -832,7 +832,7 @@ article.
 Figure~\ref{fig:fig8-definition-of-a-bend} illustrates article's figure 8,
 but with bends colored as polygons: each color is a distinctive bend.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{fig8-definition-of-a-bend}
     \caption{Originally figure 8: detected bends are highlighted.}
@@ -851,7 +851,7 @@ The gist of the section is in the original article:
 Figure~\ref{fig:fig5-gentle-inflection} visualizes original paper's figure 5,
 when a single vertex is moved outwards the end of the bend.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-before}
@@ -878,7 +878,7 @@ additional example was created, and illustrated in
 figure~\ref{fig:inflection-1-gentle-inflection}: the rule re-assigns two
 vertices to the next bend.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-before}
@@ -923,7 +923,7 @@ should be removed. There are a few rules on when and how they should be removed
 complexity and applied optimizations. Figure~\ref{fig:fig6-selfcrossing} is
 copied from the original article.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-before}
@@ -938,7 +938,7 @@ copied from the original article.
     \label{fig:fig6-selfcrossing}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-before}
