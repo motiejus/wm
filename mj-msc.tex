@@ -43,6 +43,7 @@
 
 \newcommand{\onpage}[1]{\ref{#1} on page~\pageref{#1}}
 \newcommand{\titlecite}[1]{\citetitle{#1}\cite{#1}}
+\newcommand{\titleciteauthor}[1]{\citetitle{#1} by \citeauthor{#1}\cite{#1}}
 \newcommand{\DP}{Douglas \& Peucker}
 \newcommand{\VW}{Visvalingam--Whyatt}
 \newcommand{\WM}{Wang--M{\"u}ller}
@@ -436,13 +437,14 @@ limiting the problem to cartographic line generalization. That is, full
 cartographic generalization, which takes topology and other feature classes
 into account, is out of scope.
 
-Figure~\onpage{fig:wang125} illustrates {\WM} algorithm from their original
+Figure~\ref{fig:wang125} illustrates {\WM} algorithm from their original
 paper. Note how the long bends retain curvy, and how some small bends got
 exaggerated.
 
 \begin{figure}[h]
-    \includegraphics[width=\textwidth]{wang125}
-    \caption{Originally Figure 12.5 from \titlecite{wang1998line}}
+    \centering
+    \includegraphics[width=.8\textwidth]{wang125}
+    \caption{Originally Figure 12.5 from \cite{wang1998line}.}
     \label{fig:wang125}
 \end{figure}
 
