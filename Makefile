@@ -132,7 +132,7 @@ salvis-50k_WIDTHDIV = 2
 salvis-250k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
 salvis-250k_WIDTHDIV = 10
 
-.faux_test-rivers: tests-rivers.sql wm.sql .faux_db
+.faux_test-rivers: tests-rivers.sql wm.sql Makefile .faux_db
 	./db -v scaledwidth=$(SCALEDWIDTH) -f $<
 	touch $@
 

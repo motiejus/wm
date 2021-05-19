@@ -19,11 +19,12 @@
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{fancyvrb}
+%\usepackage{charter}
 
-\iffalse
+\iftrue
 % requires minted
 \usepackage{minted}
-\newcommand{\inputcode}[2]{\inputminted[fontsize=\small}{#1}{#2}
+\newcommand{\inputcode}[2]{\inputminted[fontsize=\small]{#1}{#2}}
 \else
 % does not require minted
 \usepackage{verbatim}
@@ -98,18 +99,20 @@ Textwidth in cm: {\printinunitsof{cm}\prntlen{\textwidth}}
 \fi
 
 When creating small-scale maps, often the detail of the data source is greater
-than desired for the map. This becomes especially acute for natural features
-that have many bends, like coastlines, rivers and forest boundaries.
+than desired for the map. While many features can be removed or simplified, it
+is more tricky with natural features that have many bends, like coastlines,
+rivers and forest boundaries.
 
-To create a small-scale map from a large-scale data source, these features need
-to be generalized: detail should be reduced. However, while doing so, it is
-important to preserve the "defining" shape of the original feature, otherwise
-the result will look unrealistic.
+To create a small-scale map from a large-scale data source, features need to be
+generalized: detail should be reduced. While performing the generalization, it
+is important to retain the "defining" shape of the original feature. Otherwise,
+if the generalized feature looks too different than the original, the result
+will look unrealistic.
 
 For example, if a river is nearly straight, it should be nearly straight after
 generalization, otherwise a too straightened river will look like a canal.
 Conversely, if the river is highly wiggly, the number of bends should be
-reduced, but not removed.
+reduced, but not removed altogether.
 
 Generalization problem for other objects can often be solved by other
 non-geometric means:
@@ -121,8 +124,8 @@ non-geometric means:
         classification of the road (local, regional, international).
 \end{itemize}
 
-Natural line generalization problem can be viewed as having two competing
-goals:
+To sum up, natural line generalization problem can be viewed as a task of
+finding a delicate balance between two competing goals:
 
 \begin{itemize}
     \item Reduce detail by removing or simplifying "less important" features.
@@ -130,44 +133,52 @@ goals:
 \end{itemize}
 
 Given the discussed complexities, a fine line between under-generalization
-(leaving object as-is) and over-generalization (making a straight line) must be
-found. Therein lies the complexity of generalization algorithms: all have
+(leaving object as-is) and over-generalization (making a straight line) needs
+to be found. Therein lies the complexity of generalization algorithms: all have
 different trade-offs.
 
 \section{Literature review and problematic}
 \label{sec:literature-review}
 
 A number of cartographic line generalization algorithms have been researched.
-The "classical" ones are {\DP} and {\VW} in combination with Chaikin's. There
-are also modern ones.
+The "classical" ones are {\DP}\cite{douglas1973algorithms} and
+{\VW}\cite{visvalingam1993line} in combination with
+Chaikin's\cite{chaikin1974algorithm}.
+
+This section reviews the classical ones, which, besides being around for a long
+time, offer easily accessible implementations, as well as more modern ones,
+which only theorize, but do not provide an implementation.
 
 \subsection{Available algorithms}
 
 \subsubsection{{\DP}, {\VW} and Chaikin's}
 
-{\DP} \cite{douglas1973algorithms} and {\VW} \cite{visvalingam1993line} are
+{\DP}\cite{douglas1973algorithms} and {\VW}\cite{visvalingam1993line} are
 "classical" line generalization computer graphics algorithms. They are
 relatively simple to implement, require few runtime resources. Both of them
 accept only a single parameter, based on desired scale of the map, which makes
-them very simple to adjust for different scales.
+them straightforward to adjust for different scales.
 
 Both algorithms are part of PostGIS, a free-software GIS suite:
 \begin{itemize}
     \item {\DP} via
-        \href{https://postgis.net/docs/ST_Simplify.html}{PostGIS Simplify}.
+        \href{https://postgis.net/docs/ST_Simplify.html}{PostGIS \texttt{ST\_Simplify}}.
 
     \item {\VW} via
-        \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS SimplifyVW}.
+        \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS \texttt{SimplifyVW}}.
 \end{itemize}
 
 It may be worthwhile to post-process those through a widely available Chaikin's
-line smoothing algorithm \cite{chaikin1974algorithm} via
+line smoothing algorithm\cite{chaikin1974algorithm} via
 \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
-ChaikinSmoothing}.
+\texttt{ST\_ChaikinSmoothing}}.
 
-To use in generalization examples, we will use two rivers: Žeimena and Šalčia
-(they flow into one). Figure~\onpage{fig:salvis-25} illustrates the original
-two rivers without any processing (yet).
+To use in generalization examples, we will use two rivers: Šalčia and Visinčia.
+Figure~\ref{fig:salvis-25} illustrates the original two rivers without any
+processing.
+
+These rivers were chosen, because they have both large and small bends, and
+thus convenient to analyze for both small and large scale generalization.
 
 \begin{figure}[h]
     \centering
@@ -177,9 +188,10 @@ two rivers without any processing (yet).
 \end{figure}
 
 Same rivers, unprocessed, but with higher density (scales 1:50000 and 1:250000)
-are depicted in figure~\onpage{fig:salvis-50-250}. Some river features are so
-compact that a reasonably thin line depicting them is overlapping with itself.
-As can be seen in the article example, generalization is worthy.
+are depicted in figure~\ref{fig:salvis-50-250}. Some river features are so
+compact that a reasonably thin line depicting the river is overlapping with
+itself, creating a thicker line in print. As a result, generalization for this
+river for a smaller scale is worthy.
 
 \begin{figure}[h]
     \centering
@@ -196,8 +208,6 @@ As can be seen in the article example, generalization is worthy.
     \caption{Down-scaled original river (1:50000 and 1:250000)}
     \label{fig:salvis-50-250}
 \end{figure}
-
-
 
 \subsubsection{Modern approaches}
 
@@ -219,10 +229,12 @@ have emerged. These modern replacements fall into roughly two categories:
 \end{itemize}
 
 Authors of most of the aforementioned articles have implemented the
-generalization algorithm, at least to generate the visuals in the articles.
-However, I wasn't able to find code for any of those to evaluate with my
-desired data set, or use as a basis for my own maps. {\WM} \cite{wang1998line}
-is available in a commercial product.
+generalization algorithm, at least to generate the illustrations in the
+articles. However, code is not available for evaluation with a desired data
+set, much less for use as a basis for creating new maps. To author's knowledge,
+{\WM}\cite{wang1998line} is available in a commercial product, but requires a
+purchase of the commercial product suite, without a way to license the
+standalone algorithm.
 
 Lack of robust openly available generalization algorithm implementations poses
 a problem for map creation with free software: there is not a similar
@@ -232,6 +244,15 @@ will be of sub-par quality. We believe that availability of high-quality
 open-source tools is an important foundation for future cartographic
 experimentation and development, thus it it benefits the cartographic society
 as a whole.
+
+{\WM}'s commercial availability signals something about the value of the
+algorithm: at least the authors of the commercial software suite deemed it
+worthwhile to include it. However, not everyone has access to the commercial
+software suite, access to funds to buy the commercial suite, or access to the
+operating system required to run the commercial suite. PostGIS, in contrast, is
+free on itself, and runs on free platforms. Therefore, algorithm
+implementations that run on PostGIS or other free platforms are useful to a
+wider cartographic society than proprietary ones.
 
 \subsection{Problematic with generalization of rivers}
 
@@ -244,14 +265,15 @@ the algorithm from the paper alone.
 
 Explanations in this document are meant to expand, rather than substitute, the
 original description in {\WM}. Therefore familiarity with the original paper is
-assumed, and, for some sections, having it close-by is necessary to
+assumed, and, for some sections, having the original close-by is necessary to
 meaningfully follow this document.
 
-In this paper we describe {\WM} in a detail that is more useful for algorithm:
-each section will be expanded, with more elaborate and exact illustrations for
-every step of the algorithm.
+This paper describes {\WM} in detail that is more useful for anyone who wishes
+to follow the algorithm implementation more closely: each section is expanded
+with additional commentary, and richer illustrations for non-obvious steps. In
+many cases, corner cases are discussed and clarified.
 
-Algorithms discussed in this paper assume Euclidean geometry.
+Assume Euclidean geometry throughout this document, unless noted otherwise.
 
 \subsection{Vocabulary and terminology}
 
@@ -267,8 +289,8 @@ This section defines vocabulary and terms as defined in the rest of the paper.
         $(x_2, y_2)$. Line Segment and Segment are used interchangeably
         throughout the paper.
 
-    \item[Line] represents a single linear feature in the real world. For
-        example, a river or a coastline. {\tt LINESTRING} in GIS terms.
+    \item[Line] (or \textsc{linestring}) represents a single linear feature in
+        the real world. For example, a river or a coastline.
 
         Geometrically, A line is a series of connected line segments, or,
         equivalently, a series of connected vertices. Each vertex connects to
@@ -300,7 +322,7 @@ and the implementation.
         Radians & $\nicefrac{\pi}{6}$ & $\nicefrac{\pi}{4}$ & $\nicefrac{\pi}{2}$ & $\pi$       & $2\pi$ \\
         \hline
     \end{tabular}
-    \caption{Popular degree and radian values}
+    \caption{Some angular degree and radian values mentioned in this article.}
     \label{table:radians}
 \end{table}
 
@@ -314,8 +336,7 @@ algorithm against a predefined set of geometries, and asserts that the output
 matches the resulting hand-calculated geometry.
 
 The full set of test geometries is visualized in
-figure~\onpage{fig:test-figures}. The figure includes arrows depicting line
-direction.
+figure~\ref{fig:test-figures}.
 
 \begin{figure}[h]
     \centering
@@ -330,7 +351,7 @@ unexpected bugs have snug in while modifying the algorithm.
 
 \section{Description of the implementation}
 
-Like alluded in section~\onpage{sec:introduction}, {\WM} paper skims over
+Like alluded in section~\ref{sec:introduction}, {\WM} paper skims over
 certain details, which are important to implement the algorithm. This section
 goes through each algorithm stage, illustrating the intermediate steps and
 explaining the author's desiderata for a more detailed description.
@@ -339,14 +360,22 @@ Illustrations of the following sections are extracted from the automated test
 cases, which were written during the algorithm implementation (as discussed in
 section~\onpage{sec:automated-tests}).
 
-Lines in illustrations are black, and bends are heavily colored after
-converting them to polygons. Bends are converted to polygons (for illustration
-purposes) using the following algorithm:
+Illustrated lines are black. Bends themselves are linear features.
+Discriminating between bends in illustrations might be tricky, because
+sometimes a single \textsc{line segment} can belong to two bends.
+
+Given that, there is another way to highlight bends in a schematic drawing: by
+converting them to polygons and by altering their background colors. It works
+as follows:
 
 \begin{itemize}
     \item Join the first and last vertices of the bend, creating a polygon.
     \item Color the polygons using distinct colors.
 \end{itemize}
+
+This type of illustration works quite well, since polygons created from bends
+are almost never overlapping, and discriminating different backgrounds is
+easier than discriminating different line shapes or colors.
 
 \subsection{Definition of a Bend}
 \label{sec:definition-of-a-bend}
@@ -369,20 +398,20 @@ are necessary when writing code to detect the bends:
         segments belong to 1 or 2 bends.
 
     \item First and last segments of each bend (except for the two end-line
-        segments) is also the first vertex of the next bend.
+        segments) are also the first vertex of the next bend.
 \end{itemize}
 
 Properties above may be apparent when looking at illustrations at this article
 or reading here, but they are nowhere as such when looking at the original
 article.
 
-Figure~\ref{fig:fig8-definition-of-a-bend} illustrates article's Figure 8,
+Figure~\ref{fig:fig8-definition-of-a-bend} illustrates article's figure 8,
 but with bends colored as polygons: each color is a distinctive bend.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{fig8-definition-of-a-bend}
-    \caption{Originally Figure 8: detected bends are highlighted}
+    \caption{Originally figure 8: detected bends are highlighted}
     \label{fig:fig8-definition-of-a-bend}
 \end{figure}
 
@@ -395,7 +424,7 @@ The gist of the section is in the original article:
     would not recognize this as the bend point of a bend
 \end{displaycquote}
 
-Figure~\ref{fig:fig5-gentle-inflection} visualizes original paper's Figure 5,
+Figure~\ref{fig:fig5-gentle-inflection} visualizes original paper's figure 5,
 when a single vertex is moved outwards the end of the bend.
 
 \begin{figure}[h]
@@ -409,13 +438,13 @@ when a single vertex is moved outwards the end of the bend.
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
-    \caption{Originally Figure 5: gentle inflections at the ends of the bend}
+    \caption{Originally figure 5: gentle inflections at the ends of the bend}
     \label{fig:fig5-gentle-inflection}
 \end{figure}
 
 The illustration for this section was clear, but insufficient: it does not
 specify how many vertices should be included when calculating the end-of-bend
-inflection. We chose the iterative approach --- as long as the angle is "right"
+inflection. The iterative approach was chosen --- as long as the angle is "right"
 and the distance is decreasing, the algorithm should keep re-assigning vertices
 to different bends; practically not having an upper bound on the number of
 iterations.
@@ -423,7 +452,7 @@ iterations.
 To prove that the algorithm implementation is correct for multiple vertices,
 additional example was created, and illustrated in
 figure~\ref{fig:inflection-1-gentle-inflection}: the rule re-assigns two
-vertices to the next bend instead of one.
+vertices to the next bend.
 
 \begin{figure}[h]
     \centering
@@ -436,14 +465,15 @@ vertices to the next bend instead of one.
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
-    \caption{Gentle inflection at the end of the bend when multiple vertices is moved}
+    \caption{Gentle inflection at the end of the bend when multiple vertices
+    are moved}
     \label{fig:inflection-1-gentle-inflection}
 \end{figure}
 
-To find and fix the gentle bends' inflections requires to run the algorithm in
-both directions; if implemented as documented, the steps will fail to match
-some bends that should be mutated. This implementation does it in the following
-way:
+Note that to find and fix the gentle bends' inflections, the algorithm should
+run twice, both ways. Otherwise, if it is executed only one way, the steps will
+fail to match some bends that should be adjusted. Current implementation works
+as follows:
 
 \begin{enumerate}
     \item Run the algorithm from beginning to the end.
@@ -453,17 +483,18 @@ way:
     \item Return result.
 \end{enumerate}
 
-The current implementation is the most straightforward, but not optimal:
-reversing of lines and bends could be avoided by walking backwards the lines.
-In this case, steps \ref{rev1} and \ref{rev2} could be spared, thus saving
-memory and computation time.
+Reversing the line and its bends is straightforward to implement, but costly:
+the two reversal steps cost additional time and memory. The algorithm could be
+made more optimal with a similar version of the algorithm, but the one which
+goes backwards. In this case, steps \ref{rev1} and \ref{rev2} could be spared,
+that way saving memory and computation time.
 
 The "quite small angle" was arbitrarily chosen to $\smallAngle$.
 
 \subsection{Self-line Crossing When Cutting a Bend}
 
-When bend's baseline crosses another bend, it is called self-crossing. This is
-undesirable in the upcoming operators, and self-crossings should be removed
+When bend's baseline crosses another bend, it is called self-crossing.
+Self-crossing is undesirable in the upcoming operators, thus should be removed
 following the rules of the article.
 
 \begin{figure}[h]
@@ -477,14 +508,15 @@ following the rules of the article.
         \includegraphics[width=\textwidth]{fig6-selfcrossing-after}
         \caption{Self-crossing removed following the algorithm}
     \end{subfigure}
-    \caption{Originally Figure 6: simple case of self-line crossing}
+    \caption{Originally figure 6: simple case of self-line crossing}
     \label{fig:fig6-selfcrossing}
 \end{figure}
 
+The original description does not go into detail which bends may self-cross, and which <TBD>
+
 The self-line-crossing may happen not by the neighboring bend, but by any other
-bend in the line. For example, the baseline of the bend $(A, B)$ may cross
-different bends in between, as depicted in
-figure~\onpage{fig:selfcrossing-1-non-neighbor}.
+bend in the line. For example, the baseline of the bend may cross different
+bends in between, as depicted in figure~\ref{fig:selfcrossing-1-non-neighbor}.
 
 \begin{figure}[h]
     \centering
@@ -632,7 +664,7 @@ We strongly believe in the ability to reproduce the results is critical for any
 This was tested on Linux Debian 11 with upstream packages only.
 
 \subsection{Algorithm code listings}
-\inputcode{postgresql}{wm.sql}
+%\inputcode{postgresql}{wm.sql}
 
 \end{appendices}
 \end{document}
