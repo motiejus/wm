@@ -77,3 +77,35 @@ them).
 Removing that removes changes the meaning of the sentence that **euclidean
 distance** is normalized (the composite of the bend properties), rather than
 a single component.
+
+Offered structure
+-----------------
+
+- Introduction
+- Previous research overview
+- Methodology and metodics
+- Results
+- Conclusions
+- Literature review
+- Appendix
+
+for 2021-04-19
+--------------
+
+- literatūros šaltinių analizė
+- literatūros šaltinių priskyrimas atskiroms magistro darbo struktūrinėms dalims
+
+analizės uždaviniai:
+- galutinis problemos formulavimas
+- darbo tikslo formulavimas
+- uždavinių formulavimas
+- aktualumo
+- naujumo
+- pritaikomumo formulavimas
+
+Angl.:
+
+- trūksta literatūros apžvalgos: pervadinti šiuolaikinius sprendimus į tai
+- mažiausiai 2 poskyriai skyriuje.
+- techninė dalis -- į rezultatus.
+- "eksperimento rezultatai" eina į "darbo rezultatus".
