@@ -36,5 +36,5 @@ insert into aggregate_rivers_tmp
     where waterway in ('river', 'stream', 'canal') and :where;
 
 drop table if exists agg_rivers;
-create table agg_rivers as (select * from aggregate_rivers() where st_length(way) > 20000);
+create table agg_rivers as (select * from aggregate_rivers() where st_length(way) >= 50000);
 drop table aggregate_rivers_tmp;
