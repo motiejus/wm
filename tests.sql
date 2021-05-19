@@ -46,8 +46,6 @@ create table demo_selfcrossing3 (name text, i bigint, way geometry);
 insert into demo_selfcrossing3 select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;
 
 
-\q
-
 do $$
 declare
   vbends geometry[];
@@ -80,4 +78,25 @@ begin
   perform assert_equals(vbends[1], vinflections[1]); -- unchanged
   perform assert_equals('LINESTRING(114 20,133 20,145 15,145 0,136 5,123 7,114 7)', st_astext(vinflections[2]));
   perform assert_equals('LINESTRING(123 7,114 7,111 2)', st_astext(vinflections[3]));
+end $$ language plpgsql;
+
+do $$
+declare
+  vcrossings geometry[];
+begin
+  select self_crossing((select ways from inflections where name='fig6')) into vcrossings;
+  perform assert_equals(
+    'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
+    (select st_astext(
+        st_linemerge(st_union(way))
+    ) from (select unnest(vcrossings) way) a)
+  );
+
+  select self_crossing((select ways from inflections where name='fig6-rev')) into vcrossings;
+  perform assert_equals(
+    'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
+    (select st_astext(
+        st_translate(st_reverse(st_linemerge(st_union(way))), -80, 0)
+    ) from (select unnest(vcrossings) way) a)
+  );
 end $$ language plpgsql;
