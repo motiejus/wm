@@ -1,0 +1,28 @@
+#!/bin/bash
+set -euo pipefail
+
+fail() {
+    >&2 echo "$1"
+    exit 1
+}
+
+dir=$(mktemp -d)
+
+echo "Extracting all files from the report ..."
+pdfdetach -saveall -o "$dir" mj-msc-all.pdf
+
+echo "Re-generating the report..."
+fail=0
+make -C "$dir" -j $(nproc) mj-msc-all.pdf 2>&1 > make.log || fail=1
+
+if [[ $fail == 1 ]]; then
+    >&2 echo "Generation failed. Here are the last 10 log lines:"
+    tail -10 "$dir/make.log"
+    exit 1
+fi
+
+open=open
+if [[ $(uname) == Linux ]]
+    open=xdg-open
+fi
+"$open" "$dir/mj-msc-all.pdf"

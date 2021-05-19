@@ -128,36 +128,16 @@ ChaikinSmoothing}.
 
 \begin{appendices}
 
-\section{Žeimena and Lakaja in context}
-
 \section{Code listings}
 
-For the curious users it may be useful to see how the analysis was executed.
-Also, given the source listings, it should be relatively straightforward to
-re-run the same analysis on a different area.
+We strongly believe that ability to reproduce the graphs here is critical for
+    the longevity of the work. Therefore we have added all the source files of
+    this report to the PDF document itself. To extract the files (and, if
+    desired, re-generate the report), run this simple script:
 
-The analysis was executed and report was generated on Ubuntu 20.04 with only
-system packages. This should be sufficient: {\tt postgis gdal-bin biber
-latexmk texlive-bibtex-extra python3-geopandas python3-pygments}.
+\inputminted[fontsize=\small]{bash}{extract-and-generate}
 
-\subsection{Makefile}
-This file binds all the pieces together:
-\begin{itemize}
-    \item Prepares the PostGIS database.
-    \item Generates helper figures (sine waves, squares).
-    \item Runs analysis on input files ({\DP}, {\VW}, Chaikin).
-    \item Invokes {\tt latexmk} as a final report generation step.
-\end{itemize}
-\inputminted[fontsize=\small]{make}{Makefile}
-
-\subsection{layer2img.py}
-This file accepts a layer (or two) and generates a PDF image suitable for embedding into the report.
-\inputminted[fontsize=\small]{python}{layer2img.py}
-
-\subsection{db}
-Manages a PostGIS database in the Docker container. That way, the database can
-be torn down and re-created by automated tools like the {\tt Makefile} itself.
-\inputminted[fontsize=\small]{bash}{db}
+A working Docker installation, LaTeX environment
 
 \end{appendices}
 \end{document}
