@@ -226,16 +226,17 @@ straightforward to adjust for different scales.
 Both algorithms are part of PostGIS, a free-software GIS suite:
 \begin{itemize}
     \item {\DP} via
-        \href{https://postgis.net/docs/ST_Simplify.html}{PostGIS \texttt{ST\_Simplify}}.
+        \href{https://postgis.net/docs/ST_Simplify.html}{PostGIS \textsc{st\_simplify}}.
 
     \item {\VW} via
-        \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS \texttt{SimplifyVW}}.
+        \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS
+        \textsc{st\_simplifyvw}}.
 \end{itemize}
 
 It may be worthwhile to post-process those through a widely available Chaikin's
 line smoothing algorithm\cite{chaikin1974algorithm} via
 \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
-\texttt{ST\_ChaikinSmoothing}}.
+\textsc{st\_chaikinsmoothing}}.
 
 To use in generalization examples, we will use two rivers: Šalčia and Visinčia.
 These rivers were chosen, because they have both large and small bends, and
@@ -277,12 +278,12 @@ simplification for scale 1:\numprint{50000} and especially for
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-douglas-64-50k}
-        \caption{Using {\DP}}
+        \caption{Using {\DP}.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-visvalingam-64-50k}
-        \caption{Using {\VW}}
+        \caption{Using {\VW}.}
     \end{subfigure}
     \caption{Generalized using classical algorithms (1:\numprint{50000}).}
     \label{fig:salvis-generalized-50k}
@@ -299,12 +300,12 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-douglas-64-chaikin-50k}
-        \caption{{\DP} + Chaikin's}
+        \caption{{\DP} + Chaikin's.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-visvalingam-64-chaikin-50k}
-        \caption{{\VW} + Chaikin's}
+        \caption{{\VW} + Chaikin's.}
     \end{subfigure}
     \caption{Generalized and smoothened river (1:\numprint{50000}).}
     \label{fig:salvis-generalized-chaikin-50k}
@@ -314,12 +315,12 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-overlaid-douglas-64-chaikin-50k}
-        \caption{{\DP} + Chaikin's}
+        \caption{{\DP} + Chaikin's.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-overlaid-visvalingam-64-chaikin-50k}
-        \caption{{\VW} + Chaikin's}
+        \caption{{\VW} + Chaikin's.}
     \end{subfigure}
     \caption{Zoomed-in generalized and smoothened river + original.}
     \label{fig:salvis-overlaid-generalized-chaikin-50k}
@@ -549,7 +550,7 @@ We will explain two instances on when automated tests were very useful during
 the implementation:
 \begin{itemize}
 
-    \item Created a function \texttt{wm\_exaggeration}, which exaggerates bends
+    \item Created a function \textsc{wm\_exaggeration}, which exaggerates bends
         following the rules. It worked well over simple geometries, but, due to
         a subtle bug, created a self-crossing bend in Visinčia. We copied the
         offending bend to the automated test suite and fixed the bug. The test
@@ -632,7 +633,7 @@ easier than discriminating different line shapes or colors.
 
 \subsection{Debugging}
 
-NOTE: this will explain how intermediate debugging tables (\texttt{wm\_debug})
+NOTE: this will explain how intermediate debugging tables (\textsc{wm\_debug})
 work. This is not related to the algorithm, but the only the implementation
 itself (probably should come together with paper's regeneration and unit
 tests).
@@ -641,7 +642,7 @@ tests).
 
 NOTE: explain how different river segments are merged into a single line. This
 is not explained in the {\WM} paper, but is a necessary prerequisite. This is
-implemented in \texttt{aggregate-rivers.sql}.
+implemented in \textsc{aggregate-rivers.sql}.
 
 \subsection{Bend scaling and dimensions}
 \label{sec:bend-scaling-and-dimensions}
@@ -892,7 +893,7 @@ fraction of bends whose sum of inner angles is smaller than $180^\circ$.
 
 \subsection{Attributes of a Single Bend}
 
-\textsc{Compactness Index} is "the ratio of the area of the polygon over the
+\textsc{compactness index} is "the ratio of the area of the polygon over the
 circle whose circumference length is the same as the length of the
 circumference of the polygon" \cite{wang1998line}. Given a bend, its
 compactness index is calculated as follows:
@@ -967,7 +968,7 @@ To find out whether two bends are similar, they are compared by 3 components:
 \begin{enumerate}
   \item \textsc{adjusted size} $A_{adj}$
   \item \textsc{compactness index} $c$
-  \item \textsc{Baseline length} $l$
+  \item \textsc{baseline length} $l$
 \end{enumerate}
 
 Components 1, 2 and 3 represent a point in a 3-dimensional space, and Euclidean
@@ -992,7 +993,7 @@ NOTE: not implemented.
 
 \subsection{Exaggeration Operator}
 
-NOTE: implemented, explain. Also {\texttt intersection\_tolerance} parameter.
+NOTE: implemented, explain. Also {\textsc intersection\_tolerance} parameter.
 
 \section{Program Implementation}
 
@@ -1038,10 +1039,10 @@ Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
 
 \inputcode{bash}{extract-and-generate}
 
-\subsection{Function \texttt{ST\_SimplifyWV}}
+\subsection{Function \textsc{st\_simplifywv}}
 \inputcode{postgresql}{wm.sql}
 
-\subsection{Function \texttt{aggregate\_rivers}}
+\subsection{Function \textsc{aggregate\_rivers}}
 \inputcode{postgresql}{aggregate-rivers.sql}
 
 \end{appendices}
