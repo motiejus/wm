@@ -2,7 +2,7 @@
 EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
-RIVERS ?= Visinčia Šalčia Žeimena Lakaja
+RIVERS ?= Visinčia Šalčia Žeimena Lakaja Nemunas
 
 .faux_filter-rivers: .faux_import-osm
 	./filter-rivers-query.awk $(RIVERS) | ./db -f -
