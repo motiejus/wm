@@ -270,12 +270,12 @@ simplification for scale 1:\numprint{50000} and especially for
 \begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-douglas-64-50k}
+        \includegraphics[width=\textwidth]{salvis-dp-64-50k}
         \caption{Using {\DP}.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-visvalingam-64-50k}
+        \includegraphics[width=\textwidth]{salvis-vw-64-50k}
         \caption{Using {\VW}.}
     \end{subfigure}
     \caption{Simplified using classical algorithms (1:\numprint{50000}).}
@@ -291,15 +291,15 @@ generalization, illustrated in figure~\ref{fig:salvis-generalized-chaikin-50k}.
 \begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-douglas-64-chaikin-50k}
+        \includegraphics[width=\textwidth]{salvis-dp-64-chaikin-50k}
         \caption{{\DP} and Chaikin's.}
-        \label{fig:salvis-douglas-64-chaikin-50k}
+        \label{fig:salvis-dp-64-chaikin-50k}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-visvalingam-64-chaikin-50k}
+        \includegraphics[width=\textwidth]{salvis-vw-64-chaikin-50k}
         \caption{{\VW} and Chaikin's.}
-        \label{fig:salvis-visvalingam-64-chaikin-50k}
+        \label{fig:salvis-vw-64-chaikin-50k}
     \end{subfigure}
     \caption{Simplified and smoothened river (1:\numprint{50000}).}
     \label{fig:salvis-generalized-chaikin-50k}
@@ -308,18 +308,18 @@ generalization, illustrated in figure~\ref{fig:salvis-generalized-chaikin-50k}.
 \begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-overlaid-douglas-64-chaikin-50k}
+        \includegraphics[width=\textwidth]{salvis-overlaid-dp-64-chaikin-50k}
 
         \caption{Original (fig.~\ref{fig:salvis-50k}) and simplified
-        (fig.~\ref{fig:salvis-douglas-64-chaikin-50k}).}
+        (fig.~\ref{fig:salvis-dp-64-chaikin-50k}).}
 
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-overlaid-visvalingam-64-chaikin-50k}
+        \includegraphics[width=\textwidth]{salvis-overlaid-vw-64-chaikin-50k}
 
         \caption{Original (fig.~\ref{fig:salvis-50k}) and simplified
-            (fig.~\ref{fig:salvis-visvalingam-64-chaikin-50k}.)}
+            (fig.~\ref{fig:salvis-vw-64-chaikin-50k}.)}
 
     \end{subfigure}
     \caption{Zoomed-in simplified and smoothened river and original.}
@@ -1361,18 +1361,33 @@ Figure~\ref{fig:isolated-1-exaggerated} illustrates an exaggerated bend using
 \section{Results}
 \label{sec:results}
 
+This section visualizes the results, discusses robustness and issues of the
+generalization, and suggests specific improvements.
+
+One of our goals is to compare the generalized lines with the official
+generalized dataset\cite{nzt}. Therefore, we have selected the target scales
+that the official sources offer too: 1:\numprint{50000} and
+1:\numprint{250000}. The \textsc{dhalfcircle} values for the subset are as
+follows:
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{ c  D{.}{.}{1} }
+        Scale               & \multicolumn{1}{c}{$D(m)$}  \\ \hline
+        1:\numprint{50000}  &  75                         \\
+        1:\numprint{250000} & 220                         \\
+    \end{tabular}
+\end{table}
+
+Our generalized results are viewed from the following angles:
+\begin{itemize}
+    \item Compare to the non-simplified originals.
+    \item Compare to the official datasets.
+    \item Compare to {\DP} and {\VW}.
+\end{itemize}
+
 \subsection{Generalization Results of Analyzed Rivers}
 \label{sec:generalization-results-of-analyzed-rivers}
-
-Figures~\ref{fig:salvis-wm-50k} and~\ref{fig:salvis-wm-250k} visualize
-the generalization result for Šalčia and Visinčia using {\WM} with the
-\textsc{dhalfcircle} values from the
-table~\ref{table:scale-halfcirlce-diameter}:
-
-\begin{itemize}
-    \item 1:\numprint{50000}: 75.
-    \item 1:\numprint{250000}: 220.
-\end{itemize}
 
 \subsubsection{Medium-scale (1:\numprint{50000})}
 \label{sec:analyzed-medium-scale}
@@ -1468,7 +1483,7 @@ future research and improvement:
 
 \end{itemize}
 
-\subsection{Comparing Generalized Result with National Spatial Datasets}
+\subsection{Comparison with National Spatial Datasets}
 
 \subsubsection{Background}
 
@@ -1504,7 +1519,7 @@ all three shapes: GDR50LT, {\WM}--simplified GDB10LT, and the original GDB10LT.
     \includegraphics[width=\textwidth]{salvis-wm-gdr50}
 
     \caption{2x zoomed-in GDR50LT (green), {\WM}--simplified GDB10LT (orange)
-    and original GDB10LT (black).}
+    and original GDB10LT (dotted black).}
 
     \label{fig:salvis-wm-gdr50}
 \end{figure}
@@ -1545,6 +1560,51 @@ desired in section~\ref{sec:future-suggestions}.
     \end{subfigure}
     \caption{GDR250LT and {\WM}--simplified GDB10LT.}
     \label{fig:salvis-wm-250k}
+\end{figure}
+
+
+\subsection{Comparison with {\DP} and {\VW}}
+
+It is time to visually compare our implementation with the classical
+algorithms: {\DP}, {\VW} and Chaikin. Since we have established more work is
+needed for small-scale maps (1:\numprint{250000}), we will limit the comparison
+in this section to 1:\numprint{50000}.
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{salvis-wm-dp-50k}
+
+    \caption{{\DP} (green), {\WM} (orange) and original (black dotted) at
+    1:\numprint{50000}.}
+
+    \label{fig:salvis-wm-dp-50k}
+\end{figure}
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{salvis-wm-dp-chaikin-50k}
+
+    \caption{Chaikin--smoothened {\DP} (green), {\WM} (orange) and original
+    (black dotted) at 1:\numprint{50000}.}
+
+    \label{fig:salvis-wm-dp-chaikin-50k}
+\end{figure}
+
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{salvis-wm-vw-50k}
+
+    \caption{{\VW} (green), {\WM} (orange) and original (black dotted) at
+    1:\numprint{50000}.}
+
+    \label{fig:salvis-wm-vw-50k}
+\end{figure}
+
+\begin{figure}[h!]
+    \includegraphics[width=\textwidth]{salvis-wm-vw-chaikin-50k}
+
+    \caption{Chaikin--smoothened {\VW} (green), {\WM} (orange) and original
+    (black dotted) at 1:\numprint{50000}.}
+
+    \label{fig:salvis-wm-vw-chaikin-50k}
 \end{figure}
 
 
@@ -1605,7 +1665,7 @@ implementation:
         a exaggerated bends that became sharp and includes some future ideas.
 
     \item What are the exaggeration limits when working with large scales?
-        Section~\ref{sec:national-large-scales} discusses examples that some
+        Section~\ref{sec:national-large-scale} discusses examples that some
         limits are necessary.
 
     \item Research when bends should be marked as \textsc{isolated}. As is

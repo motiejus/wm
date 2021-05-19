@@ -35,12 +35,12 @@ RIVERS = \
 		 salvis-50k \
 		 salvis-250k-10x \
 		 salvis-gdr250-2x \
-		 salvis-douglas-64-50k \
-		 salvis-visvalingam-64-50k \
-		 salvis-douglas-64-chaikin-50k \
-		 salvis-visvalingam-64-chaikin-50k \
-		 salvis-overlaid-douglas-64-chaikin-50k \
-		 salvis-overlaid-visvalingam-64-chaikin-50k \
+		 salvis-dp-64-50k \
+		 salvis-vw-64-50k \
+		 salvis-dp-64-chaikin-50k \
+		 salvis-vw-64-chaikin-50k \
+		 salvis-overlaid-dp-64-chaikin-50k \
+		 salvis-overlaid-vw-64-chaikin-50k \
 		 salvis-wm-250k-10x \
 		 salvis-wm-250k-2x \
 		 salvis-wm-50k \
@@ -49,7 +49,11 @@ RIVERS = \
 		 salvis-wm-overlaid-250k-zoom \
 		 salvis-wm-gdr50 \
 		 salvis-wm-gdr50-ne \
-		 salvis-wm-220
+		 salvis-wm-220 \
+		 salvis-wm-dp-50k \
+		 salvis-wm-dp-chaikin-50k \
+		 salvis-wm-vw-50k \
+		 salvis-wm-vw-chaikin-50k
 
 #################################
 # The thesis, publishable version
@@ -183,29 +187,29 @@ salvis-250k-10x_WIDTHDIV = 10
 salvis-gdr250-2x_1SELECT = wm_visuals where name='salvis-gdr250'
 salvis-gdr250-2x_WIDTHDIV = 2
 
-salvis-douglas-64-50k_1SELECT = wm_visuals where name='salvis-douglas-64'
-salvis-douglas-64-50k_WIDTHDIV = 2
+salvis-dp-64-50k_1SELECT = wm_visuals where name='salvis-dp-64'
+salvis-dp-64-50k_WIDTHDIV = 2
 
-salvis-visvalingam-64-50k_1SELECT = wm_visuals where name='salvis-visvalingam-64'
-salvis-visvalingam-64-50k_WIDTHDIV = 2
+salvis-vw-64-50k_1SELECT = wm_visuals where name='salvis-vw-64'
+salvis-vw-64-50k_WIDTHDIV = 2
 
-salvis-douglas-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-douglas-64-chaikin'
-salvis-douglas-64-chaikin-50k_WIDTHDIV = 2
+salvis-dp-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-dp-64-chaikin'
+salvis-dp-64-chaikin-50k_WIDTHDIV = 2
 
-salvis-visvalingam-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-visvalingam-64-chaikin'
-salvis-visvalingam-64-chaikin-50k_WIDTHDIV = 2
+salvis-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-vw-64-chaikin'
+salvis-vw-64-chaikin-50k_WIDTHDIV = 2
 
-salvis-overlaid-douglas-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-douglas-64-chaikin'
-salvis-overlaid-douglas-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
-salvis-overlaid-douglas-64-chaikin-50k_1COLOR = orange
-salvis-overlaid-douglas-64-chaikin-50k_WIDTHDIV = 2
-salvis-overlaid-douglas-64-chaikin-50k_QUADRANT = 1
+salvis-overlaid-dp-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-dp-64-chaikin'
+salvis-overlaid-dp-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
+salvis-overlaid-dp-64-chaikin-50k_1COLOR = orange
+salvis-overlaid-dp-64-chaikin-50k_WIDTHDIV = 2
+salvis-overlaid-dp-64-chaikin-50k_QUADRANT = 1
 
-salvis-overlaid-visvalingam-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-visvalingam-64-chaikin'
-salvis-overlaid-visvalingam-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
-salvis-overlaid-visvalingam-64-chaikin-50k_1COLOR = orange
-salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
-salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
+salvis-overlaid-vw-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-vw-64-chaikin'
+salvis-overlaid-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
+salvis-overlaid-vw-64-chaikin-50k_1COLOR = orange
+salvis-overlaid-vw-64-chaikin-50k_WIDTHDIV = 2
+salvis-overlaid-vw-64-chaikin-50k_QUADRANT = 1
 
 salvis-wm-250k-2x_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-250k-2x_WIDTHDIV = 2
@@ -236,16 +240,51 @@ salvis-wm-gdr50_2SELECT = wm_visuals where name='salvis-gdr50'
 salvis-wm-gdr50_3SELECT = wm_visuals where name='salvis'
 salvis-wm-gdr50_1COLOR = orange
 salvis-wm-gdr50_2COLOR = green
+salvis-wm-gdr50_3LINESTYLE = dotted
 
 salvis-wm-gdr50-ne_1SELECT = wm_visuals where name='salvis-wm-75'
 salvis-wm-gdr50-ne_2SELECT = wm_visuals where name='salvis-gdr50'
 salvis-wm-gdr50-ne_3SELECT = wm_visuals where name='salvis'
 salvis-wm-gdr50-ne_1COLOR = orange
 salvis-wm-gdr50-ne_2COLOR = green
+salvis-wm-gdr50-ne_3LINESTYLE = dotted
 salvis-wm-gdr50-ne_QUADRANT = 1
 
 salvis-wm-220_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-220_WIDTHDIV = 2
+
+salvis-wm-dp-50k_1SELECT = wm_visuals where name='salvis-dp-64'
+salvis-wm-dp-50k_2SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-dp-50k_3SELECT = wm_visuals where name='salvis'
+salvis-wm-dp-50k_1COLOR  = green
+salvis-wm-dp-50k_2COLOR  = orange
+salvis-wm-dp-50k_3LINESTYLE  = dotted
+
+salvis-wm-dp-chaikin-50k_1SELECT = wm_visuals where name='salvis-dp-64-chaikin'
+salvis-wm-dp-chaikin-50k_2SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-dp-chaikin-50k_3SELECT = wm_visuals where name='salvis'
+salvis-wm-dp-chaikin-50k_1COLOR  = green
+salvis-wm-dp-chaikin-50k_2COLOR  = orange
+salvis-wm-dp-chaikin-50k_3LINESTYLE  = dotted
+
+salvis-wm-vw-50k_1SELECT = wm_visuals where name='salvis-vw-64'
+salvis-wm-vw-50k_2SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-vw-50k_3SELECT = wm_visuals where name='salvis'
+salvis-wm-vw-50k_1COLOR  = green
+salvis-wm-vw-50k_2COLOR  = orange
+salvis-wm-vw-50k_3LINESTYLE  = dotted
+
+salvis-wm-vw-chaikin-50k_1SELECT = wm_visuals where name='salvis-vw-64-chaikin'
+salvis-wm-vw-chaikin-50k_2SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-vw-chaikin-50k_3SELECT = wm_visuals where name='salvis'
+salvis-wm-vw-chaikin-50k_1COLOR  = green
+salvis-wm-vw-chaikin-50k_2COLOR  = orange
+salvis-wm-vw-chaikin-50k_3LINESTYLE  = dotted
+
+
+salvis-wm-dp-chaikin-50k_1SELECT = 
+
+salvis-wm-vw-chaikin-50k_1SELECT = 
 
 .faux_db_pre: db init.sql
 	bash db start
