@@ -29,8 +29,7 @@ FIGURES = \
 		  fig6-selfcrossing-after \
 		  selfcrossing-1-before \
 		  selfcrossing-1-after \
-		  isolated-1-before \
-		  isolated-1-after
+		  isolated-1-exaggerated
 
 RIVERS = \
 		 salvis-25k \
@@ -100,17 +99,17 @@ $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
 
 test-figures_1SELECT = wm_figures
 
-fig8-definition-of-a-bend_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
+fig8-definition-of-a-bend_1SELECT = wm_debug where name='fig8' AND stage='afigures' AND gen=1
 fig8-definition-of-a-bend_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
 fig8-definition-of-a-bend_3SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
 fig8-definition-of-a-bend_3LINESTYLE = dotted
 
-fig8-elimination-gen1_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
+fig8-elimination-gen1_1SELECT = wm_debug where name='fig8' AND stage='afigures' AND gen=1
 fig8-elimination-gen1_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
 fig8-elimination-gen1_3SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
 fig8-elimination-gen1_3LINESTYLE = dotted
 
-fig8-elimination-gen2_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=2
+fig8-elimination-gen2_1SELECT = wm_debug where name='fig8' AND stage='afigures' AND gen=2
 fig8-elimination-gen2_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=2
 fig8-elimination-gen2_3SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=2
 fig8-elimination-gen2_3LINESTYLE = dotted
@@ -142,28 +141,30 @@ inflection-1-gentle-inflection-after_3SELECT = wm_debug where name='inflection-1
 inflection-1-gentle-inflection-after_3LINESTYLE = dotted
 
 fig6-selfcrossing-before_WIDTHDIV = 2
-fig6-selfcrossing-before_1SELECT = wm_debug where name='fig6' AND stage='bbends' AND gen=1
+fig6-selfcrossing-before_1SELECT = wm_debug where name='fig6' AND stage='afigures' AND gen=1
+fig6-selfcrossing-before_1LINESTYLE = dotted
 fig6-selfcrossing-before_2SELECT = wm_visuals where name='fig6-baseline'
-fig6-selfcrossing-before_2LINESTYLE = dotted
-fig6-selfcrossing-before_3SELECT = wm_visuals where name='fig6-newline'
+fig6-selfcrossing-before_3SELECT = wm_debug where name='fig6' AND stage='dcrossings' AND gen=1
+fig6-selfcrossing-before_3COLOR = black
 fig6-selfcrossing-after_WIDTHDIV = 2
 fig6-selfcrossing-after_1SELECT = wm_debug where name='fig6' AND stage='dcrossings' AND gen=1
 
 selfcrossing-1-before_WIDTHDIV = 2
 selfcrossing-1-before_1SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
+selfcrossing-1-before_1LINESTYLE = dotted
 selfcrossing-1-before_2SELECT = wm_visuals where name='selfcrossing-1-baseline'
-selfcrossing-1-before_2LINESTYLE = dotted
-selfcrossing-1-before_3SELECT = wm_visuals where name='selfcrossing-1-newline'
+selfcrossing-1-before_3SELECT = wm_debug where name='selfcrossing-1' AND stage='dcrossings' AND gen=1
+selfcrossing-1-before_3COLOR = black
 selfcrossing-1-after_WIDTHDIV = 2
 selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='dcrossings' AND gen=1
 selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-after_2LINESTYLE = invisible
 
-isolated-1-before_WIDTHDIV = 2
-isolated-1-before_1SELECT = wm_debug where name='isolated-1' AND stage='bbends' AND gen=1
-isolated-1-before_2SELECT = wm_debug where name='isolated-1' AND stage='gexaggeration' AND gen=1
-isolated-1-before_2LINESTYLE = dotted
-isolated-1-before_2COLOR = black
+isolated-1-exaggerated_WIDTHDIV = 2
+isolated-1-exaggerated_1SELECT = wm_debug where name='isolated-1' AND stage='bbends' AND gen=1
+isolated-1-exaggerated_1LINESTYLE = dotted
+isolated-1-exaggerated_2SELECT = wm_debug where name='isolated-1' AND stage='gexaggeration' AND gen=1
+isolated-1-exaggerated_2COLOR = black
 
 salvis-25k_1SELECT = wm_visuals where name='salvis'
 salvis-25k_WIDTHDIV = 1
