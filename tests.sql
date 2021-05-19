@@ -54,7 +54,7 @@ insert into wm_figures (name, way) values ('multi-island',ST_GeomFromText('MULTI
 
 -- TODO: there is a bug and it does not go through `self_crossing` function.
 insert into wm_figures (name, way) values ('selfcrossing-1',ST_GeomFromText('LINESTRING(-27 180,-20 166,-21 142,-18 136,55 136,55 136,71 145,44 165,37 146,22 145,14 164,11 164,3 146,-12 146,-13 176,-18 184)'));
-insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Translate((select way from wm_figures where name='selfcrossing-1'), 60, 0)));
+insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Translate((select way from wm_figures where name='selfcrossing-1'), 0, 60)));
 
 
 -- Run ST_SimplifyWM in debug mode, so `wm_debug` is populated. That table
@@ -170,7 +170,7 @@ begin
   perform assert_equals(
     selfcrossing1,
     (select st_astext(
-        st_translate(st_reverse(st_linemerge(st_union(way))), -60, 0)
+        st_translate(st_reverse(st_linemerge(st_union(way))), 0, -60)
     ) from (select unnest(vcrossings) way) a)
   );
 

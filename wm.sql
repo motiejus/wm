@@ -475,7 +475,6 @@ begin
         );
       end if;
 
-
       bends = detect_bends(lines[i], dbgname, stagenum);
       bends = fix_gentle_inflections(bends, dbgname, stagenum);
 
