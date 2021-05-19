@@ -98,7 +98,7 @@ begin
     -- Then edges (A,B) and (E,F) are shared with the neighboring bends.
     --
     --
-    -- Assume this curve (figure `inflection-1`):
+    -- Assume this curve (figure `inflection-1`), going clockwise from A:
     --
     --    \______B
     --    A      `-------. C
@@ -110,7 +110,9 @@ begin
     -- After processing the curve following the definition of a bend, the bend
     -- [A-E] would be detected. Assuming inflection point E and F are "small",
     -- the bend needs to be extended by two edges to [A,G].
-    select geom from st_dumppoints(bends[i-1]) order by path[1] asc limit 1 into ptail;
+    select geom from st_dumppoints(bends[i-1])
+      order by path[1] asc limit 1 into ptail;
+
     while true loop
       -- copy last 3 points of bends[i-1] (tail) to ptail
       select array(
