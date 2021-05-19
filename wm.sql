@@ -328,23 +328,23 @@ begin
   mutated = true;
   foreach line in array lines loop
     while mutated loop
-      execute format('drop table if exists demo_%sfigures0', i);
-      execute format('create table demo_%sfigures0 (way geometry)', i);
+      execute format('drop table if exists demo_%safigures', i);
+      execute format('create table demo_%safigures (way geometry)', i);
       -- if anyone has suggestions how to insert a variable to a table without such
       -- hackery, I'll be glad to know
-      execute format('insert into demo_%sfigures0 select $1;', i) using (select unnest(array[line]));
+      execute format('insert into demo_%safigures select $1;', i) using (select unnest(array[line]));
       bends = detect_bends(line);
-      execute format('drop table if exists demo_%sbends1', i);
-      execute format('create table demo_%sbends1 (i bigint, way geometry)', i);
-      execute format('insert into demo_%sbends1 (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
+      execute format('drop table if exists demo_%sbbends', i);
+      execute format('create table demo_%sbbends (i bigint, way geometry)', i);
+      execute format('insert into demo_%sbbends (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
       bends = fix_gentle_inflections(bends);
-      execute format('drop table if exists demo_%sinflections2', i);
-      execute format('create table demo_%sinflections2 (i bigint, way geometry)', i);
-      execute format('insert into demo_%sinflections2 (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
+      execute format('drop table if exists demo_%scinflections', i);
+      execute format('create table demo_%scinflections (i bigint, way geometry)', i);
+      execute format('insert into demo_%scinflections (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
       select * from self_crossing(bends) into bends, mutated;
-      execute format('drop table if exists demo_%sselfcrossing3', i);
-      execute format('create table demo_%sselfcrossing3 (i bigint, way geometry)', i);
-      execute format('insert into demo_%sselfcrossing3 (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
+      execute format('drop table if exists demo_%sdselfcrossing', i);
+      execute format('create table demo_%sdselfcrossing (i bigint, way geometry)', i);
+      execute format('insert into demo_%sdselfcrossing (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
       line = st_linemerge(st_union(bends));
       i = i + 1;
     end loop;

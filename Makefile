@@ -9,6 +9,10 @@ test: tests.sql .faux.db
 test-integration: .faux_filter-rivers
 	./db -f tests-integration.sql
 
+clean:
+	-./db stop
+	-rm .faux_filter-rivers .faux_import-osm .faux.db
+
 .faux_filter-rivers: .faux_import-osm
 	./db -v where="$(WHERE)" -f aggregate-rivers.sql
 	touch $@
