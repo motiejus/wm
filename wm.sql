@@ -81,14 +81,16 @@ begin
       dbgpolygon = null;
       if st_npoints(bends[i]) >= 3 then
           dbgpolygon = st_makepolygon(
-            st_addpoint(bends[i], st_startpoint(bends[i]))
+            st_addpoint(bends[i],
+              st_startpoint(bends[i]))
           );
       end if;
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'bbends-polygon', dbgname, dbggen, i, dbgpolygon);
     end loop;
   end if;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 -- wm_fix_gentle_inflections moves bend endpoints following "Gentle Inflection
 -- at End of a Bend" section.
@@ -139,7 +141,8 @@ begin
         'cinflections-polygon', dbgname, dbggen, i, dbgpolygon);
     end loop;
   end if;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 -- wm_fix_gentle_inflections1 fixes gentle inflections of an array of lines in
 -- one direction. An implementation detail of wm_fix_gentle_inflections.
@@ -201,7 +204,8 @@ begin
     end loop;
 
   end loop;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 -- wm_if_selfcross returns whether baseline of bendi crosses bendj.
 -- If it doesn't, returns a null geometry.
@@ -231,7 +235,9 @@ begin
   end if;
 
   return multi;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
+
 
 -- wm_self_crossing eliminates self-crossing from the bends, following the
 -- article's section "Self-line Crossing When Cutting a Bend".
@@ -299,7 +305,8 @@ begin
       unnest(bends)
     );
   end if;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 drop function if exists wm_inflection_angle;
 create function wm_inflection_angle (IN bend geometry, OUT angle real) as $$
@@ -317,14 +324,17 @@ begin
     continue when p3 is null;
     angle = angle + abs(pi() - st_angle(p1, p2, p3));
   end loop;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 drop function if exists wm_bend_attrs;
+drop function if exists wm_isolated_bends;
 drop function if exists wm_elimination;
 drop function if exists wm_exaggeration;
-drop function if exists wm_st_intersects_neighbors;
-drop type if exists wm_t_attrs;
-create type wm_t_attrs as (
+drop type if exists wm_t_bend_attrs;
+create type wm_t_bend_attrs as (
+  bend geometry,
+  area real,
   adjsize real,
   baselinelength real,
   curvature real,
@@ -334,66 +344,40 @@ create function wm_bend_attrs(
   bends geometry[],
   dbgname text default null,
   dbggen integer default null
-) returns wm_t_attrs[] as $$
+) returns setof wm_t_bend_attrs as $$
 declare
-  isolation_threshold constant real default 0.5;
-  attrs wm_t_attrs[];
-  attr wm_t_attrs;
-  bend geometry;
+  cmp float;
   i int4;
-  needs_curvature real;
-  skip_next boolean;
-  dbglastid integer;
+  polygon geometry;
+  bend geometry;
+  res wm_t_bend_attrs;
 begin
   for i in 1..array_length(bends, 1) loop
     bend = bends[i];
-    attr.adjsize = 0;
-    attr.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
-    attr.curvature = wm_inflection_angle(bend) / st_length(bend);
-    attr.isolated = false;
+    res = null;
+    res.bend = bend;
+    res.adjsize = 0;
+    res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
+    res.curvature = wm_inflection_angle(bend) / st_length(bend);
+    res.isolated = false;
     if st_numpoints(bend) >= 3 then
-      attr.adjsize = wm_adjsize(bend);
+      res.adjsize = wm_adjsize(bend);
     end if;
-    attrs[i] = attr;
-  end loop;
 
-  for i in 1..array_length(attrs, 1) loop
     if dbgname is not null then
       insert into wm_debug (stage, name, gen, nbend, way, props) values(
         'ebendattrs', dbgname, dbggen, i, bend,
         jsonb_build_object(
-          'adjsize', attrs[i].adjsize,
-          'baselinelength', attrs[i].baselinelength,
-          'curvature', attrs[i].curvature,
-          'isolated', false
+          'adjsize', res.adjsize,
+          'baselinelength', res.baselinelength,
+          'curvature', res.curvature
         )
-      ) returning id into dbglastid;
+      );
     end if;
-
-    -- first and last bends can never be isolated by definition
-    if skip_next or i = 1 or i = array_length(attrs, 1) then
-      skip_next = false;
-      continue;
-    end if;
-
-    needs_curvature = attrs[i].curvature * isolation_threshold;
-    if attrs[i-1].curvature < needs_curvature and
-       attrs[i+1].curvature < needs_curvature then
-      attr = attrs[i];
-      attr.isolated = true;
-      attrs[i] = attr;
-      skip_next = true;
-
-      if dbgname is not null then
-        update wm_debug
-        set props=props || jsonb_build_object('isolated', true)
-        where id=dbglastid;
-      end if;
-    end if;
+    return next res;
   end loop;
-
-  return attrs;
-end $$ language plpgsql;
+end;
+$$ language plpgsql;
 
 -- sm_st_split a line by a point in a more robust way than st_split.
 -- See https://trac.osgeo.org/postgis/ticket/2192
@@ -417,44 +401,55 @@ end $$ language plpgsql;
 
 -- wm_exaggerate_bend exaggerates a given bend. Must be a simple linestring.
 drop function if exists wm_exaggerate_bend;
-create function wm_exaggerate_bend(INOUT bend geometry) as $$
+create function wm_exaggerate_bend(
+  INOUT bend geometry,
+  size float,
+  desired_size float
+) as $$
 declare
-  scale constant float default 1.2; -- exaggeration enthusiasm
+  scale constant float default 2; -- per-step scaling factor
   midpoint geometry; -- midpoint of the baseline
   splitbend geometry; -- bend split across its half
   bendm geometry; -- bend with coefficients to prolong the lines
   points geometry[];
 begin
+  if size = 0 then
+    raise 'invalid input: zero-area bend';
+  end if;
   midpoint = st_lineinterpolatepoint(st_makeline(
       st_pointn(bend, 1),
       st_pointn(bend, -1)
     ), .5);
 
-  splitbend = wm_st_split(bend, st_lineinterpolatepoint(bend, .5));
-  -- Convert bend to LINESTRINGM, where M is the fraction by how
-  -- much the point will be prolonged:
-  -- 1. draw a line between midpoint and the point on the bend.
-  -- 2. multiply the line length by M. Midpoint stays intact.
-  -- 3. the new set of lines form a new bend.
-  -- Uses linear interpolation; can be updated to gaussian or similar;
-  -- then interpolate manually instead of relying on st_addmeasure.
-  bendm = st_collect(
-    st_addmeasure(st_geometryn(splitbend, 1), 1, scale),
-    st_addmeasure(st_geometryn(splitbend, 2), scale, 1)
-  );
+  while size < desired_size loop
+    splitbend = wm_st_split(bend, st_lineinterpolatepoint(bend, .5));
+    -- Convert bend to LINESTRINGM, where M is the fraction by how
+    -- much the point will be prolonged:
+    -- 1. draw a line between midpoint and the point on the bend.
+    -- 2. multiply the line length by M. Midpoint stays intact.
+    -- 3. the new set of lines form a new bend.
+    -- Uses linear interpolation; can be updated to gaussian or similar;
+    -- then interpolate manually instead of relying on st_addmeasure.
+    bendm = st_collect(
+      st_addmeasure(st_geometryn(splitbend, 1), 1, scale),
+      st_addmeasure(st_geometryn(splitbend, 2), scale, 1)
+    );
 
-  points = array((
-      select st_scale(
-        st_makepoint(st_x(geom), st_y(geom)),
-        st_makepoint(st_m(geom), st_m(geom)),
-        midpoint
-      )
-      from st_dumppoints(bendm)
-      order by path[1], path[2]
-    ));
+    points = array((
+        select st_scale(
+          st_makepoint(st_x(geom), st_y(geom)),
+          st_makepoint(st_m(geom), st_m(geom)),
+          midpoint
+        )
+        from st_dumppoints(bendm)
+        order by path[1], path[2]
+      ));
 
-  bend = st_setsrid(st_makeline(points), st_srid(bend));
-end $$ language plpgsql;
+    bend = st_setsrid(st_makeline(points), st_srid(bend));
+    size = wm_adjsize(bend);
+  end loop;
+end
+$$ language plpgsql;
 
 -- wm_adjsize calculates adjusted size for a polygon. Can return 0.
 drop function if exists wm_adjsize;
@@ -479,62 +474,12 @@ begin
   if cmp > 0 then
     adjsize = (area*(0.75/cmp));
   end if;
-end $$ language plpgsql;
-
-drop function if exists wm_st_intersects_neighbors;
-create function wm_st_intersects_neighbors(
-  bends geometry[],
-  bend geometry,
-  i integer,
-  intersect_patience integer
-) returns boolean as $$
-declare
-  n integer;
-  neighbor geometry;
-begin
-  -- Do close-by bends intersect with this one? Special
-  -- handling first, because 2 vertices need to be removed before checking.
-  n = st_npoints(bends[i-1]);
-  if n > 3 and st_intersects(bend,
-    st_removepoint(st_removepoint(bends[i-1], n-1), n-2)) then
-    return true;
-  end if;
-
-  n = st_npoints(bends[i+1]);
-  if n > 3 and st_intersects(bend,
-    st_removepoint(st_removepoint(bends[i+1], 0), 0)) then
-    return true;
-  end if;
-
-  -- Go through all the neighbors and see if the enlarged bend intersects
-  -- with any of them. If yes -- abort enlargement.
-  for n in -intersect_patience+1..intersect_patience-1 loop
-    continue when i+n < 1 or n in (-1, 0, 1);
-    continue when i+n > array_length(bends, 1);
-
-    -- More special handling: if the neigbhoring bend has 3 vertices, the
-    -- neighbor's neighbor may just touch the bend; in this
-    -- case, the nearest vertex should be removed before comparing.
-    neighbor = bends[i+n];
-    if st_npoints(neighbor) > 2 then
-      if n = -2 and st_npoints(bends[i+n+1]) = 3 then
-        neighbor = st_removepoint(neighbor, st_npoints(neighbor)-1);
-      elsif n = 2 and st_npoints(bends[i+n-1]) = 3 then
-        neighbor = st_removepoint(neighbor, 0);
-      end if;
-    end if;
-    if st_intersects(bend, neighbor) then
-      return true;
-    end if;
-  end loop;
-
-  return false;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 -- wm_exaggeration is the Exaggeration Operator described in the WM paper.
 create function wm_exaggeration(
-  INOUT bends geometry[],
-  attrs wm_t_attrs[],
+  INOUT bendattrs wm_t_bend_attrs[],
   dhalfcircle float,
   intersect_patience integer,
   dbgname text default null,
@@ -543,58 +488,87 @@ create function wm_exaggeration(
 ) as $$
 declare
   desired_size constant float default pi()*(dhalfcircle^2)/8;
-  bend geometry;
-  neighbor geometry;
-  size float;
+  tmpbendattr wm_t_bend_attrs;
+  tmpint geometry;
   i integer;
-  this_mutated boolean;
+  n integer;
+  last_id integer;
 begin
   mutated = false;
-  i = 0;
-  while i < array_length(attrs, 1) loop
-    i = i + 1;
+  <<bendloop>>
+  for i in 1..array_length(bendattrs, 1) loop
+    if bendattrs[i].isolated and bendattrs[i].adjsize < desired_size then
+      tmpbendattr.bend = wm_exaggerate_bend(
+        bendattrs[i].bend,
+        bendattrs[i].adjsize,
+        desired_size
+      );
 
-    continue when not attrs[i].isolated;
-    this_mutated = false;
+      -- does tmpbendattrs.bend intersect with the previous or next
+      -- intersect_patience bends? If they do, abort exaggeration for this one.
 
-    -- keep increasing this bend until either size permits, or it hits a
-    -- neighboring bend (intersect_patience number of neighbors will be
-    -- checked). When the size is right, stick it to the line.
-    size = attrs[i].adjsize;
-    while size < desired_size loop
-      bend = wm_exaggerate_bend(bends[i]);
-      exit when wm_st_intersects_neighbors(bends, bend, i, intersect_patience);
 
-      this_mutated = true;
-      bends[i] = bend;
-      size = wm_adjsize(bend);
-    end loop;
-    continue when not this_mutated;
+      -- Do close-by bends intersect with this one? Special
+      -- handling first, because 2 vertices need to be removed before checking.
+      n = st_npoints(bendattrs[i-1].bend);
+      if n > 3 then
+        continue when st_intersects(tmpbendattr.bend,
+          st_removepoint(st_removepoint(bendattrs[i-1].bend, n-1), n-2));
+      end if;
 
-    mutated = true;
-    -- Stick the right-sized bend to the line
-    -----------------------------------------
-    -- Remove last vertex of the previous bend and first vertex of the next
-    -- bend, because bends always share a line segment together.
-    bend = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
-    bends[i-1] = bend;
-    bend = st_removepoint(bends[i+1], 0);
-    bends[i+1] = bend;
+      n = st_npoints(bendattrs[i+1].bend);
+      if n > 3 then
+        continue when st_intersects(tmpbendattr.bend,
+          st_removepoint(st_removepoint(bendattrs[i+1].bend, 0), 0));
+      end if;
 
-    if dbgname is not null then
-      insert into wm_debug (stage, name, gen, nbend, way) values(
-        'gexaggeration', dbgname, dbggen, i, bends[i]);
+      for n in -intersect_patience+1..intersect_patience-1 loop
+        continue when n in (-1, 0, 1);
+        continue when i+n < 1;
+        continue when i+n > array_length(bendattrs, 1);
+
+        -- More special handling: if the neigbhoring bend has 3 vertices, the
+        -- neighbor's neighbor may just touch the tmpbendattr.bend; in this
+        -- case, the nearest vertex should be removed before comparing.
+        tmpint = bendattrs[i+n].bend;
+        if st_npoints(tmpint) > 2 then
+          if n = -2 and st_npoints(bendattrs[i+n+1].bend) = 3 then
+            tmpint = st_removepoint(tmpint, st_npoints(tmpint)-1);
+          elsif n = 2 and st_npoints(bendattrs[i+n-1].bend) = 3 then
+            tmpint = st_removepoint(tmpint, 0);
+          end if;
+        end if;
+
+        continue bendloop when st_intersects(tmpbendattr.bend, tmpint);
+      end loop;
+
+      -- No intersections within intersect_patience, mutate bend!
+      mutated = true;
+      bendattrs[i] = tmpbendattr;
+
+      -- remove last vertex of the previous bend and first vertex of the next
+      -- bend, because bends always share a line segment together this is
+      -- duplicated in a few places, because PostGIS does not allow (?)
+      -- mutating an array when passed to a function.
+      tmpbendattr.bend = st_removepoint(
+        bendattrs[i-1].bend,
+        st_npoints(bendattrs[i-1].bend)-1
+      );
+      bendattrs[i-1] = tmpbendattr;
+      tmpbendattr.bend = st_removepoint(bendattrs[i+1].bend, 0);
+      bendattrs[i+1] = tmpbendattr;
+
+      if dbgname is not null then
+        insert into wm_debug (stage, name, gen, nbend, way) values(
+          'gexaggeration', dbgname, dbggen, i, bendattrs[i].bend
+        );
+      end if;
     end if;
-
-    -- Next bend was modified, so `isolated` is not valid for neighbor's
-    -- neighbor. Skip over.
-    i = i + 2;
   end loop;
 end $$ language plpgsql;
 
 create function wm_elimination(
-  INOUT bends geometry[],
-  attrs wm_t_attrs[],
+  INOUT bendattrs wm_t_bend_attrs[],
   dhalfcircle float,
   dbgname text default null,
   dbggen integer default null,
@@ -605,54 +579,119 @@ declare
   leftsize float;
   rightsize float;
   i int4;
+  j int4;
+  tmpbendattr wm_t_bend_attrs;
+  dbgbends geometry[];
 begin
   mutated = false;
 
   i = 1;
-  while i < array_length(attrs, 1)-1 loop
+  while i < array_length(bendattrs, 1)-1 loop
     i = i + 1;
-    continue when attrs[i].adjsize = 0;
-    continue when attrs[i].adjsize > desired_size;
+    continue when bendattrs[i].adjsize = 0;
+    continue when bendattrs[i].adjsize > desired_size;
 
     if i = 2 then
-      leftsize = attrs[i].adjsize + 1;
+      leftsize = bendattrs[i].adjsize + 1;
     else
-      leftsize = attrs[i-1].adjsize;
+      leftsize = bendattrs[i-1].adjsize;
     end if;
 
-    if i = array_length(attrs, 1)-1 then
-      rightsize = attrs[i].adjsize + 1;
+    if i = array_length(bendattrs, 1)-1 then
+      rightsize = bendattrs[i].adjsize + 1;
     else
-      rightsize = attrs[i+1].adjsize;
+      rightsize = bendattrs[i+1].adjsize;
     end if;
 
-    continue when attrs[i].adjsize >= leftsize;
-    continue when attrs[i].adjsize >= rightsize;
+    continue when bendattrs[i].adjsize >= leftsize;
+    continue when bendattrs[i].adjsize >= rightsize;
 
     -- Local minimum. Elminate bend!
     mutated = true;
-    bends[i] = st_makeline(st_pointn(bends[i], 1), st_pointn(bends[i], -1));
-
+    tmpbendattr.bend = st_makeline(
+      st_pointn(bendattrs[i].bend, 1),
+      st_pointn(bendattrs[i].bend, -1)
+    );
+    bendattrs[i] = tmpbendattr;
     -- remove last vertex of the previous bend and
     -- first vertex of the next bend, because bends always
     -- share a line segment together
-    bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
-    bends[i+1] = st_removepoint(bends[i+1], 0);
+    tmpbendattr.bend = st_removepoint(
+      bendattrs[i-1].bend,
+      st_npoints(bendattrs[i-1].bend)-1
+    );
+    bendattrs[i-1] = tmpbendattr;
+    tmpbendattr.bend = st_removepoint(bendattrs[i+1].bend, 0);
+    bendattrs[i+1] = tmpbendattr;
     -- the next bend's adjsize is now messed up; it should not be taken
     -- into consideration for other local minimas. Skip over 2.
     i = i + 2;
   end loop;
 
   if dbgname is not null then
+    for j in 1..array_length(bendattrs, 1) loop
+      dbgbends[j] = bendattrs[j].bend;
+    end loop;
+
     insert into wm_debug(stage, name, gen, nbend, way) values(
       'helimination',
       dbgname,
       dbggen,
-      generate_subscripts(bends, 1),
-      unnest(bends)
+      generate_subscripts(dbgbends, 1),
+      unnest(dbgbends)
     );
   end if;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
+
+create function wm_isolated_bends(
+  INOUT bendattrs wm_t_bend_attrs[],
+  dbgname text default null,
+  dbggen integer default null
+) as $$
+declare
+  -- if neighbor's curvatures are within this fraction of the current bend
+  isolation_threshold constant real default 0.5;
+  this real;
+  skip_next bool;
+  res wm_t_bend_attrs;
+  i int4;
+  last_id integer;
+begin
+  for i in 1..array_length(bendattrs, 1) loop
+    if dbgname is not null then
+      insert into wm_debug (stage, name, gen, nbend, way, props) values(
+        'fisolated_bends', dbgname, dbggen, i, bendattrs[i].bend,
+        jsonb_build_object('isolated', false)
+      ) returning id into last_id;
+    end if;
+    -- first and last bends cannot be isolated
+    if i = 1 or i = array_length(bendattrs, 1) then
+      continue;
+    end if;
+
+    res = bendattrs[i];
+    if skip_next then
+      skip_next = false;
+    else
+      this = bendattrs[i].curvature * isolation_threshold;
+      if bendattrs[i-1].curvature < this and
+         bendattrs[i+1].curvature < this then
+        res.isolated = true;
+        bendattrs[i] = res;
+        skip_next = true;
+
+        if dbgname is not null then
+          update wm_debug
+          set props=props || jsonb_build_object('isolated', true)
+          where id=last_id;
+        end if;
+      end if;
+    end if;
+
+  end loop;
+end
+$$ language plpgsql;
 
 drop function if exists ST_SimplifyWM_Estimate;
 create function ST_SimplifyWM_Estimate(
@@ -678,7 +717,8 @@ begin
     npoints = npoints + st_numpoints(lines[i]);
   end loop;
   secs = npoints / 33;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 -- ST_SimplifyWM simplifies a given geometry using Wang & Müller's
 -- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
@@ -702,7 +742,7 @@ declare
   line geometry;
   lines geometry[];
   bends geometry[];
-  attrs wm_t_attrs[];
+  bendattrs wm_t_bend_attrs[];
   mutated boolean;
   l_type text;
 begin
@@ -733,37 +773,42 @@ begin
 
       select * from wm_self_crossing(bends, dbgname, gen) into bends, mutated;
 
-      if not mutated then
-        attrs = wm_bend_attrs(bends, dbgname, gen);
-
-        select * from wm_exaggeration(
-          bends, attrs, dhalfcircle, intersect_patience, dbgname, gen
-        ) into bends, mutated;
+      if mutated then
+        lines[i] = st_linemerge(st_union(bends));
+        gen = gen + 1;
+        continue;
       end if;
+
+      bendattrs = array((select wm_bend_attrs(bends, dbgname, gen)));
+      bendattrs = wm_isolated_bends(bendattrs, dbgname, gen);
+
+      select * from wm_exaggeration(
+        bendattrs, dhalfcircle, intersect_patience, dbgname, gen
+      ) into bendattrs, mutated;
 
       -- TODO: wm_combination
 
       if not mutated then
         select * from wm_elimination(
-          bends, attrs, dhalfcircle, dbgname, gen) into bends, mutated;
+          bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
       end if;
 
       if mutated then
+        for j in 1..array_length(bendattrs, 1) loop
+          bends[j] = bendattrs[j].bend;
+        end loop;
         lines[i] = st_linemerge(st_union(bends));
-
         if st_geometrytype(lines[i]) != 'ST_LineString' then
-          raise notice 'Got % (in %) instead of ST_LineString. '
+          -- For manual debugging:
+          --insert into wm_manual(name, way)
+          --select 'non-linestring-' || a.path[1], a.geom
+          --from st_dump(lines[i]) a
+          --order by a.path[1];
+          raise 'Got % (in %) instead of ST_LineString. '
           'Does the exaggerated bend intersect with the line? '
           'If so, try increasing intersect_patience.',
           st_geometrytype(lines[i]), dbgname;
-          -- For manual debugging, usually when wm_exaggeration returns
-          -- ST_MultiLineString. Uncomment the code below and change `raise`
-          -- to `raise notice` above.
-          insert into wm_manual(name, way)
-          select 'non-linestring-' || a.path[1], a.geom
-          from st_dump(lines[i]) a
-          order by a.path[1];
-          exit lineloop;
+          --exit lineloop;
         end if;
         gen = gen + 1;
         continue;
@@ -776,4 +821,5 @@ begin
   elseif l_type = 'ST_MultiLineString' then
     return st_union(lines);
   end if;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
