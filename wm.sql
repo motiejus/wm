@@ -22,7 +22,6 @@ declare
 begin
   l_type = st_geometrytype(line);
   if l_type != 'ST_LineString' then
-    raise notice 'Got non-LineString: %', st_summary(line);
     raise 'This function works with ST_LineString, got %', l_type;
   end if;
 
@@ -415,24 +414,20 @@ declare
   points geometry[];
 begin
   if size = 0 then
-    raise 'unable to exaggerate a zero-area bend';
+    raise 'invalid input: zero-area bend';
   end if;
   midpoint = st_lineinterpolatepoint(st_makeline(
       st_pointn(bend, 1),
       st_pointn(bend, -1)
     ), .5);
 
-  insert into wm_manual (name, way) values ('midpoint', midpoint);
-
   while size < desired_size loop
     splitbend = wm_st_split(bend, st_lineinterpolatepoint(bend, .5));
-
     -- Convert bend to LINESTRINGM, where M is the fraction by how
     -- much the point will be prolonged:
     -- 1. draw a line between midpoint and the point on the bend.
     -- 2. multiply the line length by M. Midpoint stays intact.
     -- 3. the new set of lines form a new bend.
-
     -- Uses linear interpolation; can be updated to gaussian or similar;
     -- then interpolate manually instead of relying on st_addmeasure.
     bendm = st_collect(
@@ -498,7 +493,6 @@ declare
 begin
   mutated = false;
   for i in 1..array_length(bendattrs, 1) loop
-
     if bendattrs[i].isolated and bendattrs[i].adjsize < desired_size then
       mutated = true;
       tmpbendattr.bend = wm_exaggerate_bend(
@@ -528,11 +522,8 @@ begin
         );
       end if;
     end if;
-
   end loop;
-
-end
-$$ language plpgsql;
+end $$ language plpgsql;
 
 create function wm_elimination(
   INOUT bendattrs wm_t_bend_attrs[],
