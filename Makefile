@@ -172,8 +172,6 @@ wm_vwdp50kdotted = $(call wm_vwdp50k,$(1),$(2),$(3),$(4),$(5),dotted)
 
 $(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
 	$(eval $(call wm_vwdp50kdotted,wm75,$(x),grpk10,1,)) \
-	$(eval $(call wm_vwdp50kdotted,wm75,$(x),grpk10,1,tl)) \
-	$(eval $(call wm_vwdp50kdotted,wm75,$(x),grpk10,1,tr)) \
 )
 $(eval $(call wm_vwdp50kblack,wm75,grpk50,grpk10,1))
 $(eval $(call wm_vwdp50kblack,wm75,grpk50,grpk10,1,tr))
