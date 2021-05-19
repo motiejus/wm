@@ -716,7 +716,7 @@ begin
   for i in 1..array_length(lines, 1) loop
     npoints = npoints + st_numpoints(lines[i]);
   end loop;
-  secs = npoints / 150;
+  secs = npoints / 33;
 end
 $$ language plpgsql;
 
