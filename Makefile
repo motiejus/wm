@@ -23,6 +23,9 @@ clean-tables:
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
+slides-2021-03-29.html:
+	pandoc -t slidy --self-contained $< -o $@
+
 .faux_filter-rivers: .faux_import-osm
 	./db -v where="$(WHERE)" -f aggregate-rivers.sql
 	touch $@

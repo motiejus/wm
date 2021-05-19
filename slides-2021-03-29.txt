@@ -3,9 +3,7 @@ title: Wang & Müller linijų generalizacijos algoritmo implementacija ir analiz
 author:
 - Motiejus Jakštys
 description: |
-    foo bar
-
-    It consists of two paragraphs
+    Prezentacija apie magistrinio darbo progresą vertinimo grupei
 date: 2021-03-29
 lang: lt-LT
 ...
@@ -27,30 +25,41 @@ lang: lt-LT
 
 # Aktualumas
 
-- Aprašyti Wang & Müller praktiniais parametrais.
+- Aprašyti Wang & Müller praktiniais parametrais
 - Iš GDR10 sukurti GDR50 ir GDR250 analogus
 - Palyginti su GDR50 ir GDR250
 
 # Naujumas
 
-- Tinkamo algoritmo tiesiog nėra; čia bus vienintelė, nauja implementacija.
+- Tinkamo algoritmo tiesiog nėra; čia bus vienintelė, nauja implementacija
 
-# Progresas
+# Progresas: programavimo etapai
 
-Užduotis                                                       Laikas  Statusas
--------------------------------------------------------------  ------  --------
-Įlinkių atpažinimas                                            8       Padaryta
-Silpnas pasislinkimas įlinkio gale                             8       Padaryta
-Įlinkio kirtimas kitu įlinkiu                                  8       Padaryta
-Patikrinimas su    Nemunu, Šalčia ir Visinčia                  16      Padaryta
-Matavimai: dydis ir forma                                      8       Progrese
-Matavimas: izoliuoti, panaūs                                   8       -
-Pašalinimo  operatorius                                        8       -
-Kombinavimo operatorius                                        8       -
-Padinimo     operatorius                                       8       -
-Pritaikymas visoms Lietuvos upėms                              8       -
-MSc: proza                                                     40      -
-MSc: apipavidalinimas                                          4       -
+Užduotis                                                       Statusas
+-------------------------------------------------------------  --------
+Įlinkių atpažinimas                                            Padaryta
+Silpnas pasislinkimas įlinkio gale                             Padaryta
+Įlinkio kirtimas kitu įlinkiu                                  Padaryta
+Patikrinimas su    Nemunu, Šalčia ir Visinčia                  Padaryta
+Matavimai: dydis ir forma                                      Padaryta
+Matavimas: izoliuoti, panaūs                                   Progrese
+Pašalinimo  operatorius                                        -
+Kombinavimo operatorius                                        -
+Padinimo operatorius                                           -
+Pritaikymas visoms Lietuvos upėms                              -
+
+Table: programavimo etapai
+
+# Progresas: programavimo analizės ir darbo rašymo etapai
+
+Užduotis                                                       Statusas
+-------------------------------------------------------------  --------
+Esamų algoritmų apžvalga                                       -
+Problemos aprašymas                                            -
+Pasirinkto generalizacijos sprendimo apibūdinimas              -
+Sukurtos implementacijos aptarimas                             -
+
+Table: analizės ir darbo rašymo etapai
 
 # Demonstracija
 
