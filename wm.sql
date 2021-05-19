@@ -175,6 +175,8 @@ declare
   s2 real;
   s3 real;
   bend geometry;
+  this geometry;
+  multi geometry;
 begin
   pi = radians(180);
 
@@ -199,7 +201,6 @@ begin
     -- now try to find another bend in this line that crosses this one.
     p0 = st_pointn(bends[i], 1);
     p1 = st_pointn(bends[i], -1);
-    --this = st_makeline(st_pointn(bends[i], 1), st_pointn(bends[i], -1));
 
     -- go through each bend in this line, and see if has a potential to cross bends[i].
     -- optimization: we care only about bends which beginning and end start at different
@@ -210,14 +211,27 @@ begin
       p2 = st_pointn(bends[j], 1);
       p3 = st_pointn(bends[j], -1);
 
-      -- https://stackoverflow.com/questions/1560492
+      -- are p2 and p3 on the same side of (p0,p1)? vector multiplication
+      -- https://stackoverflow.com/questions/1560492/
       s2 = (st_x(p0)-st_x(p1)*(st_y(p2)-st_y(p1))-(st_y(p0)-st_y(p1))*(st_x(p2)-st_x(p1)));
       s3 = (st_x(p0)-st_x(p1)*(st_y(p3)-st_y(p1))-(st_y(p0)-st_y(p1))*(st_x(p3)-st_x(p1)));
       continue when sign(s2) = sign(s3);
 
-      -- bend j may be crossing bend i, and it has a chance to be "important" --
-      -- p2 and p3 are in different sides of the plane as delimited by p0 and p1.
-      -- now does it really cross the line (p0, p1)?
+      -- do end vertices of bend[i] cross bend[j]?
+      this = st_makeline(st_pointn(bends[i], 1), st_pointn(bends[i], -1));
+      multi = st_split(bends[j], this);
+      continue when st_numgeometries(multi) = 1;
+
+      -- self-crossing detected!
+      -- if j < i:
+      --   bends[j] = multi[1][1...n-1]; that will have all the vertices of bends[j],
+      --     except the crossing itself.
+      --   bends[j] = append(bends[j], bends[i][-1])
+      --   remove bends from bends[j+1] to bends[i] inclusive.
+      -- elif j > i:
+      --   remove bends from bends[i+1] to bends[j-1] inclusive.
+      --   bends[j] = multi[2][2..n]
+      --   bends[i]
 
     end loop;
 
