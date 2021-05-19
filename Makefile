@@ -27,7 +27,7 @@ clean:
 	-./db stop
 	-rm -r .faux_test .faux_filter-rivers .faux_import-osm .faux_db \
 		version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
-		minted-mj-msc \
+		_minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
 		$(addsuffix .pdf,$(FIGURES)) \
 		$(SLIDES)
@@ -45,72 +45,49 @@ slides: $(SLIDES)
 mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib $(addsuffix .pdf,$(FIGURES))
 	latexmk -shell-escape -g -pdf $<
 
-mj-msc-gray.pdf: mj-msc.pdf
-	gs \
-		-sOutputFile=$@ \
-		-sDEVICE=pdfwrite \
-		-sColorConversionStrategy=Gray \
-		-dProcessColorModel=/DeviceGray \
-		-dCompatibilityLevel=1.4 \
-		-dNOPAUSE \
-		-dBATCH \
-		$<
-
-mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES)
-	cp $< .tmp-$@
-	for f in $^; do \
-		if [ "$$f" = "$<" ]; then continue; fi; \
-		pdfattach .tmp-$@ $$f .tmp2-$@; \
-		mv .tmp2-$@ .tmp-$@; \
-	done
-	mv .tmp-$@ $@
-
 define FIG_template
 $(1).pdf: layer2img.py Makefile .faux_test
-	python ./layer2img.py \
-		--outfile=$(1).pdf \
+	python ./layer2img.py --outfile=$(1).pdf \
 		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
 		$$(foreach i,1 2 3, \
-			$$(if $$($(1)_CMAP$$(i)),--group$$(i)-cmap="$$($(1)_CMAP$$(i))") \
-			$$(if $$($(1)_SELECT$$(i)),--group$$(i)-select="$$($(1)_SELECT$$(i))") \
-			$$(if $$($(1)_LINESTYLE$$(i)),--group$$(i)-linestyle="$$($(1)_LINESTYLE$$(i))") \
+			$$(if $$($(1)_$$(i)CMAP),--group$$(i)-cmap="$$($(1)_$$(i)CMAP)") \
+			$$(if $$($(1)_$$(i)SELECT),--group$$(i)-select="$$($(1)_$$(i)SELECT)") \
+			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
-
 $(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig))))
 
-test-figures_SELECT1 = wm_figures
+test-figures_1SELECT = wm_figures
 
-fig8-definition-of-a-bend_SELECT1 = wm_debug where name='fig8' AND stage='bbends' AND gen=1
-fig8-definition-of-a-bend_CMAP2 = 1
-fig8-definition-of-a-bend_SELECT2 = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
+fig8-definition-of-a-bend_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
+fig8-definition-of-a-bend_2CMAP = 1
+fig8-definition-of-a-bend_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
 
 fig5-gentle-inflection-before_WITHDIV = 2
-fig5-gentle-inflection-before_SELECT1 = wm_debug where name='fig5' AND stage='bbends' AND gen=1
-fig5-gentle-inflection-before_CMAP2 = 1
-fig5-gentle-inflection-before_SELECT2 = wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1
+fig5-gentle-inflection-before_1SELECT = wm_debug where name='fig5' AND stage='bbends' AND gen=1
+fig5-gentle-inflection-before_2CMAP = 1
+fig5-gentle-inflection-before_2SELECT = wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1
 fig5-gentle-inflection-after_WITHDIV = 2
-fig5-gentle-inflection-after_SELECT1 = wm_debug where name='fig5' AND stage='cinflections' AND gen=1
-fig5-gentle-inflection-after_SELECT2 = wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1
-fig5-gentle-inflection-after_CMAP2 = 1
+fig5-gentle-inflection-after_1SELECT = wm_debug where name='fig5' AND stage='cinflections' AND gen=1
+fig5-gentle-inflection-after_2SELECT = wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1
+fig5-gentle-inflection-after_2CMAP = 1
 
 inflection-1-gentle-inflection-before_WIDTHDIV = 2
-inflection-1-gentle-inflection-before_SELECT1 = wm_debug where name='inflection-1' AND stage='bbends' AND gen=1
-inflection-1-gentle-inflection-before_SELECT2 = wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1
-inflection-1-gentle-inflection-before_CMAP2 = 1
+inflection-1-gentle-inflection-before_1SELECT = wm_debug where name='inflection-1' AND stage='bbends' AND gen=1
+inflection-1-gentle-inflection-before_2SELECT = wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1
+inflection-1-gentle-inflection-before_2CMAP = 1
 inflection-1-gentle-inflection-after_WIDTHDIV = 2
-inflection-1-gentle-inflection-after_SELECT1 = wm_debug where name='inflection-1' AND stage='cinflections' AND gen=1
-inflection-1-gentle-inflection-after_SELECT2 = wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1
-inflection-1-gentle-inflection-after_CMAP2 = 1
+inflection-1-gentle-inflection-after_1SELECT = wm_debug where name='inflection-1' AND stage='cinflections' AND gen=1
+inflection-1-gentle-inflection-after_2SELECT = wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1
+inflection-1-gentle-inflection-after_2CMAP = 1
 
 fig6-self-crossing-before_WIDTHDIV = 4
-fig6-self-crossing-before_SELECT1 = wm_debug where name='fig6' AND stage='bbends' AND gen=1
-fig6-self-crossing-before_SELECT2 = wm_visuals where name='fig6-baseline'
-fig6-self-crossing-before_SELECT3 = wm_visuals where name='fig6-newline'
-fig6-self-crossing-before_LINESTYLE2 = dashed
-fig6-self-crossing-before_LINESTYLE3 = dashed
+fig6-self-crossing-before_1SELECT = wm_debug where name='fig6' AND stage='bbends' AND gen=1
+fig6-self-crossing-before_2SELECT = wm_visuals where name='fig6-baseline'
+fig6-self-crossing-before_2LINESTYLE = dotted
+fig6-self-crossing-before_3SELECT = wm_visuals where name='fig6-newline'
 fig6-self-crossing-after_WIDTHDIV = 4
-fig6-self-crossing-after_SELECT1 = wm_debug where name='fig6' AND stage='dcrossings' AND gen=1
+fig6-self-crossing-after_1SELECT = wm_debug where name='fig6' AND stage='dcrossings' AND gen=1
 
 .faux_test: tests.sql wm.sql .faux_db
 	./db -f tests.sql
@@ -146,3 +123,23 @@ slides-2021-03-29.pdf: slides-2021-03-29.txt
 
 dump-debug_wm.sql.xz:
 	docker exec -ti wm-mj pg_dump -Uosm osm -t debug_wm | xz -v > $@
+
+mj-msc-gray.pdf: mj-msc.pdf
+	gs \
+		-sOutputFile=$@ \
+		-sDEVICE=pdfwrite \
+		-sColorConversionStrategy=Gray \
+		-dProcessColorModel=/DeviceGray \
+		-dCompatibilityLevel=1.4 \
+		-dNOPAUSE \
+		-dBATCH \
+		$<
+
+mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES)
+	cp $< .tmp-$@
+	for f in $^; do \
+		if [ "$$f" = "$<" ]; then continue; fi; \
+		pdfattach .tmp-$@ $$f .tmp2-$@; \
+		mv .tmp2-$@ .tmp-$@; \
+	done
+	mv .tmp-$@ $@
