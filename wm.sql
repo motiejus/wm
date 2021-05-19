@@ -10,7 +10,6 @@ create function wm_detect_bends(
   OUT bends geometry[]
 ) as $$
 declare
-  pi constant real default radians(180);
   p geometry;
   p1 geometry;
   p2 geometry;
@@ -52,7 +51,7 @@ begin
     p1 = p;
     continue when p3 is null;
 
-    cur_sign = sign(pi - st_angle(p1, p2, p2, p3));
+    cur_sign = sign(pi() - st_angle(p1, p2, p2, p3));
 
     if bend is null then
       bend = st_makeline(p3, p2);
@@ -170,7 +169,6 @@ $$ language plpgsql;
 drop function if exists wm_fix_gentle_inflections1;
 create function wm_fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
-  pi constant real default radians(180);
   -- the threshold when the angle is still "small", so gentle inflections can
   -- be joined
   small_angle constant real default radians(45);
@@ -214,7 +212,7 @@ begin
       exit when array_length(phead, 1) < 3;
 
       -- inflection angle between ptail[1:3] is "large", stop processing
-      exit when abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle;
+      exit when abs(st_angle(phead[1], phead[2], phead[3]) - pi()) > small_angle;
 
       -- distance from head's 1st vertex should be larger than from 2nd vertex
       exit when st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]);
@@ -271,7 +269,6 @@ create function wm_self_crossing(
   OUT mutated boolean
 ) as $$
 declare
-  pi constant real default radians(180);
   i int4;
   j int4;
   multi geometry;
@@ -279,7 +276,7 @@ begin
   mutated = false;
   <<bendloop>>
   for i in 1..array_length(bends, 1) loop
-    continue when abs(wm_inflection_angle(bends[i])) <= pi;
+    continue when abs(wm_inflection_angle(bends[i])) <= pi();
     -- sum of inflection angles for this bend is >180, so it may be
     -- self-crossing. Now try to find another bend in this line that
     -- crosses an imaginary line of end-vertices
@@ -337,7 +334,6 @@ $$ language plpgsql;
 drop function if exists wm_inflection_angle;
 create function wm_inflection_angle (IN bend geometry, OUT angle real) as $$
 declare
-  pi constant real default radians(180);
   p0 geometry;
   p1 geometry;
   p2 geometry;
@@ -349,7 +345,7 @@ begin
     p2 = p1;
     p1 = p0;
     continue when p3 is null;
-    angle = angle + abs(pi - st_angle(p1, p2, p3));
+    angle = angle + abs(pi() - st_angle(p1, p2, p3));
   end loop;
 end
 $$ language plpgsql;
@@ -357,6 +353,7 @@ $$ language plpgsql;
 drop function if exists wm_bend_attrs;
 drop function if exists wm_isolated_bends;
 drop function if exists wm_elimination;
+drop function if exists wm_exaggeration;
 drop type if exists wm_t_bend_attrs;
 create type wm_t_bend_attrs as (
   bend geometry,
@@ -425,6 +422,20 @@ begin
     return next res;
   end loop;
 end;
+$$ language plpgsql;
+
+create function wm_exaggeration(
+  INOUT bendattrs wm_t_bend_attrs[],
+  dhalfcircle float,
+  dbgname text default null,
+  dbggen integer default null,
+  OUT mutated boolean
+) as $$
+declare
+  area_threshold float;
+begin
+
+end
 $$ language plpgsql;
 
 create function wm_elimination(
@@ -637,6 +648,13 @@ begin
 
       bendattrs = array((select wm_bend_attrs(bends, dbgname, gen)));
 
+      -- code to detect isolated bends is there, but bend exaggeration
+      -- is not implemented.
+      perform wm_isolated_bends(bendattrs, dbgname, gen);
+
+      select * from wm_exaggeration(
+        bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
+
       select * from wm_elimination(
         bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
       if mutated then
@@ -647,10 +665,6 @@ begin
         gen = gen + 1;
         continue;
       end if;
-
-      -- code to detect isolated bends is there, but bend exaggeration
-      -- is not implemented.
-      --perform wm_isolated_bends(bendattrs, dbgname, gen);
     end loop;
 
   end loop;
