@@ -164,3 +164,15 @@ begin
   end loop;
 end
 $$ language plpgsql;
+
+-- self_crossing eliminates self-crossing from the bends, following the
+-- article's section "Self-line Crossing When Cutting a Bend".
+create or replace function self_crossing(INOUT bends geometry[]) as $$
+declare
+  pi real;
+begin
+
+
+
+end
+$$ language plpgsql;

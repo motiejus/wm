@@ -1,1 +1,36 @@
-Definition of a bend: ends of the line should always be bends, otherwise not all line vertices are covered by bends (definition elsewhere).
+Definition of a bend: ends of the line should always be bends, otherwise not
+all line vertices are covered by bends (definition elsewhere).
+
+Gentle inflection at the end of the bend: the article does not specify how many
+vertices should be included when calculating the end-of-bend inflection. We
+chose the iterative approach -- as long as the angle is "right" and the
+distance is (greedily) decreasing, keep going.
+
+Self-line crossing when cutting a bend: the self-line-crossing may happen
+after a few bends have been skipped. E.g. ends of A<->B cross the line, but
+"swallow" a few more in between:
+
+   ,______
+  /       \
+  |___A   |    \  |
+      \   |    B\ |             __
+       \  |     | |            /  \
+       /  |     | |___,---,___/A  |
+      /   |     \_________________|
+      \   |
+       \  |
+       /  /
+  ----/  /
+ / ,____/
+/ B|
+   |
+
+If a bend with 180+ deg inflection is found, its line between inflection angles
+(AB in our examples) must be crossed with all the other bends to detect a
+possible line-crossing. This is O(N*M), where N is the total number of line
+segments, and M is the number of qualifying bends. In other words, can be very
+computationally expensive.
+
+This may be slightly computationally simplified: if other bend's
+endpoints (A' and B') are in different sub-planes as divided by AB, then the
+crossing exists, and more expensive st_split can be used.
