@@ -467,10 +467,11 @@ many cases, corner cases are discussed and clarified.
 
 Assume Euclidean geometry throughout this document, unless noted otherwise.
 
-\subsection{Vocabulary and terminology}
+\subsection{Main geometry elements}
 \label{sec:vocab}
 
-This section defines vocabulary and terms as defined in the rest of the paper.
+This section defines and explains the geometry elements that are used
+throughout this paper and the implementation.
 
 \begin{description}
 
@@ -479,22 +480,26 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 
     \item[Line Segment] or \textsc{segment} joins two vertices by a straight
         line. A segment can be expressed by two coordinate pairs: $(x_1, y_1)$
-        and $(x_2, y_2)$. Line Segment and Segment are used interchangeably
-        throughout the paper.
+        and $(x_2, y_2)$. Line Segment and Segment are used interchangeably.
 
-    \item[Line] or \textsc{linestring}, represents a single linear feature in
-        the real world. For example, a river or a coastline.
+    \item[Line] or \textsc{linestring}, represents a single linear feature. For
+        example, a river or a coastline.
 
         Geometrically, A line is a series of connected line segments, or,
         equivalently, a series of connected vertices. Each vertex connects to
         two other vertices, except those vertices at either ends of the line:
         these two connect to a single other vertex.
 
+    \item[Multiline] or \textsc{multilinestring} is a collection of linear
+        features. Throughout this implementation this is used rarely (normally,
+        a river is a single line), but can be valid when, for example, a river
+        has an island.
+
     \item[Bend] is a subset of a line that humans perceive as a curve. The
         geometric definition is complex and is discussed in
         section~\ref{sec:definition-of-a-bend}.
 
-    \item[Baseline] is a line between bend's first and last vertex.
+    \item[Baseline] is a line between bend's first and last vertices.
 
     \item[Sum of inner angles] TBD.
 
@@ -506,8 +511,8 @@ This section defines vocabulary and terms as defined in the rest of the paper.
         For example, given $n$ objects and time complexity of $O(log(n))$, the
         time it takes to execute the algorithm is logarithmic to $n$.
         Conversely, if complexity is $O(n^2)$, then the time it takes to
-        execute the algorithm is quadratic depending on the input. Importantly,
-        if the input size doubles, the time it takes to run the algorithm
+        execute the algorithm grows quadratically with input. Importantly, if
+        the input size doubles, the time it takes to run the algorithm
         quadruples.
 
         $O$ notation was first suggested by
@@ -527,8 +532,7 @@ results have been manually calculated. The test suite executes parts of the
 algorithm against a predefined set of geometries, and asserts that the output
 matches the resulting hand-calculated geometry.
 
-The full set of test geometries is visualized in
-figure~\ref{fig:test-figures}.
+The full set of test geometries is visualized in figure~\ref{fig:test-figures}.
 
 \begin{figure}[h]
     \centering
@@ -537,9 +541,41 @@ figure~\ref{fig:test-figures}.
     \label{fig:test-figures}
 \end{figure}
 
-The full test suite can be executed with a single command, and completes in a
-few seconds. Having an easily accessible test suite boosts confidence that no
+The full test suite can be executed with a single command, and completes in
+about a second Having an easily accessible test suite boosts confidence that no
 unexpected bugs have snug in while modifying the algorithm.
+
+We will explain two instances on when automated tests were very useful during
+the implementation:
+\begin{itemize}
+
+    \item Created a function \texttt{wm\_exaggeration}, which exaggerates bends
+        following the rules. It worked well over simple geometries, but, due to
+        a subtle bug, created a self-crossing bend in Visinčia. We copied the
+        offending bend to the automated test suite and fixed the bug. The test
+        suite has the bend itself (a hook-like bend on the right-hand side of
+        figure~\ref{fig:test-figures}) and code to verify that it was correctly
+        exaggerated.
+
+        Later, while adding a feature to exaggeration code, I introduced a
+        different bug, which was automatically captured by the same bend.
+
+    \item During algorithm development, I run automated tests about once a
+        minute. They quickly find logical and syntax errors. In contrast,
+        running the algorithm with real rivers takes a few minutes, which is
+        increases the feedback loop, and takes longer to fix the "simple"
+        errors.
+
+\end{itemize}
+
+Whenever I find and fix a bug, I aim to create an automated test case for it,
+so the same bug is not re-introduced by whoever works next on the same piece of
+code.
+
+Besides testing for specific cases, an automated test suite ensures future
+stability and longevity of the implementation itself: when new contributors
+start changing code, they have higher assurance they have not broken
+already-working code.
 
 \subsection{Reproducing generalizations in this paper}
 \label{sec:reproducing-the-paper}
@@ -559,6 +595,12 @@ explained in section~\ref{sec:automated-tests}).
 Instructions how to re-generate all the visualizations are found in
 appendix~\ref{sec:code-regenerate}. The visualization code serves as a good
 example reference for anyone willing to start using the algorithm.
+
+\subsection{Implementation workflow}
+
+TODO: list most of the functions defined in the algorithm and draw how they
+interact. Similar to "Flow chart of the prototype system" in the original
+paper.
 
 \section{Description of the implementation}
 
