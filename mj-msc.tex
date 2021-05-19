@@ -238,6 +238,7 @@ simplification.
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-50k}
         \caption{Example scaled 1:\numprint{50000}.}
+        \label{fig:salvis-50k}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
@@ -282,11 +283,13 @@ generalization, illustrated in figure~\ref{fig:salvis-generalized-chaikin-50k}.
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-douglas-64-chaikin-50k}
         \caption{{\DP} and Chaikin's.}
+        \label{fig:salvis-douglas-64-chaikin-50k}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-visvalingam-64-chaikin-50k}
         \caption{{\VW} and Chaikin's.}
+        \label{fig:salvis-visvalingam-64-chaikin-50k}
     \end{subfigure}
     \caption{Simplified and smoothened river (1:\numprint{50000}).}
     \label{fig:salvis-generalized-chaikin-50k}
@@ -296,12 +299,18 @@ generalization, illustrated in figure~\ref{fig:salvis-generalized-chaikin-50k}.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-overlaid-douglas-64-chaikin-50k}
-        \caption{{\DP} and Chaikin's.}
+
+        \caption{Overlaid \ref{fig:salvis-50k} (orange) and
+            \ref{fig:salvis-douglas-64-chaikin-50k}.}
+
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-overlaid-visvalingam-64-chaikin-50k}
-        \caption{{\VW} and Chaikin's.}
+
+        \caption{Overlaid \ref{fig:salvis-50k} (orange) and
+            \ref{fig:salvis-visvalingam-64-chaikin-50k}.}
+
     \end{subfigure}
     \caption{Zoomed-in simplified and smoothened river and original.}
     \label{fig:salvis-overlaid-generalized-chaikin-50k}
@@ -1219,16 +1228,6 @@ exaggerated bend with the algorithm.
     \caption{Example exaggerated isolated bend.}
     \label{fig:isolated-1-exaggerated}
 \end{figure}
-
-\begin{figure}[!ht]
-  \centering
-  \begin{tikzpicture}[scale=.5]
-      \draw (-8,0) -- (0,0) -- (2,3) -- (8,0) -- (16,0);
-  \end{tikzpicture}
-  \caption{Exaggerating a single bend (WIP)}
-  \label{fig:exaggerating-a-single-bend}
-\end{figure}
-
 
 \section{Results}
 
