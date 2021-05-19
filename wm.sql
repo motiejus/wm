@@ -254,8 +254,6 @@ declare
   j int4;
   multi geometry;
 begin
-  mutated = false;
-
   <<bendloop>>
   for i in 1..array_length(bends, 1) loop
     continue when abs(inflection_angle(bends[i])) <= pi;
@@ -312,7 +310,6 @@ declare
   p2 geometry;
   p3 geometry;
 begin
-  angle = 0;
   for p0 in select geom from st_dumppoints(bend) order by path[1] asc loop
     p3 = p2;
     p2 = p1;
@@ -491,7 +488,6 @@ begin
           unnest(bends)
         );
       end if;
-
 
       if mutated then
         lines[i] = st_linemerge(st_union(bends));
