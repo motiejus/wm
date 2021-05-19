@@ -1,6 +1,6 @@
 SOURCE ?= lithuania-latest.osm.pbf
+#WHERE ?= name like '%%'
 WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Žeimena' OR name='Lakaja'
-#WHERE ?= name='Žeimena' OR name='Lakaja'
 SLIDES = slides-2021-03-29.pdf
 
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
@@ -127,8 +127,8 @@ clean-tables:
 	done
 	-rm .faux_test
 
-.faux_filter-rivers: .faux_import-osm Makefile
-	./db -v where="$(WHERE)" -f aggregate-rivers.sql
+.faux_filter-rivers: aggregate-rivers.sql .faux_import-osm Makefile
+	./db -v where="$(WHERE)" -f $<
 	touch $@
 
 .faux_import-osm: $(SOURCE) .faux_db

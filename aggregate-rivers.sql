@@ -24,6 +24,9 @@ begin
 end
 $$ language plpgsql;
 
+drop index if exists aggregate_rivers_tmp_id;
+drop index if exists aggregate_rivers_tmp_gix;
+drop table if exists aggregate_rivers_tmp;
 create temporary table aggregate_rivers_tmp (osm_id bigint, name text, way geometry);
 create index aggregate_rivers_tmp_id on aggregate_rivers_tmp(osm_id);
 create index aggregate_rivers_tmp_gix on aggregate_rivers_tmp using gist(way) include(name);
@@ -33,5 +36,5 @@ insert into aggregate_rivers_tmp
     where waterway in ('river', 'stream', 'canal') and :where;
 
 drop table if exists agg_rivers;
-create table agg_rivers as (select * from aggregate_rivers());
+create table agg_rivers as (select * from aggregate_rivers() where st_length(way) > 20000);
 drop table aggregate_rivers_tmp;

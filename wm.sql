@@ -88,7 +88,6 @@ begin
       if st_npoints(bends[i]) >= 3 then
           dbgpolygon = st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])));
       end if;
-
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'bbends-polygon',
         dbgname,
