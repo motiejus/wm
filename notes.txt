@@ -48,11 +48,17 @@ but they will be eliminated by joining A and B anyway.
 Also, there is another way to remove self-crossing, without removing most of
 the bend. E.g. from:
 
-  \  \
+  \  /
   B\ |      __
    | |     /  \
    | |____/A  |
    \__________|
+
+Instead of:
+
+  \  /
+   \/ A'
+  B
 
 To:
 

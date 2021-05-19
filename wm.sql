@@ -234,6 +234,14 @@ begin
       --   bends[i] = append(bends[i], multi[2][2..n])
       --   remove bends from bends[i+1] to bends[j] inclusive.
 
+      if j < i then
+        bends[j] = st_geometryn(multi, 1);
+        bends[j] = st_setpoint(bends[j], st_npoints(bends[j])-1, st_pointn(bends[i], st_npoints(bends[i])));
+        bends = bends[1:j] || bends[i+1:array_length(bends, 1)];
+      else
+        --
+      end if;
+
     end loop;
 
   end loop;
