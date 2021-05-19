@@ -18,6 +18,9 @@ LISTINGS = aggregate-rivers.sql wm.sql extract-and-generate
 FIGURES = \
 		  test-figures \
 		  fig8-definition-of-a-bend \
+		  fig8-elimination-gen1 \
+		  fig8-elimination-gen2 \
+		  fig8-elimination-gen3 \
 		  fig5-gentle-inflection-before \
 		  fig5-gentle-inflection-after \
 		  inflection-1-gentle-inflection-before \
@@ -97,6 +100,13 @@ test-figures_1SELECT = wm_figures
 fig8-definition-of-a-bend_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
 fig8-definition-of-a-bend_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
 
+fig8-elimination-gen1_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
+fig8-elimination-gen1_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
+fig8-elimination-gen2_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=2
+fig8-elimination-gen2_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=2
+fig8-elimination-gen3_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=3
+fig8-elimination-gen3_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=3
+
 fig5-gentle-inflection-before_WITHDIV = 2
 fig5-gentle-inflection-before_1SELECT = wm_debug where name='fig5' AND stage='bbends' AND gen=1
 fig5-gentle-inflection-before_2SELECT = wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1
@@ -128,6 +138,7 @@ selfcrossing-1-after_WIDTHDIV = 2
 selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='dcrossings' AND gen=1
 selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-after_2LINESTYLE = invisible
+
 
 salvis-25k_1SELECT = wm_visuals where name='salvis'
 salvis-25k_WIDTHDIV = 1

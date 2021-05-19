@@ -1049,9 +1049,9 @@ Two conditions must be true to claim that a bend is isolated:
 To find out whether two bends are similar, they are compared by 3 components:
 
 \begin{enumerate}
-  \item \textsc{adjusted size} $A_{adj}$
-  \item \textsc{compactness index} $c$
-  \item \textsc{baseline length} $l$
+  \item \textsc{adjusted size} $A_{adj}$.
+  \item \textsc{compactness index} $c$.
+  \item \textsc{baseline length} $l$.
 \end{enumerate}
 
 Components 1, 2 and 3 represent a point in a 3-dimensional space, and Euclidean
@@ -1068,7 +1068,26 @@ The smaller the distance $d$, the more similar the bends are.
 
 \subsection{Elimination Operator}
 
-NOTE: implemented, explain.
+Elimination was explained reasonably well in the original paper. Figure X
+illustrates steps of Figure 8 from the original paper.
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{.7\textwidth}
+        \includegraphics[width=\textwidth]{fig8-elimination-gen1}
+        \caption{Original}
+    \end{subfigure}
+    \begin{subfigure}[b]{.7\textwidth}
+        \includegraphics[width=\textwidth]{fig8-elimination-gen2}
+        \caption{Iteration 1}
+    \end{subfigure}
+    \begin{subfigure}[b]{.7\textwidth}
+        \includegraphics[width=\textwidth]{fig8-elimination-gen3}
+        \caption{Iteration 2 (result)}
+    \end{subfigure}
+    \caption{Bend elimination through iterations.}
+    \label{fig:elimination-through-iterations}
+\end{figure}
 
 \subsection{Combination Operator}
 
