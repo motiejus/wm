@@ -14,8 +14,7 @@ declare
   prev_sign int4;
   cur_sign int4;
 begin
-
-  -- the last vertex is iterated over twice, because the algorithm uses 3
+  -- The last vertex is iterated over twice, because the algorithm uses 3
   -- vertices to calculate the angle between them.
   --
   -- Given 3 vertices p1, p2, p3:
@@ -31,7 +30,6 @@ begin
   -- So once the p1 becomes the last vertex, the loop terminates, and the
   -- [p2,p1] line will not have a chance to be added. So the loop adds the last
   -- vertex twice, so it has a chance to become p2, and be added to the bend.
-  --
   for p in (
     (select geom from st_dumppoints(line) order by path[1] asc)
     union all
