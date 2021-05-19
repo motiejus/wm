@@ -61,7 +61,6 @@
     \end{center}
 \end{titlepage}
 
-
 \begin{abstract}
 \label{sec:abstract}
 Current open-source line generalization solutions have their roots in
@@ -185,12 +184,27 @@ as a whole.
 \section{Methodology}
 \label{sec:methodology}
 
-In this paper we describe {\WM} in a detail that is more useful for algorithm
-developers than the original \cite{wang1998line}: sections will be expanded,
-with more detailed illustrations next to the descriptions.
-<TODO: expand>
+The original \cite{wang1998line} leaves something to be desired for a practical
+implementation: it is not straightforward to implement the algorithm from the
+paper alone.
+
+In this paper we describe {\WM} in a detail that is more useful for algorithm:
+each section will be expanded, with more elaborate and exact illustrations for
+every step of the algorithm.
 
 \subsection{Automated tests}
+
+As part of the algorithm realization, an automated test suite has been
+developed. Shapes to test each function have been hand-crafted and expected
+results have been manually calculated. The test suite executes parts of the
+algorithm against a predefined set of geometries, and asserts that the output
+matches the resulting hand-calculated geometry.
+
+The full test suite can be executed with a single command, and completes in a
+few seconds. Having an easily accessible test suite boosts confidence that no
+unexpected regressions have been added while modifying the algorithm.
+
+<TODO: expand with a screenshot>
 
 \section{Description of the implementation}
 
