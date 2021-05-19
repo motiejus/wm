@@ -265,28 +265,26 @@ drop function if exists bend_attrs;
 drop type if exists t_bend_attrs;
 create type t_bend_attrs as (
   bend geometry,
-  area real,
-  cmp real,
-  adjsize real,
-  baselinelength real
+  area real not null default 0,
+  cmp real not null default 0,
+  adjsize real not null default 0,
+  baselinelength real not null default 0
 );
 create function bend_attrs(bends geometry[], dbgname text default null) returns setof t_bend_attrs as $$
 declare
+  fourpi constant real default 4*radians(180);
   i int4;
-  fourpi real;
   polygon geometry;
   bend geometry;
   res t_bend_attrs;
 begin
-  fourpi = 4*radians(180);
   for i in 1..array_length(bends, 1) loop
-    res = null;
     bend = bends[i];
-    if st_numpoints(bend) < 3 then
-      polygon = null;
-    else
-      select st_makepolygon(st_addpoint(bend, st_startpoint(bend))) into polygon;
-      select st_distance(st_startpoint(bend), st_endpoint(bend)) into res.baselinelength;
+    res = null;
+    res.bend = bend;
+    if st_numpoints(bend) >= 3 then
+      polygon = st_makepolygon(st_addpoint(bend, st_startpoint(bend)));
+      res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
       -- Compactness Index (cmp) is defined as "the ratio of the area of the
       -- polygon over the circle whose circumference length is the same as the
       -- length of the circumference of the polygon". I assume they meant the
@@ -295,13 +293,11 @@ begin
       -- 2. get polygon perimeter = u. Pretend it's our circle's circumference.
       -- 3. get A (area) of the circle from u: A = (u^2)/(4*pi)
       -- 4. divide P by A: cmp = P/A = P/((u^2)*4*pi) = 4*pi*P/u^2
-      select st_area(polygon) into res.area;
-      select fourpi*res.area/(st_perimeter(polygon)^2) into res.cmp;
-      select bend into res.bend;
-    end if;
-
-    if res.area > 0 then
-      select (res.area*(0.75/res.cmp)) into res.adjsize;
+      res.area = st_area(polygon);
+      res.cmp = fourpi*res.area/(st_perimeter(polygon)^2);
+      if res.cmp > 0 then
+        res.adjsize = (res.area*(0.75/res.cmp));
+      end if;
     end if;
 
     if dbgname is not null then
@@ -318,7 +314,9 @@ begin
         )
       );
     end if;
+
     return next res;
+
   end loop;
 end;
 $$ language plpgsql;
