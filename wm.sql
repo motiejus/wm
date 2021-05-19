@@ -289,13 +289,13 @@ begin
     select fourpi*area/(st_perimeter(polygon)^2) into cmp;
     if cmp > 0 then
       select (area*(0.75/cmp)) into adjsize;
-      if dbg then
-        insert into debug_wm (name, way, props) values(
-          'bend_attrs_' || i,
-          polygon,
-          json_build_object('area', area, 'cmp', cmp, 'adjsize', adjsize)
-        );
-      end if;
+    end if;
+    if dbg then
+      insert into debug_wm (name, way, props) values(
+        'bend_attrs_' || i,
+        polygon,
+        json_build_object('area', area, 'cmp', cmp, 'adjsize', adjsize)
+      );
     end if;
     return next;
   end loop;
