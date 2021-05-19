@@ -170,18 +170,12 @@ create function self_crossing(
   OUT mutated boolean
 ) as $$
 declare
+  pi real;
   i int4;
   j int4;
   prev_length int4;
-  pi real;
-  angle real;
-  p0 geometry;
-  p1 geometry;
-  p2 geometry;
-  p3 geometry;
   a geometry;
   b geometry;
-  bend geometry;
   multi geometry;
 begin
   pi = radians(180);
@@ -189,39 +183,19 @@ begin
 
   -- go through the bends and find one where sum of inflection angle is >180
   for i in 1..array_length(bends, 1) loop
-    angle = 0;
-    p1 = null;
-    p2 = null;
-    p3 = null;
-    for p0 in (
-      select geom from st_dumppoints(bends[i]) order by path[1] asc
-    ) loop
-      p3 = p2;
-      p2 = p1;
-      p1 = p0;
-      continue when p3 is null;
-      angle = angle + abs(pi - st_angle(p1, p2, p3));
-    end loop;
-
-    continue when abs(angle) <= pi;
-
+    continue when abs(inflection_angle(bends[i])) <= pi;
     -- sum of inflection angles for this bend is >180, so it may be
     -- self-crossing. now try to find another bend in this line that
     -- crosses an imaginary line of end-vertices
-    p0 = st_pointn(bends[i], 1);
-    p1 = st_pointn(bends[i], -1);
 
     -- go through each bend in the given line, and see if has a potential to
     -- cross bends[i]. optimization: we care only about bends which beginning
     -- and end start at different sides of the plane, separated by endpoints
-    -- p0 and p1.
+    -- of the vertex.
     j = 0;
     while j < array_length(bends, 1) loop
       j = j + 1;
       continue when i = j;
-
-      p2 = st_pointn(bends[j], 1);
-      p3 = st_pointn(bends[j], -1);
 
       -- do end vertices of bend[i] cross bend[j]?
       a = st_pointn(bends[i], 1);
@@ -266,6 +240,33 @@ begin
   end loop;
 end
 $$ language plpgsql;
+
+drop function if exists inflection_angle;
+create function inflection_angle (IN bend geometry, OUT angle real) as $$
+declare
+  pi real;
+  p0 geometry;
+  p1 geometry;
+  p2 geometry;
+  p3 geometry;
+begin
+  pi = radians(180);
+  angle = 0;
+  p1 = null;
+  p2 = null;
+  p3 = null;
+  for p0 in (
+    select geom from st_dumppoints(bend) order by path[1] asc
+  ) loop
+    p3 = p2;
+    p2 = p1;
+    p1 = p0;
+    continue when p3 is null;
+    angle = angle + abs(pi - st_angle(p1, p2, p3));
+  end loop;
+end
+$$ language plpgsql;
+
 
 drop function if exists bend_attrs;
 drop type if exists t_bend_attrs;
