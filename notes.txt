@@ -75,7 +75,7 @@ Offered structure
 
 - Introduction
 - Previous research overview
-- Methodology and metodics
+- Methodology and methodics
 - Results
 - Conclusions
 - Literature review

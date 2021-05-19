@@ -458,6 +458,35 @@ bends need to be checked.
 
 \subsection{Attributes of a Single Bend}
 
+Compactness Index $cmp$ is "the ratio of the area of the polygon over the
+circle whose circumference length is the same as the length of the
+circumference of the polygon" \cite{wang1998line}. We assume the area of the
+circle is meant. Given a bend, its compactness index is calculated as follows:
+
+\begin{enumerate}
+
+  \item From a non-crossing line, construct a polygon by joining first and last
+    vertices.
+
+  \item Calculate polygon area $P$.
+
+  \item Calculate polygon perimeter $U$. The same value is the circumference of
+    the circle.
+
+  \item Given circle's perimeter $U$, circle's area $A$ is:
+
+    \[
+      A = \frac{u^2}{4\pi}
+    \]
+
+  \item Compactness index is $\nicefrac{P}{A}$:
+
+    \[
+      cmp = \frac{P}{A} = \frac{P}{ \frac{u^2}{4\pi}} = \frac{4\pi P}{u^2}
+    \]
+
+\end{enumerate}
+
 \subsection{Shape of a Bend}
 
 \subsection{The Context of a Bend: Isolated and Similar Bends}
