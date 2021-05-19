@@ -1,4 +1,10 @@
 #!/usr/bin/python3
+"""
+Convert PostGIS geometries to an image. To scale.
+
+Accepts a few geometry fine-tuning parameters.
+"""
+
 import argparse
 import geopandas
 import psycopg2
@@ -27,8 +33,7 @@ def inch(cm):
 
 def parse_args():
     kwcolor = {'type': color, 'default': 'black'}
-    parser = argparse.ArgumentParser(
-            description='Convert a geometry to an image')
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--group1-select')
     parser.add_argument('--group1-linestyle')
     parser.add_argument('--group1-color', **kwcolor)
@@ -38,10 +43,15 @@ def parse_args():
     parser.add_argument('--group3-select')
     parser.add_argument('--group3-linestyle')
     parser.add_argument('--group3-color', **kwcolor)
-    parser.add_argument('--widthdiv',
-                        default=1, type=float, help='Width divisor')
-    parser.add_argument('--quadrant', type=int, choices=(1, 2, 3, 4))
-    parser.add_argument('-o', '--outfile', metavar='<file>')
+    parser.add_argument('--widthdiv', default=1, type=float,
+            help="Divide the width by this number "
+            "(useful when two images are laid horizontally "
+            "in the resulting file")
+    parser.add_argument('--quadrant', type=int, choices=(1, 2, 3, 4),
+            help="Image is comprised of 4 quadrants. This variable, "
+            "when non-empty, will clip and return the requested quadrant")
+    parser.add_argument('--outfile', metavar='<file>',
+            help="If unset, displayed on the screen")
     return parser.parse_args()
 
 
