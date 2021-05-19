@@ -105,13 +105,13 @@ insert into wm_visuals(name, way) values
       :scaledwidth
     )
   )),
-  ('salvis-50', (
+  ('salvis-gdr50', (
     wm_salvisbbox(
       (select st_union(way) from wm_rivers_50 where name in ('Šalčia', 'Visinčia')),
       :scaledwidth
     )
   )),
-  ('salvis-250', (
+  ('salvis-gdr250', (
     wm_salvisbbox(
       (select st_union(way) from wm_rivers_250 where name in ('Šalčia', 'Visinčia')),
       :scaledwidth

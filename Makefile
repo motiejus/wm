@@ -43,7 +43,8 @@ RIVERS = \
 		 salvis-wm-50k \
 		 salvis-wm-250k \
 		 salvis-wm-overlaid-50k-zoom \
-		 salvis-wm-overlaid-250k-zoom
+		 salvis-wm-overlaid-250k-zoom \
+		 salvis-gdr50-overlaid
 
 #################################
 # The thesis, publishable version
@@ -208,9 +209,15 @@ salvis-wm-overlaid-50k-zoom_1SELECT = wm_visuals where name='salvis'
 salvis-wm-overlaid-50k-zoom_2SELECT = wm_visuals where name='salvis-wm-75'
 salvis-wm-overlaid-50k-zoom_1COLOR = orange
 
-salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis'
-salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis-wm-220'
+salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis-wm-220'
+salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis'
 salvis-wm-overlaid-250k-zoom_1COLOR = orange
+
+salvis-gdr50-overlaid_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-gdr50-overlaid_2SELECT = wm_visuals where name='salvis-gdr50'
+salvis-gdr50-overlaid_3SELECT = wm_visuals where name='salvis'
+salvis-gdr50-overlaid_1COLOR = orange
+salvis-gdr50-overlaid_2COLOR = green
 
 .faux_db_pre: db init.sql
 	bash db start

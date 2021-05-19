@@ -111,7 +111,7 @@
     dokumentacija yra nemokami ir laisvai prieinami naudojant PostGIS
     platformą.
 
- \end{abstract}
+\end{abstract}
 
 \newpage
 
@@ -1376,6 +1376,7 @@ table~\ref{table:scale-halfcirlce-diameter}:
 \end{itemize}
 
 \subsubsection{Medium-scale (1:\numprint{50000})}
+\label{sec:analyzed-medium-scale}
 
 \begin{figure}[ht]
     \centering
@@ -1436,7 +1437,7 @@ simplification and overlays the original (in orange).
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm-overlaid-250k-zoom}
+    \includegraphics[width=.8\textwidth]{salvis-wm-overlaid-250k-zoom}
     \caption{10x zoomed-in {\WM} for 1:\numprint{250000}.}
     \label{fig:salvis-wm-250k-overlaid-zoom}
 \end{figure}
@@ -1449,7 +1450,45 @@ smaller bends at approximately the same location.
 
 \subsection{Comparing Generalized Result with National Spatial Datasets}
 
-% TODO: GDR50LT and GDR250LT
+\subsubsection{Background}
+
+There are a few datasets used in this comparison: GDB10LT, GDR50LT and
+GDR250LT. They are vector datasets, which include rivers. They can be
+downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
+
+\begin{description}
+
+    \item[GDB10LT] is dataset of highest detail. Suited for maps of scale
+        1:\numprint{10000}.
+
+    \item[GDR50LT] is suited for maps of scale 1:\numprint{50000}.
+
+    \item[GDR250LT] offers least detail, and is suited for maps of
+        scale 1:\numprint{250000}.
+
+\end{description}
+
+During the analysis, we ran {\WM} on GDB10LT for 2 destination scales:
+1:\numprint{50000} and 1:\numprint{250000}.\footnote{parameter calculation is
+detailed in section~\ref{sec:bend-scaling-and-dimensions}.} This section
+compares the resulting {\WM}--generalized rivers to GDR50LT and GDR250LT.
+
+\subsubsection{Medium-scale (1:\numprint{50000})}
+
+For our research location, the national dataset GDB10LT is almost equivalent to
+GDR50LT. Figure~\ref{fig:salvis-gdr50-overlaid} illustrates it. Therefore, the
+comparison between {\WM}--simplified GDB10LT and GDR50LT is equivalent to the
+comparison between {\WM}--simplified GDB10LT and non--simplified GDR50LT, which
+was covered in section~\ref{sec:analyzed-medium-scale}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.8\textwidth]{salvis-gdr50-overlaid}
+    \caption{GDB10LT (orange) and GDR50LT (black)}
+    \label{fig:salvis-gdr50-overlaid}
+\end{figure}
+
+\subsubsection{Large-scale (1:\numprint{250000})}
 
 \subsection{Testing Results Online}
 \label{sec:testing-results-online}
