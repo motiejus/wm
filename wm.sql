@@ -260,6 +260,8 @@ $$ language plpgsql;
 drop function if exists wm_self_crossing;
 create function wm_self_crossing(
   INOUT bends geometry[],
+  dbgname text default null,
+  dbggen integer default null,
   OUT mutated boolean
 ) as $$
 declare
@@ -313,6 +315,16 @@ begin
       continue bendloop;
     end loop;
   end loop;
+
+  if dbgname is not null then
+    insert into wm_debug(stage, name, gen, nbend, way) values(
+      'dcrossings',
+      dbgname,
+      dbggen,
+      generate_subscripts(bends, 1),
+      unnest(bends)
+    );
+  end if;
 end
 $$ language plpgsql;
 
@@ -599,28 +611,13 @@ begin
     while mutated loop
       if dbgname is not null then
         insert into wm_debug (stage, name, gen, nbend, way) values(
-          'afigures',
-          dbgname,
-          gen,
-          i,
-          lines[i]
-        );
+          'afigures', dbgname, gen, i, lines[i]);
       end if;
 
       bends = wm_detect_bends(lines[i], dbgname, gen);
       bends = wm_fix_gentle_inflections(bends, dbgname, gen);
 
       select * from wm_self_crossing(bends) into bends, mutated;
-
-      if dbgname is not null then
-        insert into wm_debug(stage, name, gen, nbend, way) values(
-          'dcrossings',
-          dbgname,
-          gen,
-          generate_subscripts(bends, 1),
-          unnest(bends)
-        );
-      end if;
 
       if mutated then
         lines[i] = st_linemerge(st_union(bends));
@@ -632,7 +629,6 @@ begin
 
       select * from wm_elimination(
         bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
-
       if mutated then
         for j in 1..array_length(bendattrs, 1) loop
           bends[j] = bendattrs[j].bend;
@@ -642,7 +638,9 @@ begin
         continue;
       end if;
 
-      perform wm_isolated_bends(bendattrs, dbgname, gen);
+      -- code to detect isolated bends is there, but bend exaggeration
+      -- is not implemented.
+      --perform wm_isolated_bends(bendattrs, dbgname, gen);
     end loop;
 
   end loop;
