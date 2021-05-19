@@ -122,6 +122,9 @@ fig6-self-crossing-before.pdf: layer2img.py Makefile .faux_test
 		--group1-where="name='fig6' AND stage='bbends' AND gen=1" \
 		--group2-table=wm_visuals \
 		--group2-where="name='fig6-baseline'" \
+		--group3-table=wm_visuals \
+		--group3-where="name='fig6-newline'" \
+		--group3-linestyle=dashed \
 		--outfile=$@
 
 fig6-self-crossing-after.pdf: layer2img.py Makefile .faux_test

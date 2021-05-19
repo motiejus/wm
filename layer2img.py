@@ -20,17 +20,20 @@ def parse_args():
     parser.add_argument('--group1-table')
     parser.add_argument('--group1-where')
     parser.add_argument('--group1-cmap', type=bool)
+    parser.add_argument('--group1-linestyle')
 
     parser.add_argument('--group2-table')
     parser.add_argument('--group2-where')
     parser.add_argument('--group2-cmap', type=bool)
+    parser.add_argument('--group2-linestyle')
 
     parser.add_argument('--group3-table')
     parser.add_argument('--group3-where')
     parser.add_argument('--group3-cmap', type=bool)
+    parser.add_argument('--group3-linestyle')
 
     parser.add_argument('--widthdiv',
-                        default=1, type=float, help='Size divisor')
+                        default=1, type=float, help='Width divisor')
 
     parser.add_argument('-o', '--outfile', metavar='<file>')
     parser.add_argument('--clip', type=float, nargs=4, metavar=BOUNDS)
@@ -46,15 +49,24 @@ def read_layer(table, maybe_where=None):
         sql += " WHERE %s" % maybe_where
     return geopandas.read_postgis(sql, con=conn, geom_col='way')
 
+def plot_args(color, maybe_cmap, maybe_linestyle):
+    if maybe_cmap:
+        r = {'cmap': CMAP}
+    else:
+        r = {'color': color}
+
+    if maybe_linestyle:
+        r['linestyle'] = maybe_linestyle
+    return r
 
 def main():
     args = parse_args()
     group1 = read_layer(args.group1_table, args.group1_where)
     group2 = read_layer(args.group2_table, args.group2_where)
     group3 = read_layer(args.group3_table, args.group3_where)
-    c1 = {'cmap': CMAP} if args.group1_cmap else {'color': BLACK}
-    c2 = {'cmap': CMAP} if args.group2_cmap else {'color': ORANGE}
-    c3 = {'cmap': CMAP} if args.group3_cmap else {'color': GREEN}
+    c1 = plot_args(BLACK, args.group1_cmap, args.group1_linestyle)
+    c2 = plot_args(ORANGE, args.group2_cmap, args.group2_linestyle)
+    c3 = plot_args(GREEN, args.group3_cmap, args.group3_linestyle)
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
