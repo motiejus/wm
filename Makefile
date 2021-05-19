@@ -93,7 +93,7 @@ $(1).pdf: layer2img.py Makefile $(2)
 			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
-$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
+$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_visuals)))
 $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
 
 test-figures_1SELECT = wm_figures
@@ -200,7 +200,7 @@ salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 	bash db -f $<
 	touch $@
 
-.faux_visuals: visuals.sql wm.sql Makefile .faux_test
+.faux_visuals: visuals.sql Makefile .faux_test
 	bash db -v scaledwidth=$(SCALEDWIDTH) -f $<
 	touch $@
 
