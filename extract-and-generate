@@ -8,4 +8,4 @@ echo "Logs in $l ..."; make -j "$(nproc)" -C "$d" "$f" &> "$l" || {
     echo "Failed to generate. $l extract:"; tail -20 "$l"; exit 1
 }
 echo "Opening $d/$f ..."; xdg-open "$d/$f"
-echo "$d/$f was closed. Removing $d"; rm -fr "$d"
+echo "$d/$f was closed. Removing $d"; rm -r "$d"
