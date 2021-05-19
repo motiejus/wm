@@ -6,11 +6,11 @@
 \usepackage{a4wide}
 \usepackage [autostyle, english=american]{csquotes}
 \MakeOuterQuote{"}
-\usepackage[maxbibnames=99,style=authoryear]{biblatex}
+\usepackage[maxbibnames=99,style=numeric,sorting=none]{biblatex}
+\addbibresource{bib.bib}
 \usepackage[pdfusetitle]{hyperref}
 \usepackage{enumitem}
 \usepackage[toc,page,title]{appendix}
-\addbibresource{bib.bib}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{gensymb}
@@ -24,11 +24,9 @@
 \input{vars.inc}
 
 \newcommand{\onpage}[1]{\ref{#1} on page~\pageref{#1}}
-
 \newcommand{\DP}{Douglas \& Peucker}
 \newcommand{\VW}{Visvalingam--Whyatt}
 \newcommand{\WM}{Wang--M{\"u}ller}
-
 \newcommand{\MYTITLE}{Cartographic Generalization of Lines using free software (example of rivers)}
 \newcommand{\MYAUTHOR}{Motiejus Jakštys}
 
@@ -123,24 +121,25 @@ The "classical" ones are {\DP} and {\VW}.
 
 \subsection{{\DP} and {\VW}}
 
-\cite{douglas1973algorithms} and \cite{visvalingam1993line} are "classical"
-line generalization computer graphics algorithms. They are relatively simple to
-implement, require few runtime resources. Both of them accept only a single
-parameter, based on desired scale of the map, which makes them very simple to
-adjust for different scales.
+{\DP} \cite{douglas1973algorithms} and {\VW} \cite{visvalingam1993line} are
+"classical" line generalization computer graphics algorithms. They are
+relatively simple to implement, require few runtime resources. Both of them
+accept only a single parameter, based on desired scale of the map, which makes
+them very simple to adjust for different scales.
 
 Both algorithms are part of PostGIS, a free-software GIS suite:
 \begin{itemize}
-    \item \cite{douglas1973algorithms} via
+    \item {\DP} via
         \href{https://postgis.net/docs/ST_Simplify.html}{PostGIS Simplify}.
 
-    \item \cite{visvalingam1993line} via
+    \item {\VW} via
         \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS SimplifyVW}.
 \end{itemize}
 
 Since both algorithms produce jagged output lines, it is worthwhile to process
-those through a widely available \cite{chaikin1974algorithm} smoothing
-algorithm via \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
+those through a widely available Chaikin's line smoothing
+algorithm \cite{chaikin1974algorithm} via
+\href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
 ChaikinSmoothing}.
 
 Even though {\DP} and {\VW} are simple to understand and computationally
@@ -234,9 +233,9 @@ and the implementation.
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|}
         \hline
-        Degrees & $0^\circ$ & $30^\circ$      & $45^\circ$      & $90^\circ$      & $180^\circ$ & $360^\circ$ \\
+        Degrees & $30^\circ$      & $45^\circ$      & $90^\circ$      & $180^\circ$ & $360^\circ$ \\
         \hline
-        Radians & $0$       & $\nicefrac{\pi}{6}$ & $\nicefrac{\pi}{4}$ & $\nicefrac{\pi}{2}$ & $\pi$       & $2\pi$ \\
+        Radians & $\nicefrac{\pi}{6}$ & $\nicefrac{\pi}{4}$ & $\nicefrac{\pi}{2}$ & $\pi$       & $2\pi$ \\
         \hline
     \end{tabular}
     \caption{Popular degree and radian values}
@@ -269,10 +268,10 @@ unexpected bugs have snug in while modifying the algorithm.
 
 \section{Description of the implementation}
 
-Like alluded in section~\onpage{sec:introduction}, \cite{wang1998line} paper
-skims over certain details, which are important to implement the algorithm.
-This section goes through each algorithm stage, illustrating the intermediate
-steps and explaining the author's desiderata for a more detailed description.
+Like alluded in section~\onpage{sec:introduction}, {\WM} paper skims over
+certain details, which are important to implement the algorithm. This section
+goes through each algorithm stage, illustrating the intermediate steps and
+explaining the author's desiderata for a more detailed description.
 
 Illustrations of the following sections are extracted from the automated test
 cases, which were written during the algorithm implementation (as discussed in
