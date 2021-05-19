@@ -53,8 +53,8 @@ insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Tr
 
 delete from wm_debug where name in (select distinct name from wm_figures);
 delete from wm_demo where name in (select distinct name from wm_figures);
-insert into wm_demo (name, way) select name, ST_SimplifyWM(way, 10000, name) from wm_figures where name != 'fig8';
-insert into wm_demo (name, way) select name, ST_SimplifyWM(way, 15, name) from wm_figures where name = 'fig8';
+insert into wm_demo (name, way) select name, ST_SimplifyWM(way, .1, name) from wm_figures where name != 'fig8';
+insert into wm_demo (name, way) select name, ST_SimplifyWM(way, .1, name) from wm_figures where name = 'fig8';
 
 
 do $$

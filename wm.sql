@@ -431,7 +431,8 @@ begin
   i = 1;
   while i < array_length(bendattrs, 1)-1 loop
     i = i + 1;
-    continue when area_threshold >= bendattrs[i].adjsize;
+    continue when bendattrs[i].adjsize = 0;
+    continue when bendattrs[i].adjsize > area_threshold;
 
     if i = 2 then
       leftsize = bendattrs[i].adjsize + 1;
@@ -445,8 +446,8 @@ begin
       rightsize = bendattrs[i+1].adjsize;
     end if;
 
-    continue when leftsize <= bendattrs[i].adjsize;
-    continue when rightsize <= bendattrs[i].adjsize;
+    continue when bendattrs[i].adjsize >= leftsize;
+    continue when bendattrs[i].adjsize >= rightsize;
 
     -- Local minimum. Elminate!
     mutated = true;
