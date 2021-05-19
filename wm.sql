@@ -165,6 +165,8 @@ $$ language plpgsql;
 -- article's section "Self-line Crossing When Cutting a Bend".
 create or replace function self_crossing(INOUT bends geometry[]) as $$
 declare
+  i int4;
+  j int4;
   pi real;
   angle real;
   p geometry;
@@ -176,12 +178,12 @@ begin
   pi = radians(180);
 
   -- go through the bends and find one where sum of inflection angle is >180
-  foreach bend in array bends loop
+  for i in 1..array_length(bends, 1) loop
     angle = 0;
-    p3 = null;
-    p2 = null;
     p1 = null;
-    for p in (select geom from st_dumppoints(bend) order by path[1] asc) loop
+    p2 = null;
+    p3 = null;
+    for p in (select geom from st_dumppoints(bends[i]) order by path[1] asc) loop
       p3 = p2;
       p2 = p1;
       p1 = p;
@@ -192,7 +194,16 @@ begin
     end loop;
 
     if abs(angle) > pi then
-      raise notice 'maybe self-crossing bend %: %', st_astext(bend), round(degrees(abs(angle)));
+      raise notice 'maybe self-crossing bend %: %', st_astext(bends[i]), round(degrees(abs(angle)));
+      -- sum of inflection angles for this bend is >180, so it may be self-crossing.
+      -- now try to find another bend in this line that crosses this one.
+      for j in 1..array_length(bends, 1) loop
+        continue when i = j;
+
+
+
+      end loop;
+
     end if;
   end loop;
 
