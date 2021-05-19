@@ -11,6 +11,8 @@ Status
 It mostly works. Read `mj-msc-full.pdf` for visual examples and possible
 gotchas.
 
+![line simplification example](https://raw.githubusercontent.com/motiejus/wm/main/salvis.png)
+
 Structure
 ---------
 
