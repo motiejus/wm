@@ -26,11 +26,6 @@ begin
 end
 $$ language plpgsql;
 
--- to preview this somewhat conveniently in QGIS:
--- stage || '_' || name || ' gen:' || coalesce(gen, 'Ø') || ' nbend:' || lpad(nbend, 4, '0')
-drop table if exists wm_debug;
-create table wm_debug(stage text, name text, gen bigint, nbend bigint, way geometry, props jsonb);
-
 drop table if exists wm_figures;
 create table wm_figures (name text, way geometry);
 -- add fig8.gpkg to postgis:
@@ -56,10 +51,6 @@ insert into wm_figures (name, way) values ('multi-island',ST_GeomFromText('MULTI
 insert into wm_figures (name, way) values ('selfcrossing-1',ST_GeomFromText('LINESTRING(-27 180,-20 166,-21 142,-18 136,55 136,55 136,71 145,44 165,37 146,22 145,14 164,11 164,3 146,-12 146,-13 176,-18 184)'));
 insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Translate((select way from wm_figures where name='selfcrossing-1'), 0, 60)));
 
--- Run ST_SimplifyWM in debug mode, so `wm_debug` is populated. That table
--- is used for geometric assertions later in the file.
-drop table if exists wm_demo;
-create table wm_demo (name text, i bigint, way geometry);
 insert into wm_demo (name, way) select name, ST_SimplifyWM(way, name) from wm_figures;
 
 -- wm_visuals holds visual aids for the paper.

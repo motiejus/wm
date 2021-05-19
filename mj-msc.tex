@@ -121,7 +121,9 @@ different trade-offs.
 A number of cartographic line generalization algorithms have been researched.
 The "classical" ones are {\DP} and {\VW}.
 
-\subsection{{\DP} and {\VW}}
+\subsection{Available algorithms}
+
+\subsubsection{{\DP}, {\VW} and Chaikin's}
 
 {\DP} \cite{douglas1973algorithms} and {\VW} \cite{visvalingam1993line} are
 "classical" line generalization computer graphics algorithms. They are
@@ -144,13 +146,8 @@ algorithm \cite{chaikin1974algorithm} via
 \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
 ChaikinSmoothing}.
 
-Even though {\DP} and {\VW} are simple to understand and computationally
-efficient, they have serious deficiencies for cartographic natural line
-generalization.
 
-<TODO: expand on deficiencies>
-
-\subsection{Modern approaches}
+\subsubsection{Modern approaches}
 
 Due to their simplicity and ubiquity, {\DP} and {\VW} have been established as
 go-to algorithms for line generalization. During recent years, alternatives
@@ -184,7 +181,7 @@ open-source tools is an important foundation for future cartographic
 experimentation and development, thus it it benefits the cartographic society
 as a whole.
 
-<TODO: expand on each paper>
+\subsection{Problematic with generalization of rivers}
 
 \section{Methodology}
 \label{sec:methodology}
