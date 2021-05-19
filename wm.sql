@@ -482,9 +482,15 @@ $$ language plpgsql;
 -- ST_SimplifyWM simplifies a given geometry using Wang & Müller's
 -- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
 -- 1998.
+-- Input parameters:
+-- - geom: ST_LineString or ST_MultiLineString: the geometry to be simplified
+-- - diameter: the diameter of a half-circle, whose area is an approximate
+--   threshold for small bend elimination. If bend's area is larger than that,
+--   the bend will be left alone.
 drop function if exists ST_SimplifyWM;
 create function ST_SimplifyWM(
   geom geometry,
+  diameter float,
   dbgname text default null
 ) returns geometry as $$
 declare
@@ -541,9 +547,25 @@ begin
         continue;
       end if;
 
-      -- self-crossing mutations are done, calculate bend properties
-      bend_attrs = array((select bend_attrs(bends, dbgname)));
+      --select * from elimination(bends, diameter) into bends, mutated;
 
+      --if dbgname is not null then
+      --  insert into wm_debug(stage, name, gen, nbend, way) values(
+      --    'eelimination',
+      --    dbgname,
+      --    stagenum,
+      --    generate_subscripts(bends, 1),
+      --    unnest(bends)
+      --  );
+      --end if;
+
+      --if mutated then
+      --  lines[i] = st_linemerge(st_union(bends));
+      --  stagenum = stagenum + 1;
+      --  continue;
+      --end if;
+
+      bend_attrs = array((select bend_attrs(bends, dbgname)));
       perform isolated_bends(bend_attrs, dbgname);
     end loop;
 
