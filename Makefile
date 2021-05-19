@@ -48,7 +48,7 @@ RIVERS = \
 		 salvis-wm-50k-ne \
 		 salvis-wm-overlaid-250k-zoom \
 		 salvis-wm-grpk50 \
-		 salvis-wm-grpk50-ne \
+		 salvis-wm75-grpk50-grpk10ne \
 		 salvis-wm220
 
 ################################################################################
@@ -191,13 +191,6 @@ salvis-wm-grpk50_1COLOR = orange
 salvis-wm-grpk50_2COLOR = green
 salvis-wm-grpk50_3LINESTYLE = dotted
 
-salvis-wm-grpk50-ne_1SELECT = wm_visuals where name='salvis-wm75'
-salvis-wm-grpk50-ne_2SELECT = wm_visuals where name='salvis-grpk50'
-salvis-wm-grpk50-ne_3SELECT = wm_visuals where name='salvis-grpk10'
-salvis-wm-grpk50-ne_1COLOR = orange
-salvis-wm-grpk50-ne_2COLOR = green
-salvis-wm-grpk50-ne_3LINESTYLE = dotted
-salvis-wm-grpk50-ne_QUADRANT = tl
 
 salvis-wm220_1SELECT = wm_visuals where name='salvis-wm220'
 salvis-wm220_WIDTHDIV = 2
@@ -206,11 +199,12 @@ label_wm75 = Wang--Müller
 label_vw64 = Visvalingam--Whyatt
 label_dp64 = Douglas \& Peucker
 label_grpk10 = GRPK 1:\numprint{10000}
+label_grpk50 = GRPK 1:\numprint{50000}
 label_vw64chaikin = $(label_vw64) and Chaikin
 label_dp64chaikin = $(label_dp64) and Chaikin
 legend_   = lower left
 legend_tr = lower right
-legend_tl = lower right
+legend_tl = lower center
 
 define wm_vwdp50k
 RIVERS += salvis-$(1)-$(2)-$(3)-50k$(4)
@@ -231,6 +225,7 @@ $(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
 	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tl)) \
 	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tr)) \
 )
+$(eval $(call wm_vwdp50k,wm75,grpk50,grpk10,tr))
 
 define FIG_template
 $(1).pdf: layer2img.py Makefile $(2)
@@ -245,6 +240,7 @@ $(1).pdf: layer2img.py Makefile $(2)
 			$$(if $$($(1)_$$(i)LINESTYLE),--g$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
+
 
 $(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
 $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
