@@ -63,9 +63,8 @@ slides-2021-03-29.html: slides-2021-03-29.txt
 $(SOURCE):
 	wget http://download.geofabrik.de/europe/$@
 
-REF = $(shell git describe --tags --dirty)
-version.tex: $(shell git rev-parse --show-toplevel)/.git
+REF = $(shell git describe --abbrev=12 --always --dirty)
+version.tex: Makefile $(shell git rev-parse --show-toplevel)/.git
 	( \
-		date '+\gdef\GeneratedAt{%F %T %Z}%'; \
-		printf '\gdef\VCDescribe{%s}%%\n' $(REF); \
+		TZ=UTC date '+\gdef\VCDescribe{%F ($(REF))}%'; \
 	) > $@
