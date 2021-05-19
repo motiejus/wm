@@ -1,14 +1,22 @@
-Definition of a bend: ends of the line should always be bends, otherwise not
+Definition of a bend
+--------------------
+
+Ends of the line should always be bends, otherwise not
 all line vertices are covered by bends (definition elsewhere).
 
-Gentle inflection at the end of the bend: the article does not specify how many
-vertices should be included when calculating the end-of-bend inflection. We
-chose the iterative approach -- as long as the angle is "right" and the
-distance is (greedily) decreasing, keep going.
+Gentle inflection at the end of the bend
+----------------------------------------
 
-Self-line crossing when cutting a bend: the self-line-crossing may happen
-after a few bends have been skipped. E.g. ends of A<->B cross the line, but
-"swallow" a few more in between:
+The article does not specify how many vertices should be included when
+calculating the end-of-bend inflection. We chose the iterative approach -- as
+long as the angle is "right" and the distance is (greedily) decreasing, keep
+going.
+
+Self-line crossing when cutting a bend
+--------------------------------------
+
+The self-line-crossing may happen after a few bends have been skipped. E.g.
+ends of A<->B cross the line, but "swallow" a few more in between:
 
    ,______
   /       \
@@ -36,3 +44,24 @@ This may be simplified: if other bend's endpoints (A' and B') are in the same
 sub-plane as divided by AB, then the bend can be skipped from checking if it
 intersects with AB. Some intersections may be missed (see the last example),
 but they will be eliminated by joining A and B anyway.
+
+Also, there is another way to remove self-crossing, without removing most of
+the bend. E.g. from:
+
+
+\  \
+B\ |      __
+ | |     /  \
+ | |____/A  |
+ \__________|
+
+To:
+
+\  \_
+B\   `-,_.__
+ |       A' \
+ |          |
+ \__________|
+
+But perhaps it doesn't look quite as natural. I will trust the original
+article to do the right thing here.

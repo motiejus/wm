@@ -191,28 +191,29 @@ begin
       p2 = p1;
       p1 = p0;
       continue when p3 is null;
-
       angle = angle + abs(pi - st_angle(p1, p2, p3));
     end loop;
 
     continue when abs(angle) <= pi;
 
-    -- sum of inflection angles for this bend is >180, so it may be self-crossing.
-    -- now try to find another bend in this line that crosses this one.
+    -- sum of inflection angles for this bend is >180, so it may be
+    -- self-crossing. now try to find another bend in this line that
+    -- crosses an imaginary line of end-vertices
     p0 = st_pointn(bends[i], 1);
     p1 = st_pointn(bends[i], -1);
 
-    -- go through each bend in this line, and see if has a potential to cross bends[i].
-    -- optimization: we care only about bends which beginning and end start at different
-    -- sides of the plane, separated by endpoints p0 and p1.
+    -- go through each bend in the given line, and see if has a potential to
+    -- cross bends[i]. optimization: we care only about bends which beginning
+    -- and end start at different sides of the plane, separated by endpoints
+    -- p0 and p1.
     for j in 1..array_length(bends, 1) loop
       continue when i = j;
 
       p2 = st_pointn(bends[j], 1);
       p3 = st_pointn(bends[j], -1);
 
-      -- are p2 and p3 on the same side of (p0,p1)? vector multiplication
-      -- https://stackoverflow.com/questions/1560492/
+      -- are p2 and p3 on the different sides of line(p0,p1)? vector
+      -- multiplication; https://stackoverflow.com/questions/1560492/
       s2 = (st_x(p0)-st_x(p1)*(st_y(p2)-st_y(p1))-(st_y(p0)-st_y(p1))*(st_x(p2)-st_x(p1)));
       s3 = (st_x(p0)-st_x(p1)*(st_y(p3)-st_y(p1))-(st_y(p0)-st_y(p1))*(st_x(p3)-st_x(p1)));
       continue when sign(s2) = sign(s3);
@@ -222,16 +223,16 @@ begin
       multi = st_split(bends[j], this);
       continue when st_numgeometries(multi) = 1;
 
-      -- self-crossing detected!
+      -- real self-crossing detected! Remove it.
       -- if j < i:
       --   bends[j] = multi[1][1...n-1]; that will have all the vertices of bends[j],
-      --     except the crossing itself.
+      --     except the crossing and what comes after it.
       --   bends[j] = append(bends[j], bends[i][-1])
       --   remove bends from bends[j+1] to bends[i] inclusive.
       -- elif j > i:
-      --   remove bends from bends[i+1] to bends[j-1] inclusive.
-      --   bends[j] = multi[2][2..n]
-      --   bends[i]
+      --   bends[i] = bends[i][1]
+      --   bends[i] = append(bends[i], multi[2][2..n])
+      --   remove bends from bends[i+1] to bends[j] inclusive.
 
     end loop;
 
