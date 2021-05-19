@@ -351,7 +351,8 @@ create type wm_t_bend_attrs as (
 );
 create function wm_bend_attrs(
   bends geometry[],
-  dbgname text default null
+  dbgname text default null,
+  dbggen integer default null
 ) returns setof wm_t_bend_attrs as $$
 declare
   fourpi constant real default 4*radians(180);
@@ -388,10 +389,11 @@ begin
     end if;
 
     if dbgname is not null then
-      insert into wm_debug (stage, name, nbend, way, props) values(
+      insert into wm_debug (stage, name, gen, nbend, way, props) values(
         'ebendattrs',
         dbgname,
         i,
+        dbggen,
         bend,
         jsonb_build_object(
           'area', res.area,
@@ -410,8 +412,8 @@ $$ language plpgsql;
 create function wm_elimination(
   INOUT bendattrs wm_t_bend_attrs[],
   dhalfcircle float,
-  dbgname text,
-  dbggen int4,
+  dbgname text default null,
+  dbggen integer default null,
   OUT mutated boolean
 ) as $$
 declare
@@ -461,7 +463,7 @@ begin
     for j in 1..array_length(bendattrs, 1) loop
       dbgbends[j] = bendattrs[j].bend;
     end loop;
-    
+
     insert into wm_debug(stage, name, gen, nbend, way) values(
       'eelimination',
       dbgname,
@@ -475,7 +477,8 @@ $$ language plpgsql;
 
 create function wm_isolated_bends(
   INOUT bendattrs wm_t_bend_attrs[],
-  dbgname text default null
+  dbgname text default null,
+  dbggen integer default null
 ) as $$
 declare
   -- if neighbor's curvatures are within this fraction of the current bend
@@ -499,9 +502,10 @@ begin
     end if;
 
     if dbgname is not null then
-      insert into wm_debug (stage, name, nbend, way, props) values(
+      insert into wm_debug (stage, name, gen, nbend, way, props) values(
         'fisolated_bends',
         dbgname,
+        dbggen,
         i,
         res.bend,
         jsonb_build_object(
@@ -615,7 +619,7 @@ begin
         continue;
       end if;
 
-      bendattrs = array((select wm_bend_attrs(bends, dbgname)));
+      bendattrs = array((select wm_bend_attrs(bends, dbgname, gen)));
 
       select * from wm_elimination(
         bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
@@ -629,7 +633,7 @@ begin
         continue;
       end if;
 
-      perform wm_isolated_bends(bendattrs, dbgname);
+      perform wm_isolated_bends(bendattrs, dbgname, gen);
     end loop;
 
   end loop;
