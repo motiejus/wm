@@ -9,9 +9,16 @@ test: tests.sql .faux.db
 test-integration: .faux_filter-rivers
 	./db -f tests-integration.sql
 
+.PHONY: clean
 clean:
 	-./db stop
 	-rm .faux_filter-rivers .faux_import-osm .faux.db
+
+.PHONY: clean-tables
+clean-tables:
+	for t in $$(./db -c '\dt' | awk '/demo_|integ_/{print $$3}'); do \
+		./db -c "drop table $$t"; \
+	done
 
 .faux_filter-rivers: .faux_import-osm
 	./db -v where="$(WHERE)" -f aggregate-rivers.sql
