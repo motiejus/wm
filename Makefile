@@ -1,5 +1,6 @@
 OSM ?= lithuania-latest.osm.pbf
-WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Merkys'
+#WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Merkys'
+WHERE ?= name='Šalčia'
 #WHERE ?= name like '%'
 SLIDES = slides-2021-03-29.pdf
 

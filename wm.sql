@@ -22,6 +22,7 @@ declare
 begin
   l_type = st_geometrytype(line);
   if l_type != 'ST_LineString' then
+    raise notice 'Got non-LineString: %', st_astext(line);
     raise 'This function works with ST_LineString, got %', l_type;
   end if;
 
@@ -76,12 +77,7 @@ begin
   if dbgname is not null then
     for i in 1..array_length(bends, 1) loop
       insert into wm_debug(stage, name, gen, nbend, way) values(
-        'bbends',
-        dbgname,
-        dbggen,
-        i,
-        bends[i]
-      );
+        'bbends', dbgname, dbggen, i, bends[i]);
 
       dbgpolygon = null;
       if st_npoints(bends[i]) >= 3 then
@@ -91,12 +87,7 @@ begin
           );
       end if;
       insert into wm_debug(stage, name, gen, nbend, way) values(
-        'bbends-polygon',
-        dbgname,
-        dbggen,
-        i,
-        dbgpolygon
-      );
+        'bbends-polygon', dbgname, dbggen, i, dbgpolygon);
     end loop;
   end if;
 end
@@ -137,12 +128,7 @@ begin
   if dbgname is not null then
     for i in 1..array_length(bends, 1) loop
       insert into wm_debug(stage, name, gen, nbend, way) values(
-        'cinflections',
-        dbgname,
-        dbggen,
-        i,
-        bends[i]
-      );
+        'cinflections', dbgname, dbggen, i, bends[i]);
 
       dbgpolygon = null;
       if st_npoints(bends[i]) >= 3 then
@@ -153,12 +139,7 @@ begin
       end if;
 
       insert into wm_debug(stage, name, gen, nbend, way) values(
-        'cinflections-polygon',
-        dbgname,
-        dbggen,
-        i,
-        dbgpolygon
-      );
+        'cinflections-polygon', dbgname, dbggen, i, dbgpolygon);
     end loop;
   end if;
 end
@@ -171,7 +152,7 @@ create function wm_fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
   -- the threshold when the angle is still "small", so gentle inflections can
   -- be joined
-  small_angle constant real default radians(45);
+  small_angle constant real default pi()/4;
   ptail geometry; -- tail point of tail bend
   phead geometry[]; -- 3 tail points of head bend
   i int4; -- bends[i] is the current head
@@ -321,10 +302,7 @@ begin
 
   if dbgname is not null then
     insert into wm_debug(stage, name, gen, nbend, way) values(
-      'dcrossings',
-      dbgname,
-      dbggen,
-      generate_subscripts(bends, 1),
+      'dcrossings', dbgname, dbggen, generate_subscripts(bends, 1),
       unnest(bends)
     );
   end if;
@@ -389,11 +367,7 @@ begin
 
     if dbgname is not null then
       insert into wm_debug (stage, name, gen, nbend, way, props) values(
-        'ebendattrs',
-        dbgname,
-        dbggen,
-        i,
-        bend,
+        'ebendattrs', dbgname, dbggen, i, bend,
         jsonb_build_object(
           'adjsize', res.adjsize,
           'baselinelength', res.baselinelength,
@@ -406,9 +380,9 @@ begin
 end;
 $$ language plpgsql;
 
--- wm_exaggerate exaggerates a given bend. Must be a simple linestring.
-drop function if exists wm_exaggerate;
-create function wm_exaggerate(
+-- wm_exaggerate_bend exaggerates a given bend. Must be a simple linestring.
+drop function if exists wm_exaggerate_bend;
+create function wm_exaggerate_bend(
   INOUT bend geometry,
   size float,
   desired_size float
@@ -457,8 +431,7 @@ begin
         order by path[1], path[2]
       ));
 
-    bend = st_makeline(points);
-
+    bend = st_setsrid(st_makeline(points), st_srid(bend));
     size = wm_adjsize(bend);
   end loop;
 end
@@ -490,6 +463,7 @@ begin
 end
 $$ language plpgsql;
 
+-- wm_exaggeration is the Exaggeration Operator described in the WM paper.
 create function wm_exaggeration(
   INOUT bendattrs wm_t_bend_attrs[],
   dhalfcircle float,
@@ -498,7 +472,45 @@ create function wm_exaggeration(
   OUT mutated boolean
 ) as $$
 declare
+  desired_size constant float default pi() * ((dhalfcircle/2)^2)/2;
+  tmpbendattr wm_t_bend_attrs;
+  i integer;
+  last_id integer;
 begin
+  mutated = false;
+  for i in 1..array_length(bendattrs, 1) loop
+
+    if bendattrs[i].isolated and bendattrs[i].adjsize < desired_size then
+      mutated = true;
+      tmpbendattr.bend = wm_exaggerate_bend(
+        bendattrs[i].bend,
+        bendattrs[i].adjsize,
+        desired_size
+      );
+      bendattrs[i] = tmpbendattr;
+
+      -- remove last vertex of the previous bend and
+      -- first vertex of the next bend, because bends always
+      -- share a line segment together
+      -- this is duplicated in a few places, because PostGIS
+      -- does not allow (?) mutating an array when passed to a
+      -- function.
+      tmpbendattr.bend = st_removepoint(
+        bendattrs[i-1].bend,
+        st_npoints(bendattrs[i-1].bend)-1
+      );
+      bendattrs[i-1] = tmpbendattr;
+      tmpbendattr.bend = st_removepoint(bendattrs[i+1].bend, 0);
+      bendattrs[i+1] = tmpbendattr;
+
+      if dbgname is not null then
+        insert into wm_debug (stage, name, gen, nbend, way) values(
+          'gexaggeration', dbgname, dbggen, i, bendattrs[i].bend
+        );
+      end if;
+    end if;
+
+  end loop;
 
 end
 $$ language plpgsql;
@@ -511,22 +523,21 @@ create function wm_elimination(
   OUT mutated boolean
 ) as $$
 declare
-  area_threshold float;
+  desired_size constant float default pi() * ((dhalfcircle/2)^2)/2;
   leftsize float;
   rightsize float;
   i int4;
   j int4;
-  tmpbendattrs wm_t_bend_attrs;
+  tmpbendattr wm_t_bend_attrs;
   dbgbends geometry[];
 begin
-  area_threshold = radians(180) * ((dhalfcircle/2)^2)/2;
   mutated = false;
 
   i = 1;
   while i < array_length(bendattrs, 1)-1 loop
     i = i + 1;
     continue when bendattrs[i].adjsize = 0;
-    continue when bendattrs[i].adjsize > area_threshold;
+    continue when bendattrs[i].adjsize > desired_size;
 
     if i = 2 then
       leftsize = bendattrs[i].adjsize + 1;
@@ -545,21 +556,21 @@ begin
 
     -- Local minimum. Elminate bend!
     mutated = true;
-    tmpbendattrs.bend = st_makeline(
+    tmpbendattr.bend = st_makeline(
       st_pointn(bendattrs[i].bend, 1),
       st_pointn(bendattrs[i].bend, -1)
     );
-    bendattrs[i] = tmpbendattrs;
+    bendattrs[i] = tmpbendattr;
     -- remove last vertex of the previous bend and
     -- first vertex of the next bend, because bends always
     -- share a line segment together
-    tmpbendattrs.bend = st_removepoint(
+    tmpbendattr.bend = st_removepoint(
       bendattrs[i-1].bend,
       st_npoints(bendattrs[i-1].bend)-1
     );
-    bendattrs[i-1] = tmpbendattrs;
-    tmpbendattrs.bend = st_removepoint(bendattrs[i+1].bend, 0);
-    bendattrs[i+1] = tmpbendattrs;
+    bendattrs[i-1] = tmpbendattr;
+    tmpbendattr.bend = st_removepoint(bendattrs[i+1].bend, 0);
+    bendattrs[i+1] = tmpbendattr;
     -- the next bend's adjsize is now messed up; it should not be taken
     -- into consideration for other local minimas. Skip over 2.
     i = i + 2;
@@ -571,7 +582,7 @@ begin
     end loop;
 
     insert into wm_debug(stage, name, gen, nbend, way) values(
-      'felimination',
+      'helimination',
       dbgname,
       dbggen,
       generate_subscripts(dbgbends, 1),
@@ -593,8 +604,20 @@ declare
   skip_next bool;
   res wm_t_bend_attrs;
   i int4;
+  last_id integer;
 begin
-  for i in 2..array_length(bendattrs, 1)-1 loop
+  for i in 1..array_length(bendattrs, 1) loop
+    if dbgname is not null then
+      insert into wm_debug (stage, name, gen, nbend, way, props) values(
+        'fisolated_bends', dbgname, dbggen, i, bendattrs[i].bend,
+        jsonb_build_object('isolated', false)
+      ) returning id into last_id;
+    end if;
+    -- first and last bends cannot be isolated
+    if i = 1 or i = array_length(bendattrs, 1) then
+      continue;
+    end if;
+
     res = bendattrs[i];
     if skip_next then
       skip_next = false;
@@ -605,24 +628,13 @@ begin
         res.isolated = true;
         bendattrs[i] = res;
         skip_next = true;
-      end if;
-    end if;
 
-    if dbgname is not null then
-      insert into wm_debug (stage, name, gen, nbend, way, props) values(
-        'fisolated_bends',
-        dbgname,
-        dbggen,
-        i,
-        res.bend,
-        jsonb_build_object(
-          'area', res.area,
-          'adjsize', res.adjsize,
-          'baselinelength', res.baselinelength,
-          'curvature', res.curvature,
-          'isolated', res.isolated
-        )
-      );
+        if dbgname is not null then
+          update wm_debug
+          set props=props || jsonb_build_object('isolated', true)
+          where id=last_id;
+        end if;
+      end if;
     end if;
 
   end loop;
@@ -680,6 +692,7 @@ declare
   bendattrs wm_t_bend_attrs[];
   mutated boolean;
   l_type text;
+  dbggeoms geometry[];
 begin
   l_type = st_geometrytype(geom);
   if l_type = 'ST_LineString' then
@@ -711,24 +724,39 @@ begin
       end if;
 
       bendattrs = array((select wm_bend_attrs(bends, dbgname, gen)));
-
-      -- code to detect isolated bends is there, but bend exaggeration
-      -- is not implemented.
-      perform wm_isolated_bends(bendattrs, dbgname, gen);
+      bendattrs = wm_isolated_bends(bendattrs, dbgname, gen);
 
       --select * from wm_exaggeration(
       --  bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
 
-      select * from wm_elimination(
-        bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
+      -- TODO: wm_combination
+
+      if not mutated then
+        select * from wm_elimination(
+          bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
+      end if;
+
       if mutated then
         for j in 1..array_length(bendattrs, 1) loop
           bends[j] = bendattrs[j].bend;
         end loop;
         lines[i] = st_linemerge(st_union(bends));
+
         gen = gen + 1;
-        continue;
+        if st_geometrytype(lines[i]) != 'ST_lineString' then
+          dbggeoms = array((select a.geom from st_dump(lines[i]) a order by path[1] asc));
+          insert into wm_debug (stage, name, gen, nbend, way) values(
+            'manual', dbgname, gen,
+            generate_subscripts(dbggeoms, 1),
+            unnest(dbggeoms)
+          );
+          raise notice '% non-linestring: %', dbgname, st_summary(lines[i]);
+          exit;
+        else
+          continue;
+        end if;
       end if;
+
     end loop;
 
   end loop;
