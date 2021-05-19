@@ -117,12 +117,16 @@ begin
   foreach i in array array[16, 64, 256] loop
     geom1 = st_simplify((select way from wm_visuals where name='salvis'), i);
     geom2 = st_simplifyvw((select way from wm_visuals where name='salvis'), i*i);
-    geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i, 50, 'salvis-' || i);
     insert into wm_visuals(name, way) values
       ('salvis-douglas-'     || i, geom1),
       ('salvis-douglas-'     || i || '-chaikin', st_chaikinsmoothing(geom1, 5)),
       ('salvis-visvalingam-' || i, geom2),
-      ('salvis-visvalingam-' || i || '-chaikin', st_chaikinsmoothing(geom2, 5)),
+      ('salvis-visvalingam-' || i || '-chaikin', st_chaikinsmoothing(geom2, 5));
+  end loop;
+  -- TODO: try 32, 64, 256?
+  foreach i in array array[16, 24] loop
+    geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i, 50, 'salvis-' || i);
+    insert into wm_visuals(name, way) values
       ('salvis-wm-'          || i, geom3);
   end loop;
 end $$ language plpgsql;

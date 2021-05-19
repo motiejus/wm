@@ -182,11 +182,13 @@ salvis-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 
 salvis-overlaid-douglas-64-chaikin-50k_1SELECT = wm_visuals where name='salvis'
 salvis-overlaid-douglas-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-douglas-64-chaikin'
+salvis-overlaid-douglas-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-douglas-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-douglas-64-chaikin-50k_QUADRANT = 1
 
 salvis-overlaid-visvalingam-64-chaikin-50k_1SELECT = wm_visuals where name='salvis'
 salvis-overlaid-visvalingam-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-visvalingam-64-chaikin'
+salvis-overlaid-visvalingam-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 
@@ -200,7 +202,7 @@ salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 	bash db -f $<
 	touch $@
 
-.faux_visuals: visuals.sql Makefile .faux_test
+.faux_visuals: visuals.sql .faux_test
 	bash db -v scaledwidth=$(SCALEDWIDTH) -f $<
 	touch $@
 
