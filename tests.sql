@@ -1,4 +1,3 @@
-create schema if not exists test;
 \i wm.sql
 
 -- https://stackoverflow.com/questions/19982373/which-tools-libraries-do-you-use-to-unit-test-your-pl-pgsql
@@ -21,9 +20,9 @@ insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRI
 -- DETECT BENDS
 drop table if exists bends, demo_bends;
 create table bends (name text, ways geometry[]);
-insert into bends select f.name, detect_bends(f.way) from figures f;
+insert into bends select name, detect_bends(way) from figures;
 create table demo_bends (name text, i bigint, way geometry);
-insert into demo_bends select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from bends a;
+insert into demo_bends select name, generate_subscripts(ways, 1), unnest(ways) from bends;
 
 do $$
 declare
@@ -43,7 +42,7 @@ end $$ language plpgsql;
 -- FIX BEND INFLECTIONS
 drop table if exists inflections, demo_inflections;
 create table inflections (name text, ways geometry[]);
-insert into inflections select a.name, fix_gentle_inflections(a.ways) from bends a;
+insert into inflections select name, fix_gentle_inflections(ways) from bends;
 create table demo_inflections (name text, i bigint, way geometry);
 insert into demo_inflections select a.name, generate_subscripts(a.ways, 1), unnest(a.ways) from inflections a;
 
