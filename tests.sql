@@ -11,9 +11,9 @@ begin
 end $$ LANGUAGE plpgsql;
 
 -- to preview this somewhat conveniently in QGIS:
--- stage || '_' || dbgname || ' iter:' || iter || ' nbend:'|| nbend
+-- stage || '_' || name || ' iter:' || iter || ' nbend:'|| nbend
 drop table if exists debug_wm;
-create table debug_wm(stage text, dbgname text, iter bigint, nbend bigint, way geometry, props json);
+create table debug_wm(stage text, name text, iter bigint, nbend bigint, way geometry, props json);
 
 drop table if exists figures;
 create table figures (name text, way geometry);
@@ -70,7 +70,7 @@ do $$
 declare
   vbends geometry[];
 begin
-  select array((select way from debug_wm where dbgname='fig3' and stage='bbends')) into vbends;
+  select array((select way from debug_wm where name='fig3' and stage='bbends')) into vbends;
   perform assert_equals(5, array_length(vbends, 1));
   perform assert_equals('LINESTRING(0 0,12 0,13 4)', st_astext(vbends[1]));
   perform assert_equals('LINESTRING(12 0,13 4,20 2,20 0)', st_astext(vbends[2]));
@@ -86,14 +86,14 @@ declare
   vbends geometry[];
   vinflections geometry[];
 begin
-  select array((select way from debug_wm where dbgname='fig5' and stage='cinflections')) into vinflections;
+  select array((select way from debug_wm where name='fig5' and stage='cinflections')) into vinflections;
   perform assert_equals('LINESTRING(0 39,19 52,27 77)', st_astext(vinflections[1]));
   perform assert_equals('LINESTRING(19 52,27 77,26 104,41 115,49 115,65 103,65 75,53 45)', st_astext(vinflections[2]));
   perform assert_equals('LINESTRING(65 75,53 45,63 15,91 0)', st_astext(vinflections[3]));
 
   -- inflections-1, the example in fix_gentle_inflections docstring
-  select array((select way from debug_wm where dbgname='inflection-1' and stage='bbends')) into vbends;
-  select array((select way from debug_wm where dbgname='inflection-1' and stage='cinflections')) into vinflections;
+  select array((select way from debug_wm where name='inflection-1' and stage='bbends')) into vbends;
+  select array((select way from debug_wm where name='inflection-1' and stage='cinflections')) into vinflections;
   perform assert_equals(vbends[1], vinflections[1]); -- unchanged
   perform assert_equals('LINESTRING(114 20,133 20,145 15,145 0,136 5,123 7,114 7)', st_astext(vinflections[2]));
   perform assert_equals('LINESTRING(123 7,114 7,111 2)', st_astext(vinflections[3]));
@@ -101,10 +101,13 @@ end $$ language plpgsql;
 
 do $$
 declare
+  elem geometry;
+  elems1 geometry[];
+  elems2 geometry[];
   vcrossings geometry[];
   mutated boolean;
 begin
-  select (self_crossing(array((select way from debug_wm where stage='cinflections' and dbgname='fig6')))).* into vcrossings, mutated;
+  select (self_crossing(array((select way from debug_wm where stage='cinflections' and name='fig6')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
@@ -113,7 +116,7 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  select (self_crossing(array((select way from debug_wm where stage='cinflections' and dbgname='fig6-rev')))).* into vcrossings, mutated;
+  select (self_crossing(array((select way from debug_wm where stage='cinflections' and name='fig6-rev')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 47,91 59,114 64,120 45,125 39,141 39,147 32)',
@@ -122,8 +125,23 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  select (self_crossing((select ways from inflections where name='fig6-combi'))).* into vcrossings, mutated;
-  --select (self_crossing(array((select way from debug_wm where stage='cinflections' and dbgname='fig6-combi')))).* into vcrossings, mutated;
+  elems1 = array((select way from debug_wm where stage='cinflections' and name='fig6-combi' and iter=1));
+  elems2 = (select ways from inflections where name='fig6-combi');
+
+  raise notice 'input 1: %', array_length(elems1, 1);
+  raise notice 'input 2: %', array_length(elems2, 1);
+
+  foreach elem in array elems1 loop
+    raise notice 'elem 1: %', st_astext(elem);
+  end loop;
+
+  foreach elem in array elems2 loop
+    raise notice 'elem 2: %', st_astext(elem);
+  end loop;
+
+
+  --select (self_crossing((select ways from inflections where name='fig6-combi'))).* into vcrossings, mutated;
+  select (self_crossing(array((select way from debug_wm where stage='cinflections' and name='fig6-combi')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 137,91 149,114 154,120 135,125 129,141 129,147 122,164 137,171 149,194 154,200 135,205 129,221 129,227 122)',
