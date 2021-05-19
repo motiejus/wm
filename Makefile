@@ -141,7 +141,7 @@ version.inc.tex: Makefile $(shell git rev-parse --git-dir 2>/dev/null)
 	TZ=UTC date '+\gdef\VCDescribe{%F ($(REF))}%' > $@
 
 vars.inc.tex: vars.awk wm.sql Makefile
-	./$< wm.sql > $@
+	awk -f $< wm.sql
 
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@

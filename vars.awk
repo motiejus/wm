@@ -1,20 +1,19 @@
 #!/usr/bin/awk -f
 
-BEGIN {
-  FS="[() ]"
-}
+BEGIN { FS="[() ]" }
 
 /small_angle constant real default radians/ {
   if(d) {
     exit 1
   } else {
-    printf ("\\newcommand{\\smallAngle}{\\frac{\\pi}{%d}}\n",180/$8);
-    d=1
+    d = sprintf("\\newcommand{\\smallAngle}{\\frac{\\pi}{%d}}\n",180/$8);
   }
 }
 
 END{
-  if(!d){
+  if(d) {
+    print d > "vars.inc.tex"
+  } else {
     exit 1
   }
 }
