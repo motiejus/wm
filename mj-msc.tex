@@ -160,7 +160,8 @@ different trade-offs.
 \section{Literature Review and Problematic}
 \label{sec:literature-review-problematic}
 
-\subsection{Simplification, Cartographic Simplification and Generalization}
+\subsection{From Simplification to Generalization}
+\label{sec:from-simplification-to-generalization}
 
 It is important to note the distinction between simplification, line
 generalization and cartographic generalization.
@@ -173,65 +174,47 @@ but lose some shapes that define it. For example:
 \begin{itemize}
 
   \item Low-water rivers in slender slopes have many small bends next to each
-    other. A non-cartographic line simplification may remove all of them, thus
-    losing an important river's characteristic feature.
+      other. A non-cartographic line simplification may remove all of them,
+        thus losing an important river's characteristic feature: after such
+        simplification, it will be hard to tell that the original river was
+        low-water in a slender slope.
 
-  \item Insignificant river bend river over a long distance differs
-    significantly from a completely straight canal. Non-cartographic line
-    simplification may replace a long and small bend with a straight line,
-    making the river more similar to a canal than a river.
+  \item Low-angle river bend river over a long distance differs significantly
+      from a completely straight canal. Non-cartographic line simplification
+        may replace a that bend with a straight line, making the river more
+        similar to a canal than a river.
 
 \end{itemize}
 
-In other words, simplification simplifies the line ignoring its cartographic
+In other words, simplification processes the line ignoring its geographic
 features. It is works well when the features are man-made (e.g., roads,
-administrative boundaries, buildings)
+administrative boundaries, buildings). There is a number of freely available
+non-cartographic line simplification algorithms, which this paper will review.
 
+Contrary to line simplification, Cartographic Generalization does not focus
+into a single feature class (e.g., rivers), but the whole map. For example,
+line simplification may change river bends in a way that bridges (and roads to
+the bridges) become misplaced. While line simplification is limited to a single
+feature class, cartographic generalization is not. Fully automatic cartographic
+generalization is not yet a solved problem <TODO: Reference needed>.
 
-Line simplification solves a 
-
-Simplification is most frequently used when the topology
-mismatches are invisible or not a concern (huge scale maps), or when creating,
-for example, river-only maps.
-
-Conversely, cartographic generalization takes into account the surrounding
-object's topology. That way, when a river is generalized, objects around it are
-generalized with it. Keeping the river as an example:
-
-\begin{itemize}
-
-  \item "Minor" bridges will be removed. Important bridges will be generalized
-    together with the river and remain on the river. Roads or railways that
-    cross the bridge will be generalized together, and will make sense (a
-    railway will be relatively straight when crossing the river).
-
-  \item Towns will either disappear (if they are too small for the given
-    scale), or retain in the correct river side.
-
-\end{itemize}
-
-"Cartographic Line Generalization" is in the middle: it accepts 
-
-In essence, cartographic generalization cannot be done in isolation. However,
-full automatic feature generalization is not yet a solved problem <TODO:
-Reference needed>. This paper examines {\WM}'s \titlecite{wang1998line}, which
-has "generalization" in its title, but is a simplification following the rules
-above.
-
-A number of cartographic line generalization algorithms have been researched.
-The "classical" ones are {\DP}\cite{douglas1973algorithms} and
-{\VW}\cite{visvalingam1993line} in combination with
-Chaikin's\cite{chaikin1974algorithm}.
-
-This section reviews the classical ones, which, besides being around for a long
-time, offer easily accessible implementations, as well as more modern ones,
-which only theorize, but do not provide an implementation.
+Cartographic line generalization falls in between the two: it does more than
+line simplification, and less than cartographic generalization. Cartographic
+line generalization deals with a single feature class, but takes into account
+its geographic properties. This paper examines {\WM}'s
+\titlecite{wang1998line}, a cartographic line generalization algorithm.
 
 \subsection{Available algorithms}
+
+This section reviews the classical line simplification algorithms, which,
+besides being around for a long time, offer easily accessible implementations,
+as well as more modern ones, which only theorize, but do not provide an
+implementation.
 
 \subsection{Simplification requirements}
 
 \subsubsection{{\DP}, {\VW} and Chaikin's}
+\label{sec:dp-vw-chaikin}
 
 {\DP}\cite{douglas1973algorithms} and {\VW}\cite{visvalingam1993line} are
 "classical" line simplification computer graphics algorithms. They are
@@ -253,11 +236,11 @@ line smoothing algorithm\cite{chaikin1974algorithm} via
 \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
 \texttt{ST\_ChaikinSmoothing}}.
 
-To use in generalization examples, we will use two rivers: Šalčia and Visinčia
-(Visinčia flows into Šalčia). These rivers were chosen, because they have both
-large and small bends, and thus convenient to analyze for both small and large
-scale generalization. Figure~\ref{fig:salvis-25} illustrates the original two
-rivers without any simplification.
+To use in generalization examples, we will use two rivers: Šalčia and Visinčia.
+These rivers were chosen, because they have both large and small bends, and
+thus convenient to analyze for both small and large scale generalization.
+Figure~\onpage{fig:salvis-25} illustrates the original two rivers without any
+simplification.
 
 \begin{figure}[h]
     \centering
@@ -432,6 +415,36 @@ implementations that run on PostGIS or other free platforms are useful to a
 wider cartographic society than proprietary ones.
 
 \subsection{Problematic with generalization of rivers}
+
+Section~\ref{sec:dp-vw-chaikin} illustrates the current gaps with Line
+Simplification algorithms for real rivers. To sum up, we highlight the
+following cartographic problems from our examples:
+
+\begin{description}
+
+    \item[Long bends] should remain as long bends, instead of become fully
+        straight lines.
+
+    \item[Many small bends] should not be removed. To retain river's character,
+        the algorithm should retain some small bends, and, when they are too
+        small to be visible, should be combined or exaggerated.
+
+\end{description}
+
+Like discussed in section~\label{sec:from-simplification-to-generalization}, we
+limiting the problem to cartographic line generalization. That is, full
+cartographic generalization, which takes topology and other feature classes
+into account, is out of scope.
+
+Figure~\onpage{fig:wang125} illustrates {\WM} algorithm from their original
+paper. Note how the long bends retain curvy, and how some small bends got
+exaggerated.
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{wang125}
+    \caption{Originally Figure 12.5 from \titlecite{wang1998line}}
+    \label{fig:wang125}
+\end{figure}
 
 \section{Methodology}
 \label{sec:methodology}
