@@ -209,7 +209,8 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 
     \item[Line Segment (or Segment)] joins two vertices by a straight line. A
         segment can be expressed by two coordinate pairs: $(x_1, y_1)$ and
-        $(x_2, y_2)$. Line Segment and Segment are used interchangeably.
+        $(x_2, y_2)$. Line Segment and Segment are used interchangeably
+        throughout the paper.
 
     \item[Line] represents a single linear feature in the real world. For
         example, a river or a coastline. {\tt LINESTRING} in GIS terms.
@@ -272,7 +273,7 @@ purposes) using the following algorithm:
 \section{Definition of a Bend}
 \label{sec:definition-of-a-bend}
 
-The original article describes:
+The original article describes a bend as:
 
 \begin{displayquote}[\cite{wang1998line}][]
     A bend can be defined as that part of a line which contains a number of
@@ -281,21 +282,9 @@ The original article describes:
     two end vertices being in opposite signs.
 \end{displayquote}
 
-While it gives a good intuitive understanding of what the bend is, some more
-technical details would be appreciated.
-
-Figure~\ref{fig:fig8-definition-of-a-bend} illustrates article's figure 8,
-but with bends colored as polygons: each color is a distinctive bend.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\linewidth]{fig8-definition-of-a-bend}
-    \caption{Originally figure 8: detected bends are highlighted}
-    \label{fig:fig8-definition-of-a-bend}
-\end{figure}
-
-Once the intuitive definition is established, here are some non-obvious
-characteristics that are necessary when writing code to detect the bends:
+While it gives a good intuitive understanding of what the bend is, this section
+provides more technical details. Here are some non-obvious characteristics that
+are necessary when writing code to detect the bends:
 
 \begin{itemize}
 
@@ -309,6 +298,16 @@ characteristics that are necessary when writing code to detect the bends:
 Properties above may be apparent when looking at illustrations at this article
 or reading here, but they are nowhere as such when looking at the original
 article.
+
+Figure~\ref{fig:fig8-definition-of-a-bend} illustrates article's Figure 8,
+but with bends colored as polygons: each color is a distinctive bend.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{fig8-definition-of-a-bend}
+    \caption{Originally Figure 8: detected bends are highlighted}
+    \label{fig:fig8-definition-of-a-bend}
+\end{figure}
 
 \section{Gentle Inflection at End of a Bend}
 
@@ -333,7 +332,7 @@ when a single vertex is moved outwards the end of the bend.
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
-    \caption{Originally figure 5: gentle inflections at the ends of the bend}
+    \caption{Originally Figure 5: gentle inflections at the ends of the bend}
     \label{fig:fig5-gentle-inflection}
 \end{figure}
 
