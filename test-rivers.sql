@@ -19,8 +19,7 @@ begin
       st_translate(center, -halfX, -halfY)
     )
   );
-end
-$$ language plpgsql;
+end $$ language plpgsql;
 
 -- wm_quadrant divides the given geometry to 4 rectangles
 -- and returns the requested quadrant following cartesian

@@ -8,7 +8,7 @@ begin
   else
     raise exception 'Assertion Error. Expected <%> but was <%>', expected, actual;
   end if;
-end $$ LANGUAGE plpgsql;
+end $$ language plpgsql;
 
 drop function if exists dbg_geomsummary;
 create function dbg_geomsummary(geoms geometry[]) returns void as $$
