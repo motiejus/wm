@@ -282,10 +282,6 @@ salvis-wm-vw-chaikin-50k_2COLOR  = orange
 salvis-wm-vw-chaikin-50k_3LINESTYLE  = dotted
 
 
-salvis-wm-dp-chaikin-50k_1SELECT = 
-
-salvis-wm-vw-chaikin-50k_1SELECT = 
-
 .faux_db_pre: db init.sql
 	bash db start
 	bash db -f init.sql
