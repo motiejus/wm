@@ -44,8 +44,6 @@ RIVERS = \
 		 salvis-wm220-10x \
 		 salvis-wm220-2x \
 		 salvis-wm-overlaid-250k-zoom \
-		 salvis-wm75-grpk50-grpk10 \
-		 salvis-wm75-grpk50-grpk10ne \
 		 salvis-wm220
 
 ################################################################################
@@ -137,7 +135,8 @@ salvis-grpk250-2x_WIDTHDIV = 2
 # 50K
 ################################################################################
 
-label_wm75 = Wang--Müller
+label_wm75 = Wang--Müller 1:\numprint{50000}
+label_wm220 = Wang--Müller 1:\numprint{250000}
 label_vw64 = Visvalingam--Whyatt
 label_dp64 = Douglas \& Peucker
 label_grpk10 = GRPK 1:\numprint{10000}
@@ -149,34 +148,40 @@ legend_tr = lower right
 legend_tl = lower center
 
 define wm_vwdp50k
-RIVERS += salvis-$(1)-$(2)-$(3)-1x50k$(4)
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_1SELECT    = wm_visuals where name='salvis-$(1)'
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_1COLOR     = orange
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_1LABEL     = $(label_$(1))
+RIVERS += salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_1SELECT    = wm_visuals where name='salvis-$(1)'
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_1COLOR     = orange
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_1LABEL     = $(label_$(1))
 $(if $(2),
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_2SELECT    = wm_visuals where name='salvis-$(2)'
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_2COLOR     = green
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_2LABEL     = $(label_$(2))
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_2SELECT    = wm_visuals where name='salvis-$(2)'
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_2COLOR     = green
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_2LABEL     = $(label_$(2))
 ,)
 $(if $(3),
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_3SELECT    = wm_visuals where name='salvis-$(3)'
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_3LINESTYLE = dotted
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_3LABEL     = $(label_$(3))
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_3SELECT    = wm_visuals where name='salvis-$(3)'
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_3LINESTYLE = $(6)
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_3LABEL     = $(label_$(3))
 ,)
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_QUADRANT   = $(4)
-salvis-$(1)-$(2)-$(3)-1x50k$(4)_LEGEND     = $(legend_$(4))
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_WIDTHDIV   = $(4)
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_QUADRANT   = $(5)
+salvis-$(1)-$(2)-$(3)-$(4)x50k$(5)_LEGEND     = $(legend_$(5))
 endef
-$(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
-	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,)) \
-	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tl)) \
-	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tr)) \
-)
-$(eval $(call wm_vwdp50k,wm75,grpk50,grpk10))
-$(eval $(call wm_vwdp50k,wm75,grpk50,grpk10,tr))
 
-$(eval $(call wm_vwdp50k,wm75,,grpk10,))
-$(eval $(call wm_vwdp50k,wm75,,grpk10,tr))
-$(eval $(call wm_vwdp50k,wm75,,grpk10,tl))
+wm_vwdp50kblack = $(call wm_vwdp50k,$(1),$(2),$(3),$(4),$(5))
+wm_vwdp50kdotted = $(call wm_vwdp50k,$(1),$(2),$(3),$(4),$(5),dotted)
+
+$(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
+	$(eval $(call wm_vwdp50kdotted,wm75,$(x),grpk10,1,)) \
+	$(eval $(call wm_vwdp50kdotted,wm75,$(x),grpk10,1,tl)) \
+	$(eval $(call wm_vwdp50kdotted,wm75,$(x),grpk10,1,tr)) \
+)
+$(eval $(call wm_vwdp50kblack,wm75,grpk50,grpk10,1))
+$(eval $(call wm_vwdp50kblack,wm75,grpk50,grpk10,1,tr))
+
+$(eval $(call wm_vwdp50kblack,wm75,,grpk10,1))
+$(eval $(call wm_vwdp50kblack,wm75,,grpk10,1,tr))
+$(eval $(call wm_vwdp50kblack,wm75,,grpk10,1,tl))
+
 
 salvis-25k_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-25k_WIDTHDIV = 1
