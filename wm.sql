@@ -1,11 +1,8 @@
 \set ON_ERROR_STOP on
 SET plpgsql.extra_errors TO 'all';
 
+-- detect_bends detects bends using the inflection angles. It does not do corrections.
 create or replace function detect_bends(line geometry) returns table(bend geometry) as $$
-/* for each bend, should return:
-   - size (area)
-   - shape (cmp, compactness index)
-*/
 declare
   pi real;
   p geometry;
@@ -43,5 +40,12 @@ begin
   if (select count(1) from ((select st_dumppoints(bend) as a)) b) >= 3 then
     return next;
   end if;
+end
+$$ language plpgsql;
+
+
+-- fix_gentle_inflections moves bend endpoints in case of gentle inflections
+create or replace function fix_gentle_inflections(line geometry) returns table(bend geometry) as $$
+begin
 end
 $$ language plpgsql;
