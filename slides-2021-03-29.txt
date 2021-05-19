@@ -78,11 +78,11 @@ linijinių objektų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
 
 # Tolimesnis pritaikymas
 
-Sukurta algoritmo techninė realizacija atviro kodo GIS bus pradžia tolesniam jo
+- Sukurta algoritmo techninė realizacija atviro kodo GIS bus pradžia tolesniam jo
 pritaikymui kitiems gamtiniams objektams: ežerų kranto linija, jūrų,
 kontinentų, miškų ribos.
 
-Kadangi rezultatas bus techninė realizacija, o ne rašinėlis, tai suteikia
+- Kadangi rezultatas bus techninė realizacija, o ne rašinėlis, tai suteikia
 toliau galimybę vystyti sprendimą.
 
 # Demonstracija

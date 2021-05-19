@@ -276,7 +276,13 @@ begin
   fourpi = 4*radians(180);
   for i in 1..array_length(bends, 1) loop
     bend = bends[i];
-    select st_makepolygon(st_addpoint(bend, st_startpoint(bend))) into polygon;
+    if st_numpoints(bend) < 3 then
+      cmp = 0;
+      area = 0;
+      polygon = null;
+    else
+      select st_makepolygon(st_addpoint(bend, st_startpoint(bend))) into polygon;
+    end if;
     -- Compactness Index (cmp) is defined as "the ratio of the area of the
     -- polygon over the circle whose circumference length is the same as the
     -- length of the circumference of the polygon". I assume they meant the
@@ -285,15 +291,17 @@ begin
     -- 2. get polygon perimeter = u. Pretend it's our circle's circumference.
     -- 3. get A (area) of the circle from circumference u := (u^2)/(4*pi)
     -- 4. divide area by A: cmp = P/((u^2)*4*pi) = 4*pi*P/u^2
-    select st_area(polygon) into area;
-    select fourpi*area/(st_perimeter(polygon)^2) into cmp;
-    if cmp > 0 then
+    if polygon is not null then
+      select st_area(polygon) into area;
+      select fourpi*area/(st_perimeter(polygon)^2) into cmp;
+    end if;
+    if area > 0 then
       select (area*(0.75/cmp)) into adjsize;
     end if;
     if dbg then
       insert into debug_wm (name, way, props) values(
         'bend_attrs_' || i,
-        polygon,
+        bend,
         json_build_object('area', area, 'cmp', cmp, 'adjsize', adjsize)
       );
     end if;
