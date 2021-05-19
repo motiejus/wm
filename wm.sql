@@ -1,14 +1,16 @@
 \set ON_ERROR_STOP on
 SET plpgsql.extra_errors TO 'all';
 
+drop function if exists detect_bends;
 -- detect_bends detects bends using the inflection angles. It does not do corrections.
-create or replace function detect_bends(line geometry) returns table(bend geometry) as $$
+create or replace function detect_bends(line geometry, OUT bends geometry[]) as $$
 declare
   pi real;
   p geometry;
   p1 geometry;
   p2 geometry;
   p3 geometry;
+  bend geometry;
   prev_sign int4;
   cur_sign int4;
 begin
@@ -27,7 +29,7 @@ begin
 
     if prev_sign + cur_sign = 0 then
       if bend is not null then
-        return next;
+        bends = bends || bend;
       end if;
       bend = st_makeline(p3, p2);
     end if;
@@ -38,7 +40,7 @@ begin
   -- to avoid that, return the last bend if the last accumulation has >3
   -- vertices.
   if (select count(1) from ((select st_dumppoints(bend) as a)) b) >= 3 then
-    return next;
+    bends = bends || bend;
   end if;
 end
 $$ language plpgsql;
