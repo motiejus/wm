@@ -111,6 +111,7 @@ create or replace function fix_gentle_inflections(
 declare
   len int4;
   bends1 geometry[];
+  dbgpolygon geometry;
 begin
   len = array_length(bends, 1);
 
@@ -133,12 +134,18 @@ begin
         i,
         bends[i]
       );
+
+      dbgpolygon = null;
+      if st_npoints(bends[i]) >= 3 then
+          dbgpolygon = st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])));
+      end if;
+
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'cinflections-polygon',
         dbgname,
         dbgstagenum,
         i,
-        st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])))
+        dbgpolygon
       );
     end loop;
   end if;
