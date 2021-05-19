@@ -75,7 +75,6 @@ def read_layer(select, width_in, maybe_wmclip):
         )
     conn = psycopg2.connect(PSQL_CREDS)
     sql = "SELECT {way} as way1 FROM {select}".format(way=way, select=select)
-    print("sql: %s" % sql)
     return geopandas.read_postgis(sql, con=conn, geom_col='way1')
 
 
@@ -103,7 +102,7 @@ def main():
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
-    #fig.set_figwidth(width)
+    fig.set_figwidth(width)
 
     group1 is not None and group1.plot(ax=ax, **c1)
     group2 is not None and group2.plot(ax=ax, **c2)

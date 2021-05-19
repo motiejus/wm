@@ -28,7 +28,7 @@ declare
   halfX float;
   halfY float;
 begin
-  halfX = projection_scale * projection_width_cm / 2;
+  halfX = projection_scale * projection_width_cm / 2 / 100;
   halfY = halfX * sqrt(2);
   select way from wm_visuals where name=center into gcenter;
   if gcenter is null then

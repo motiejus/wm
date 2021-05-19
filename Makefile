@@ -24,7 +24,8 @@ FIGURES = \
 
 RIVERS = \
 		 salvis-gdr10 \
-		 salvis-gdr50
+		 salvis-gdr50 \
+		 salvis-gdr250
 
 # paper sizes in mm
 A4p = 210x297
@@ -140,6 +141,10 @@ salvis-gdr10_WMCLIP = salcia-visincia:GDR10
 
 salvis-gdr50_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
 salvis-gdr50_WMCLIP = salcia-visincia:GDR50
+
+salvis-gdr250_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-gdr250_WMCLIP = salcia-visincia:GDR250
+
 
 
 .faux_test-rivers: tests-rivers.sql wm.sql .faux_db
