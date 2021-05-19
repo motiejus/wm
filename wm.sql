@@ -298,7 +298,7 @@ begin
   end loop;
 
   if l_type = 'ST_LineString' then
-    return bends[1];
+    return st_linemerge(st_union(bends));
   elseif l_type = 'ST_MultiLineString' then
     return st_union(bends);
   end if;
@@ -351,7 +351,7 @@ begin
   end loop;
 
   if l_type = 'ST_LineString' then
-    return bends[1];
+    return st_linemerge(st_union(bends));
   elseif l_type = 'ST_MultiLineString' then
     return st_union(bends);
   end if;
