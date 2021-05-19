@@ -539,25 +539,17 @@ begin
           end if;
         end if;
 
-        if st_intersects(tmpbendattr.bend, tmpint) then
-          insert into wm_manual(name, way) values
-            ('intersecter', tmpbendattr.bend),
-            ('intersectee', tmpint);
-          raise notice '[%] % intersects with %', dbggen, i, i+n;
-          continue bendloop;
-        end if;
+        continue bendloop when st_intersects(tmpbendattr.bend, tmpint);
       end loop;
 
-      -- no intersections within intersect_patience. Mutate bend.
+      -- No intersections within intersect_patience, mutate bend!
       mutated = true;
       bendattrs[i] = tmpbendattr;
 
-      -- remove last vertex of the previous bend and
-      -- first vertex of the next bend, because bends always
-      -- share a line segment together
-      -- this is duplicated in a few places, because PostGIS
-      -- does not allow (?) mutating an array when passed to a
-      -- function.
+      -- remove last vertex of the previous bend and first vertex of the next
+      -- bend, because bends always share a line segment together this is
+      -- duplicated in a few places, because PostGIS does not allow (?)
+      -- mutating an array when passed to a function.
       tmpbendattr.bend = st_removepoint(
         bendattrs[i-1].bend,
         st_npoints(bendattrs[i-1].bend)-1
@@ -807,10 +799,11 @@ begin
         end loop;
         lines[i] = st_linemerge(st_union(bends));
         if st_geometrytype(lines[i]) != 'ST_LineString' then
-          insert into wm_manual(name, way)
-          select 'non-linestring-' || a.path[1], a.geom
-          from st_dump(lines[i]) a
-          order by a.path[1];
+          -- For manual debugging:
+          --insert into wm_manual(name, way)
+          --select 'non-linestring-' || a.path[1], a.geom
+          --from st_dump(lines[i]) a
+          --order by a.path[1];
           raise 'Got % (in %) instead of ST_LineString. '
           'Does the exaggerated bend intersect with the line? '
           'If so, try increasing intersect_patience.',

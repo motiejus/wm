@@ -1,12 +1,7 @@
 \i wm.sql
 
---do $$
---begin
---  SET AUTOCOMMIT TO ON;
---end $$ language plpgsql;
-
 -- https://stackoverflow.com/questions/19982373/which-tools-libraries-do-you-use-to-unit-test-your-pl-pgsql
-CREATE OR REPLACE FUNCTION assert_equals(expected anyelement, actual anyelement) RETURNS void AS $$
+create or replace function assert_equals(expected anyelement, actual anyelement) returns void as $$
 begin
   if expected = actual or (expected is null and actual is null) then
     --do nothing
@@ -51,10 +46,8 @@ insert into wm_figures (name, way) values ('fig6-combi', ST_Union(
       ST_Translate((select way from wm_figures where name='fig6'), 80, 90)
   ));
 
--- TODO: there is a bug and it does not go through `self_crossing` function.
 insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(
     ST_Translate((select way from wm_figures where name='selfcrossing-1'), 0, 60)));
-
 
 delete from wm_debug where name in (select distinct name from wm_figures);
 delete from wm_demo where name in (select distinct name from wm_figures);
@@ -62,11 +55,7 @@ insert into wm_demo (name, way) select name, ST_SimplifyWM(way, .1, null, name) 
 insert into wm_demo (name, way) select name, ST_SimplifyWM(way, 14, null, name) from wm_figures where name in ('fig8', 'isolated-1', 'isolated-2');
 
 drop function if exists wm_debug_get;
-create function wm_debug_get(
-  _stage text,
-  _name text,
-  OUT ways geometry[]
-) as $$
+create function wm_debug_get( _stage text, _name text, OUT ways geometry[]) as $$
 declare
 begin
   ways = array((select way from wm_debug where stage=_stage and name=_name order by id));
@@ -75,7 +64,6 @@ end $$ language plpgsql;
 do $$
   declare fig6b1 geometry;
   declare fig6b2 geometry;
-
   declare sclong geometry;
   declare scshort geometry;
 begin
