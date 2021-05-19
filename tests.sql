@@ -11,9 +11,9 @@ begin
 end $$ LANGUAGE plpgsql;
 
 -- to preview this somewhat conveniently in QGIS:
--- stage || '_' || name || ' iter:' || iter || ' nbend:'|| nbend
+-- stage || '_' || name || ' gen:' || coalesce(gen, 'Ø')|| ' nbend:'|| lpad(nbend, 2, '0')
 drop table if exists debug_wm;
-create table debug_wm(stage text, name text, iter bigint, nbend bigint, way geometry, props json);
+create table debug_wm(stage text, name text, gen bigint, nbend bigint, way geometry, props json);
 
 drop table if exists figures;
 create table figures (name text, way geometry);
@@ -64,7 +64,7 @@ $$ language plpgsql;
 -- COMBINED
 drop table if exists demo_wm;
 create table demo_wm (name text, i bigint, way geometry);
-insert into demo_wm (name, way) select name, ST_SimplifyWM(way, name) from figures;
+insert into demo_wm (name, way) select name, ST_SimplifyWM(way, name) from figures where name='fig6-combi';
 
 do $$
 declare
@@ -125,7 +125,7 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  elems1 = array((select way from debug_wm where stage='cinflections' and name='fig6-combi' and iter=1));
+  elems1 = array((select way from debug_wm where stage='cinflections' and name='fig6-combi' and gen=1));
   elems2 = (select ways from inflections where name='fig6-combi');
 
   foreach elem in array elems1 loop

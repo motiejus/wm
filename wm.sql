@@ -299,10 +299,9 @@ begin
       select (res.area*(0.75/res.cmp)) into res.adjsize;
     end if;
     if dbgname is not null then
-      insert into debug_wm (stage, name, iter, nbend, way, props) values(
+      insert into debug_wm (stage, name, nbend, way, props) values(
         'ebendattrs',
         dbgname,
-        1,
         i,
         bend,
         json_build_object(
@@ -346,10 +345,10 @@ begin
     dbg_stage = 1;
     while mutated loop
       if dbgname is not null then
-        insert into debug_wm (stage, name, iter, nbend, way) values(
+        insert into debug_wm (stage, name, gen, nbend, way) values(
           'afigures',
           dbgname,
-          1,
+          dbg_stage,
           i,
           lines[i]
         );
@@ -358,22 +357,23 @@ begin
       bends = detect_bends(lines[i]);
 
       if dbgname is not null then
-        insert into debug_wm(stage, name, iter, nbend, way) values(
+        insert into debug_wm(stage, name, gen, nbend, way) values(
           'bbends',
           dbgname,
-          i,
+          dbg_stage,
           generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
 
+      raise notice 'before inflections: %', dbg_geomsummary(bends);
       bends = fix_gentle_inflections(bends);
 
       if dbgname is not null then
-        insert into debug_wm(stage, name, iter, nbend, way) values(
+        insert into debug_wm(stage, name, gen, nbend, way) values(
           'cinflections',
           dbgname,
-          i,
+          dbg_stage,
           generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -382,10 +382,10 @@ begin
       select * from self_crossing(bends) into bends, mutated;
 
       if dbgname is not null then
-        insert into debug_wm(stage, name, iter, nbend, way) values(
+        insert into debug_wm(stage, name, gen, nbend, way) values(
           'dcrossings',
           dbgname,
-          i,
+          dbg_stage,
           generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -408,5 +408,16 @@ begin
   elseif l_type = 'ST_MultiLineString' then
     return st_union(lines);
   end if;
+end
+$$ language plpgsql;
+
+drop function if exists dbg_geomsummary;
+create function dbg_geomsummary(geoms geometry[], OUT output text) as $$
+  declare i int4;
+begin
+  output = format('len: %s;', array_length(geoms, 1));
+  for i in 1..array_length(geoms, 1) loop
+    output = output || format(' %s:%s;', i, st_astext(geoms[i]));
+  end loop;
 end
 $$ language plpgsql;
