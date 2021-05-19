@@ -51,6 +51,9 @@ insert into selfcrossing select name, (self_crossing(ways)).* from inflections;
 create table demo_selfcrossing3 (name text, i bigint, way geometry);
 insert into demo_selfcrossing3 select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;
 
+-- COMBINED
+drop table if exists demo_wm;
+create table demo_wm (name text, i bigint, way geometry);
 
 do $$
 declare

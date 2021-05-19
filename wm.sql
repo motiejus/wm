@@ -296,9 +296,9 @@ begin
   end loop;
 
   if l_type = 'ST_LineString' then
-    return geoms[1];
+    return bends[1];
   elseif l_type = 'ST_MultiLineString' then
-    return st_union(geoms);
+    return st_union(bends);
   end if;
 end
 $$ language plpgsql;

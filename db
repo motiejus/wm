@@ -28,6 +28,7 @@ _wait_for_postgres() {
 
 case ${1:-} in
     start)
+        _psql -qc '\q' 2>/dev/null && exit 0
         docker run -d --rm \
             -p 5432:5432 \
             -e POSTGRES_DBNAME=osm \
