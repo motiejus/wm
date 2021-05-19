@@ -85,7 +85,7 @@ Current open-source line generalization solutions have their roots in
 NOTICE: this value should be copied to layer2img.py:TEXTWIDTH, so dimensions
 of inline images are reasonable.
 
-textwidth in cm: {\printinunitsof{cm}\prntlen{\textwidth}}
+Textwidth in cm: {\printinunitsof{cm}\prntlen{\textwidth}}
 \fi
 
 When creating small-scale maps, often the detail of the data source is greater
@@ -129,7 +129,8 @@ different trade-offs.
 \label{sec:literature-review}
 
 A number of cartographic line generalization algorithms have been researched.
-The "classical" ones are {\DP} and {\VW}.
+The "classical" ones are {\DP} and {\VW} in combination with Chaikin's. There
+are also modern ones.
 
 \subsection{Available algorithms}
 
@@ -150,12 +151,42 @@ Both algorithms are part of PostGIS, a free-software GIS suite:
         \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS SimplifyVW}.
 \end{itemize}
 
-Examples of <TBD Chaikin and others>
-
 It may be worthwhile to post-process those through a widely available Chaikin's
 line smoothing algorithm \cite{chaikin1974algorithm} via
 \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
 ChaikinSmoothing}.
+
+To use in generalization examples, we will use two rivers: Žeimena and Šalčia
+(they flow into one). Figure~\onpage{fig:salvis-25} illustrates the original
+two rivers without any processing (yet).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{salvis-25k}
+    \caption{Example rivers for visual tests (1:25000)}
+    \label{fig:salvis-25}
+\end{figure}
+
+Same rivers, unprocessed, but with higher density (scales 1:50000 and 1:250000)
+are depicted in figure~\onpage{fig:salvis-50-250}. Some river features are so
+compact that a reasonably thin line depicting them is overlapping with itself.
+As can be seen in the article example, generalization is worthy.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.49\textwidth}
+        \includegraphics[width=\textwidth]{salvis-50k}
+        \caption{Example scaled 1:50000}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.49\textwidth}
+        \centering
+        \includegraphics[width=.2\textwidth]{salvis-250k}
+        \caption{Example scaled 1:250000}
+    \end{subfigure}
+    \caption{Down-scaled original river (1:50000 and 1:250000)}
+    \label{fig:salvis-50-250}
+\end{figure}
 
 
 \subsubsection{Modern approaches}
@@ -359,12 +390,12 @@ when a single vertex is moved outwards the end of the bend.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{.45\textwidth}
+    \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-before}
         \caption{Before applying the inflection rule}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.45\textwidth}
+    \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
@@ -386,12 +417,12 @@ vertices to the next bend instead of one.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{.45\textwidth}
+    \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-before}
         \caption{Before applying the inflection rule}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.45\textwidth}
+    \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
@@ -427,12 +458,12 @@ following the rules of the article.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{.45\textwidth}
+    \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-before}
         \caption{Bend's baseline (dotted) is crossing a neighboring bend}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.45\textwidth}
+    \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-after}
         \caption{Self-crossing removed following the algorithm}
     \end{subfigure}
@@ -447,12 +478,12 @@ figure~\onpage{fig:selfcrossing-1-non-neighbor}.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{.45\textwidth}
+    \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-before}
         \caption{Bend's baseline (dotted) is crossing a non-neighboring bend}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.45\textwidth}
+    \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-after}
         \caption{Self-crossing removed following the algorithm}
     \end{subfigure}

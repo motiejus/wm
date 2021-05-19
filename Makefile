@@ -23,9 +23,9 @@ FIGURES = \
 		  selfcrossing-1-after
 
 RIVERS = \
-		 salvis-gdr10 \
-		 salvis-gdr50 \
-		 salvis-gdr250
+		 salvis-25k \
+		 salvis-50k \
+		 salvis-250k
 
 #################################
 # The thesis, publishable version
@@ -121,15 +121,17 @@ selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='d
 selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-after_2LINESTYLE = invisible
 
-salvis-gdr10_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
-salvis-gdr10_WMCLIP = salcia-visincia:GDR10
+salvis-25k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-25k_WMCLIP = salcia-visincia:25k
+salvis-25k_WIDTHDIV = 1
 
-salvis-gdr50_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
-salvis-gdr50_WMCLIP = salcia-visincia:GDR50
+salvis-50k_WIDTHDIV = 2
+salvis-50k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-50k_WMCLIP = salcia-visincia:50k
 
-salvis-gdr250_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
-salvis-gdr250_WMCLIP = salcia-visincia:GDR250
-
+salvis-250k_WIDTHDIV = 10
+salvis-250k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-250k_WMCLIP = salcia-visincia:250k
 
 .faux_test-rivers: tests-rivers.sql wm.sql .faux_db
 	./db -f $<

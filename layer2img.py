@@ -17,9 +17,10 @@ PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
 TEXTWIDTH_CM = 12.12364
 
 SCALES = {
-    "GDR10": 10000,
-    "GDR50": 50000,
-    "GDR250": 250000,
+    "10k": 10000,
+    "25k": 25000,
+    "50k": 50000,
+    "250k": 250000,
 }
 
 def inch(cm):
@@ -52,7 +53,7 @@ def parse_args():
 
     parser.add_argument('--wmclip',
                         type=wm_clip,
-                        help="Clip for scale. E.g. salcia-visincia:GDR10",
+                        help="Clip for scale. E.g. salcia-visincia:10k",
                         )
     parser.add_argument('--widthdiv',
                         default=1, type=float, help='Width divisor')
