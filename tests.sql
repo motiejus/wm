@@ -44,7 +44,7 @@ insert into wm_figures (name, way) values ('fig6-combi',
   )
 );
 insert into wm_figures (name, way) values('fig8', ST_GeomFromText('LINESTRING(173 12,174 10,180 8,186 8,186 13,191 11,189 6,201 5,203 11,216 16,216 6,222 7,229 3,236 2,239 6,243 8,248 6)'));
-insert into wm_figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
+insert into wm_figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 8,123 10,114 10,111 2)'));
 insert into wm_figures (name, way) values ('multi-island',ST_GeomFromText('MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'));
 
 -- Run ST_SimplifyWM in debug mode, so `wm_debug` is populated. That table
@@ -82,8 +82,8 @@ begin
   select array((select way from wm_debug where name='inflection-1' and stage='bbends')) into vbends;
   select array((select way from wm_debug where name='inflection-1' and stage='cinflections')) into vinflections;
   perform assert_equals(vbends[1], vinflections[1]); -- unchanged
-  perform assert_equals('LINESTRING(114 20,133 20,145 15,145 0,136 5,123 7,114 7)', st_astext(vinflections[2]));
-  perform assert_equals('LINESTRING(123 7,114 7,111 2)', st_astext(vinflections[3]));
+  perform assert_equals('LINESTRING(114 20,133 20,145 15,145 0,136 8,123 10,114 10)', st_astext(vinflections[2]));
+  perform assert_equals('LINESTRING(123 10,114 10,111 2)', st_astext(vinflections[3]));
 end $$ language plpgsql;
 
 do $$
