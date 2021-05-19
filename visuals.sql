@@ -66,27 +66,57 @@ begin
 end $$ language plpgsql;
 
 
+drop function if exists wm_salvisbbox;
+create function wm_salvisbbox(
+  geom geometry,
+  scaledwidth float
+) returns geometry as $$
+declare
+  ret geometry;
+begin
+  with multismall as (
+    select st_intersection(
+      st_union(geom),
+      wm_bbox(
+        st_closestpoint(
+          (select way from wm_rivers where name='Šalčia'),
+          (select way from wm_rivers where name='Visinčia')
+        ),
+        scaledwidth
+      )
+    ) ways
+  )
+  -- protecting against very small bends that were cut
+  -- in the corner of the picture
+  select st_union(a.geom)
+  from st_dump((select ways from multismall)) a
+  where st_length(a.geom) >= 100
+  into ret;
+
+  return ret;
+end $$ language plpgsql;
+
 delete from wm_debug where name like 'salvis%';
 delete from wm_visuals where name like 'salvis%';
-insert into wm_visuals(name, way) values('salvis', (
-    with multismall as (
-      select st_intersection(
-        (select st_union(way) from wm_rivers where name in ('Šalčia', 'Visinčia')),
-        wm_bbox(
-          st_closestpoint(
-            (select way from wm_rivers where name='Šalčia'),
-            (select way from wm_rivers where name='Visinčia')
-          ),
-          :scaledwidth
-        )
-      ) ways
+insert into wm_visuals(name, way) values
+  ('salvis', (
+    wm_salvisbbox(
+      (select st_union(way) from wm_rivers where name in ('Šalčia', 'Visinčia')),
+      :scaledwidth
     )
-    -- protecting against very small bends that were cut
-    -- in the corner of the picture
-    select st_union(a.geom)
-    from st_dump((select ways from multismall)) a
-    where st_length(a.geom) >= 100
-));
+  )),
+  ('salvis-50', (
+    wm_salvisbbox(
+      (select st_union(way) from wm_rivers_50 where name in ('Šalčia', 'Visinčia')),
+      :scaledwidth
+    )
+  )),
+  ('salvis-250', (
+    wm_salvisbbox(
+      (select st_union(way) from wm_rivers_250 where name in ('Šalčia', 'Visinčia')),
+      :scaledwidth
+    )
+  ));
 
 do $$
 declare
