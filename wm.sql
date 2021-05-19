@@ -470,8 +470,7 @@ begin
     end loop;
     size = wm_adjsize(bend);
   end loop;
-end
-$$ language plpgsql;
+end $$ language plpgsql;
 
 -- wm_adjsize calculates adjusted size for a polygon. Can return 0.
 drop function if exists wm_adjsize;

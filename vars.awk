@@ -4,11 +4,11 @@ BEGIN { FS="[(); ]" }
 
 /small_angle constant real default radians/ {
   x1 += 1;
-  d1 = sprintf("\\newcommand{\\smallAngle}{\\frac{\\pi}{%d}}",180/$8);
+  d1 = sprintf("\\newcommand{\\smallAngle}{$%d^\\circ$}",$8);
 }
 /isolation_threshold constant real default / {
   x2 += 1;
-  d2 = sprintf("\\newcommand{\\isolationThreshold}{%.2f}",$7);
+  d2 = sprintf("\\newcommand{\\isolationThreshold}{%.1f}",$7);
 }
 /scale constant float default / {
   x3 += 1;
