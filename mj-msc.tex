@@ -285,7 +285,7 @@ simplification for scale 1:\numprint{50000} and especially for
         \includegraphics[width=\textwidth]{salvis-visvalingam-64-50k}
         \caption{Using {\VW}.}
     \end{subfigure}
-    \caption{Generalized using classical algorithms (1:\numprint{50000}).}
+    \caption{Simplified using classical algorithms (1:\numprint{50000}).}
     \label{fig:salvis-generalized-50k}
 \end{figure}
 
@@ -300,14 +300,14 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-douglas-64-chaikin-50k}
-        \caption{{\DP} + Chaikin's.}
+        \caption{{\DP} and Chaikin's.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-visvalingam-64-chaikin-50k}
-        \caption{{\VW} + Chaikin's.}
+        \caption{{\VW} and Chaikin's.}
     \end{subfigure}
-    \caption{Generalized and smoothened river (1:\numprint{50000}).}
+    \caption{Simplified and smoothened river (1:\numprint{50000}).}
     \label{fig:salvis-generalized-chaikin-50k}
 \end{figure}
 
@@ -315,18 +315,18 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-overlaid-douglas-64-chaikin-50k}
-        \caption{{\DP} + Chaikin's.}
+        \caption{{\DP} and Chaikin's.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-overlaid-visvalingam-64-chaikin-50k}
-        \caption{{\VW} + Chaikin's.}
+        \caption{{\VW} and Chaikin's.}
     \end{subfigure}
-    \caption{Zoomed-in generalized and smoothened river + original.}
+    \caption{Zoomed-in simplified and smoothened river and original.}
     \label{fig:salvis-overlaid-generalized-chaikin-50k}
 \end{figure}
 
-The resulting generalized and smoothened example
+The resulting simplified and smoothened example
 (figure~\onpage{fig:salvis-generalized-chaikin-50k}) yields a more
 aesthetically pleasing result, however, it obscures natural river features.
 Given the absence of rocks, the only natural features that influence the river
@@ -433,7 +433,7 @@ following cartographic problems from our examples:
 
 \end{description}
 
-Like discussed in section~\label{sec:from-simplification-to-generalization}, we
+Like discussed in section~\ref{sec:from-simplification-to-generalization}, we
 limiting the problem to cartographic line generalization. That is, full
 cartographic generalization, which takes topology and other feature classes
 into account, is out of scope.
@@ -445,7 +445,9 @@ exaggerated.
 \begin{figure}[h]
     \centering
     \includegraphics[width=.8\textwidth]{wang125}
-    \caption{Originally Figure 12.5 from \cite{wang1998line}.}
+
+    \caption{Originally figure 12.5: cartographic line generalization example.}
+
     \label{fig:wang125}
 \end{figure}
 
@@ -517,10 +519,9 @@ throughout this paper and the implementation.
         quadruples.
 
         $O$ notation was first suggested by
-        Bachmann\cite{bachmann1894analytische} and
-        Landau\cite{landau1911} in late XIX'th century, and clarified
-        and popularized for computing science by Donald
-        Knuth\cite{knuth1976big} in the 1970s.
+        Bachmann\cite{bachmann1894analytische} and Landau\cite{landau1911} in
+        late \textsc{xix} century, and clarified and popularized for
+        computing science by Donald Knuth\cite{knuth1976big} in the 1970s.
 
 \end{description}
 
@@ -551,12 +552,12 @@ the implementation:
 \begin{itemize}
 
     \item Created a function \textsc{wm\_exaggeration}, which exaggerates bends
-        following the rules. It worked well over simple geometries, but, due to
-        a subtle bug, created a self-crossing bend in Visinčia. We copied the
-        offending bend to the automated test suite and fixed the bug. The test
-        suite has the bend itself (a hook-like bend on the right-hand side of
-        figure~\ref{fig:test-figures}) and code to verify that it was correctly
-        exaggerated.
+      following the rules. It worked well over simple geometries, but, due to a
+      subtle bug, created a self-crossing bend in Visinčia. We copied the
+      offending bend to the automated test suite and fixed the bug. The test
+      suite has the bend itself (a hook-looking bend on the right-hand side of
+      figure~\ref{fig:test-figures}) and code to verify that it was correctly
+      exaggerated.
 
         Later, while adding a feature to exaggeration code, I introduced a
         different bug, which was automatically captured by the same bend.
@@ -672,14 +673,14 @@ of 45cm (1.5 feet) is 1.5mm, as analyzed in \titlecite{mappingunits}.
 In our case, our target is line bend, rather than a symbol. Assume 1.5mm is a
 diameter of the bend. A semi-circle of 1.5mm diameter is depicted in
 figure~\ref{fig:half-circle}. In other words, a bend of this size or larger,
-when adjusted to scale, will not be generalized.
+when adjusted to scale, will not be simplified.
 
 \begin{figure}[h]
   \centering
   \begin{tikzpicture}[x=1mm,y=1mm]
       \draw[] (-10, 0) -- (-.75,0) arc (225:-45:.75) -- (10, 0);
   \end{tikzpicture}
-  \caption{Smallest feature that will be not generalized (to scale).}
+  \caption{Smallest feature that will be not simplified (to scale).}
   \label{fig:half-circle}
 \end{figure}
 
@@ -691,14 +692,13 @@ table~\ref{table:scale-halfcirlce-diameter}.
 
 \begin{table}[h]
     \centering
-    \begin{tabular}{| c | D{.}{.}{1} |}
-        \hline
-        Scale               & \multicolumn{1}{c|}{$D(m)$} \\ \hline
-        1:\numprint{10000}  &  15                         \\ \hline
-        1:\numprint{15000}  &  22.5                       \\ \hline
-        1:\numprint{25000}  &  37.5                       \\ \hline
-        1:\numprint{50000}  &  75                         \\ \hline
-        1:\numprint{250000} & 375                         \\ \hline
+    \begin{tabular}{ c  D{.}{.}{1} }
+        Scale               & \multicolumn{1}{c}{$D(m)$}  \\ \hline
+        1:\numprint{10000}  &  15                         \\
+        1:\numprint{15000}  &  22.5                       \\
+        1:\numprint{25000}  &  37.5                       \\
+        1:\numprint{50000}  &  75                         \\
+        1:\numprint{250000} & 375                         \\
     \end{tabular}
     \caption{{\WM} half-circle diameter $D$ for popular scales.}
     \label{table:scale-halfcirlce-diameter}
@@ -715,7 +715,7 @@ from circle's area formula $A = 2\pi \frac{D}{2}^2$:
 In reverse, adjusted size $A_{adj}$ from half-circle's diameter:
 
 \[
-  A_{adj} = \frac{1}{8} \pi D^2
+  A_{adj} = \frac{\pi D^2}{8}
 \]
 
 \subsection{Definition of a Bend}
@@ -806,8 +806,7 @@ vertices to the next bend.
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-after}
         \caption{After applying the inflection rule.}
     \end{subfigure}
-    \caption{Gentle inflection at the end of the bend when multiple vertices
-    are moved.}
+    \caption{Gentle inflection at the end of the bend with multiple vertices.}
     \label{fig:inflection-1-gentle-inflection}
 \end{figure}
 
