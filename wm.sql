@@ -550,22 +550,24 @@ declare
   this_mutated boolean;
 begin
   mutated = false;
-  <<bendloop>>
-  for i in 1..array_length(attrs, 1) loop
+  i = 0;
+  while i < array_length(attrs, 1) loop
+    i = i + 1;
+
     continue when not attrs[i].isolated;
-    size = attrs[i].adjsize;
     this_mutated = false;
 
     -- keep increasing this bend until either size permits, or it hits a
     -- neighboring bend (intersect_patience number of neighbors will be
     -- checked). When the size is right, stick it to the line.
+    size = attrs[i].adjsize;
     while size < desired_size loop
       bend = wm_exaggerate_bend(bends[i]);
       exit when wm_st_intersects_neighbors(bends, bend, i, intersect_patience);
 
       this_mutated = true;
       bends[i] = bend;
-      size = wm_adjsize(bends[i]);
+      size = wm_adjsize(bend);
     end loop;
     continue when not this_mutated;
 
@@ -583,6 +585,10 @@ begin
       insert into wm_debug (stage, name, gen, nbend, way) values(
         'gexaggeration', dbgname, dbggen, i, bends[i]);
     end if;
+
+    -- Next bend was modified, so `isolated` is not valid for neighbor's
+    -- neighbor. Skip over.
+    i = i + 2;
   end loop;
 end $$ language plpgsql;
 
@@ -746,18 +752,18 @@ begin
         lines[i] = st_linemerge(st_union(bends));
 
         if st_geometrytype(lines[i]) != 'ST_LineString' then
-          raise 'Got % (in %) instead of ST_LineString. '
+          raise notice 'Got % (in %) instead of ST_LineString. '
           'Does the exaggerated bend intersect with the line? '
           'If so, try increasing intersect_patience.',
           st_geometrytype(lines[i]), dbgname;
           -- For manual debugging, usually when wm_exaggeration returns
           -- ST_MultiLineString. Uncomment the code below and change `raise`
           -- to `raise notice` above.
-          --insert into wm_manual(name, way)
-          --select 'non-linestring-' || a.path[1], a.geom
-          --from st_dump(lines[i]) a
-          --order by a.path[1];
-          --exit lineloop;
+          insert into wm_manual(name, way)
+          select 'non-linestring-' || a.path[1], a.geom
+          from st_dump(lines[i]) a
+          order by a.path[1];
+          exit lineloop;
         end if;
         gen = gen + 1;
         continue;
