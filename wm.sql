@@ -627,7 +627,7 @@ begin
       bends = wm_detect_bends(lines[i], dbgname, gen);
       bends = wm_fix_gentle_inflections(bends, dbgname, gen);
 
-      select * from wm_self_crossing(bends) into bends, mutated;
+      select * from wm_self_crossing(bends, dbgname, gen) into bends, mutated;
 
       if mutated then
         lines[i] = st_linemerge(st_union(bends));

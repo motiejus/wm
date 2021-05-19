@@ -16,6 +16,7 @@
 \usepackage[toc,page,title]{appendix}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{dcolumn}
 \usepackage{gensymb}
 \usepackage{units}
 \usepackage{varwidth}
@@ -545,6 +546,66 @@ NOTE: explain how different river segments are merged into a single line. This
 is not explained in the {\WM} paper, but is a necessary prerequisite. This is
 implemented in \texttt{aggregate-rivers.sql}.
 
+\subsection{Bend scaling and dimensions}
+\label{sec:bend-scaling-and-dimensions}
+
+{\WM} accepts a single input parameter: the diameter of a half-circle. If the
+bend's adjusted size (explained in detail in
+section~\onpage{sec:shape-of-a-bend}) is greater than the area of the
+half-circle, then the bend will be left untouched. If the bend's adjusted size
+is smaller than the area of the provided half-circle, the bend will be
+simplified: either exaggerated, combined or eliminated.
+
+The half-circle's diameter depends on the desired scale of the target map: it
+should be small enough to retain small but visible bends,
+
+The extent of line simplification depends on the desired target scale.
+Simplification should be more aggressive for smaller target scales, and
+less aggressive for larger scales. This section goes through the process
+of finding the correct variable to {\WM} algorithm.
+
+What is the minimal, but still eligible figure that can should be displayed on
+the map?
+
+According to \titlecite{cartoucheMinimalDimensions}, the map is typically held
+at a distance of 30cm. Recommended minimum symbol size given viewing distance
+of 45cm (1.5 feet) is 1.5mm, as analyzed in \titlecite{mappingunits}.
+
+In our case, our target is line bend, rather than a symbol. Assume 1.5mm is a
+diameter of the bend. A semi-circle of 1.5mm diameter is depicted in
+figure~\ref{fig:half-circle}. In other words, a bend of this size or larger,
+when adjusted to scale, will not be generalized.
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[x=1mm,y=1mm]
+      \draw[] (-10, 0) -- (-.75,0) arc (225:-45:.75) -- (10, 0);
+  \end{tikzpicture}
+  \caption{Smallest feature that will be not generalized.}
+  \label{fig:half-circle}
+\end{figure}
+
+{\WM} algorithm does not have a notion of scale, but it does have a notion of
+distance. Assuming measurement units in projected coordinate system are meters
+(for example, \titlecite{epsg3857}), conversion is depicted in
+table~\ref{table:scale-halfcirlce-diameter}.
+
+\newcolumntype{d}[1]{D{.}{.}{#1} }
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c @{:}l | D{.}{.}{1} |}
+        \hline
+        \multicolumn{2}{|c|}{Scale} & \multicolumn{1}{c|}{Diameter (m)} \\ \hline
+        1 & 10000                   & 15 \\ \hline
+        1 & 25000                   & 37.5 \\ \hline
+        1 & 50000                   & 50 \\ \hline
+        1 & 250000                  & 250 \\ \hline
+    \end{tabular}
+    \caption{{\WM} parameter table for popular scales.}
+    \label{table:scale-halfcirlce-diameter}
+\end{table}
+
+
 \subsection{Definition of a Bend}
 \label{sec:definition-of-a-bend}
 
@@ -754,6 +815,7 @@ Other than that, once this section is implemented, each bend will have a list
 of properties, upon which actions later will be performed.
 
 \subsection{Shape of a Bend}
+\label{sec:shape-of-a-bend}
 
 This section introduces \textsc{adjusted size}, which trivially derives from
 \textsc{compactness index} $cmp$ and shape's area $A$:
