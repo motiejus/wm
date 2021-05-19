@@ -22,7 +22,7 @@ test-integration: .faux_filter-rivers
 clean:
 	-./db stop
 	-rm -r .faux_test .faux_filter-rivers .faux_import-osm .faux_db \
-		version.tex version.aux version.fdb_latexmk \
+		version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
 		test-figures.pdf _minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
 		$(SLIDES) \
@@ -38,7 +38,7 @@ clean-tables:
 .PHONY: slides
 slides: $(SLIDES)
 
-mj-msc.pdf: mj-msc.tex test-figures.pdf version.tex bib.bib $(FIGURES)
+mj-msc.pdf: mj-msc.tex test-figures.pdf version.inc.tex vars.inc.tex bib.bib $(FIGURES)
 	latexmk -shell-escape -g -pdf $<
 
 mj-msc-gray.pdf: mj-msc.pdf
@@ -52,7 +52,7 @@ mj-msc-gray.pdf: mj-msc.pdf
 		-dBATCH \
 		$<
 
-mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
+mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES)
 	cp $< .tmp-$@
 	for f in $^; do \
 		if [ "$$f" = "$<" ]; then continue; fi; \
@@ -137,8 +137,11 @@ $(SOURCE):
 	wget http://download.geofabrik.de/europe/$@
 
 REF = $(shell git describe --abbrev=12 --always --dirty)
-version.tex: Makefile $(shell git rev-parse --git-dir 2>/dev/null)
+version.inc.tex: Makefile $(shell git rev-parse --git-dir 2>/dev/null)
 	TZ=UTC date '+\gdef\VCDescribe{%F ($(REF))}%' > $@
+
+vars.inc.tex: vars.awk wm.sql Makefile
+	./$< wm.sql > $@
 
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@

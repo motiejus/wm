@@ -23,7 +23,8 @@
 \usepackage{minted}
 \usetikzlibrary{er,positioning}
 \definecolor{mypurple}{RGB}{117,112,179}
-\input{version}
+\input{version.inc}
+\input{vars.inc}
 
 \newcommand{\onpage}[1]{\ref{#1} on page~\pageref{#1}}
 
@@ -375,10 +376,13 @@ some bends that should be mutated. This implementation does it in the following 
     \item Return result.
 \end{enumerate}
 
-The current implementation is the most straight-forward, but not optimal:
+The current implementation is the most straightforward, but not optimal:
 reversing of lines and bends could be avoided by walking backwards the lines.
 In this case, steps \ref{rev1} and \ref{rev2} could be remove. That would save
 both memory and computation time.
+
+The "quite small angle", as mentioned in the article, was arbitrarily chosen to
+$\smallAngle$.
 
 \section{Self-line Crossing When Cutting a Bend}
 
