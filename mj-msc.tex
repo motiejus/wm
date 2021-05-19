@@ -588,17 +588,17 @@ table~\ref{table:scale-halfcirlce-diameter}.
 \end{table}
 
 Sometimes, when working with {\WM}, it is useful to convert between
-half-circle's diameter and adjusted size. These easily derive from circle's
-area formula $A = 2\pi r^2$. Diameter:
+half-circle's diameter $D$ and adjusted size $A_{adj}$. These easily derive
+from circle's area formula $A = 2\pi r^2$. Diameter:
 
 \[
-    D = 2\sqrt{\frac{2 adjsize}{\pi}}
+  D = 2\sqrt{\frac{2 A_{adj}}{\pi}}
 \]
 
-In reverse, half-circle's area from it's diameter (adjusted size):
+In reverse, adjusted size $A_{adj}$ from half-circle's diameter:
 
 \[
-  adjsize = \frac{\pi D^2}{8}
+  A_{adj} = \frac{\pi D^2}{8}
 \]
 
 \subsection{Definition of a Bend}
@@ -785,23 +785,24 @@ compactness index is calculated as follows:
 
   \item Construct a polygon by joining first and last vertices of the bend.
 
-  \item Calculate area of the polygon $A_p$.
+  \item Calculate area of the polygon $A_{p}$.
 
   \item Calculate perimeter $P$ of the polygon. The same value is the
       circumference of the circle: $C = P$.
 
-  \item Given circle's circumference $C$, circle's area $A_c$ is:
+    \item Given circle's circumference $C$, circle's area $A_{c}$ is:
 
     \[
-      A_{c} = \frac{C^2}{4\pi}
+      A_{circle} = \frac{C^2}{4\pi}
     \]
 
-  \item Compactness index is $\frac{A_p}{A_c}$:
+  \item Compactness index $c$ is are of the polygon divided by the area of the
+    circle:
 
     \[
-      cmp = \frac{A_p}{A_c} =
-        \frac{A_p}{ \frac{C^2}{4\pi} } =
-        \frac{4\pi A_p}{C^2}
+      c = \frac{A_{p}}{A_{c}} =
+        \frac{A_{p}}{ \frac{C^2}{4\pi} } =
+        \frac{4\pi A_{p}}{C^2}
     \]
 
 \end{enumerate}
@@ -812,11 +813,11 @@ of properties, upon which actions later will be performed.
 \subsection{Shape of a Bend}
 \label{sec:shape-of-a-bend}
 
-This section introduces \textsc{adjusted size}, which trivially derives from
-\textsc{compactness index} $cmp$ and shape's area $A$:
+This section introduces \textsc{adjusted size} $A_{adj}$, which trivially
+derives from \textsc{compactness index} $c$ and "polygonized" bend's area $A_{p}$:
 
 \[
-    adjsize = \frac{0.75 A}{cmp}
+  A_{adj} = \frac{0.75 A_{p}}{c}
 \]
 
 Adjusted size becomes necessary later to compare bends with each other, and
@@ -848,19 +849,19 @@ Two conditions must be true to claim that a bend is isolated:
 To find out whether two bends are similar, they are compared by 3 components:
 
 \begin{enumerate}
-    \item \textsc{adjusted size}
-    \item \textsc{compactness index}
-    \item Baseline length
+  \item \textsc{adjusted size} $A_{adj}$
+  \item \textsc{compactness index} $c$
+  \item \textsc{Baseline length} $l$
 \end{enumerate}
 
 Components 1, 2 and 3 represent a point in a 3-dimensional space, and Euclidean
-distance $d$ between those is calculated to differentiate between bends $p$ and
+distance $d(p,q)$ between those is calculated to differentiate bends $p$ and
 $q$:
 
 \[
-    d(p,q) = \sqrt{(adjsize_p-adjsize_q)^2 +
-                   (cmp_p-cmp_q)^2 +
-                   (baseline_p-baseline_q)^2}
+  d(p,q) = \sqrt{(A_{adj(p)}-A_{adj(q)})^2 +
+                   (c_p-c_q)^2 +
+                   (l_p-l_q)^2}
 \]
 
 The smaller the distance $d$, the more similar the bends are.
