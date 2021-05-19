@@ -1,0 +1,1 @@
+Definition of a bend: ends of the line should always be bends, otherwise not all line vertices are covered by bends (definition elsewhere).

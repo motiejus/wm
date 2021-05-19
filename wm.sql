@@ -16,7 +16,11 @@ declare
 begin
   pi = radians(180);
 
-  for p in (select (dp).geom from st_dumppoints(line) as dp) loop
+  for p in (
+    (select (dp).geom from st_dumppoints(line) as dp order by (dp).path[1] asc)
+    union all
+    (select (dp).geom from st_dumppoints(line) as dp order by (dp).path[1] desc limit 1)
+  ) loop
     p3 = p2;
     p2 = p1;
     p1 = p;
@@ -25,7 +29,11 @@ begin
     end if;
     cur_sign = sign(pi - st_angle(p1, p2, p2, p3));
 
-    bend = st_linemerge(st_union(bend, st_makeline(p3, p2)));
+    if bend is null then
+      bend = st_makeline(p3, p2);
+    else
+      bend = st_linemerge(st_union(bend, st_makeline(p3, p2)));
+    end if;
 
     if prev_sign + cur_sign = 0 then
       if bend is not null then
@@ -36,10 +44,8 @@ begin
     prev_sign = cur_sign;
   end loop;
 
-  -- the last bend may be lost if there is no "final" inflection angle.
-  -- to avoid that, return the last bend if the last accumulation has >3
-  -- vertices.
-  if (select count(1) from ((select st_dumppoints(bend) as a)) b) >= 3 then
+  -- the last bend may be lost if there is no "final" inflection angle. Add it.
+  if (select count(1) from ((select st_dumppoints(bend) as a)) b) >= 2 then
     bends = bends || bend;
   end if;
 end
