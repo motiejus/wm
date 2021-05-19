@@ -18,7 +18,8 @@ FIGURES = test-figures \
 					inflection-1-gentle-inflection-after \
 					fig6-selfcrossing-before \
 					fig6-selfcrossing-after \
-					selfcrossing-1-before
+					selfcrossing-1-before \
+					selfcrossing-1-after
 
 #################################
 # The thesis, publishable version
@@ -106,6 +107,8 @@ selfcrossing-1-before_1SELECT = wm_debug where name='selfcrossing-1' AND stage='
 selfcrossing-1-before_2SELECT = wm_visuals where name='selfcrossing-1-baseline'
 selfcrossing-1-before_2LINESTYLE = dotted
 selfcrossing-1-before_3SELECT = wm_visuals where name='selfcrossing-1-newline'
+selfcrossing-1-after_WIDTHDIV = 4
+selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='dcrossings' AND gen=1
 
 .faux_test-integration: tests-integration.sql wm.sql .faux_aggregate-rivers
 	./db -f $<
