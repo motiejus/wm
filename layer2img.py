@@ -22,6 +22,7 @@ COLORS = {
 # see `NOTICE` in the LaTeX document; this is the width of the main text block.
 TEXTWIDTH_CM = 12.12364
 
+QUADRANTS = {'tl':1, 'tr':2, 'br':3, 'bl':4}
 
 def color(string):
     return COLORS[string if string else 'black']
@@ -52,7 +53,7 @@ def parse_args():
             help="Divide the width by this number "
             "(useful when two images are laid horizontally "
             "in the resulting file")
-    parser.add_argument('--quadrant', type=int, choices=(1, 2, 3, 4),
+    parser.add_argument('--quadrant', choices=QUADRANTS.keys(),
             help="Image is comprised of 4 quadrants. This variable, "
             "when non-empty, will clip and return the requested quadrant")
     parser.add_argument('--outfile', metavar='<file>',
@@ -65,7 +66,7 @@ def read_layer(select, width, maybe_quadrant):
         return
     way = "way"
     if maybe_quadrant:
-        way = "wm_quadrant(way, {})".format(maybe_quadrant)
+        way = "wm_quadrant(way, {})".format(QUADRANTS[maybe_quadrant])
 
     conn = psycopg2.connect(PSQL_CREDS)
     sql = "SELECT {way} as way1 FROM {select}".format(way=way, select=select)
@@ -111,7 +112,7 @@ def main():
     c3 = plot_args(g3, args.g3_color, args.g3_linestyle, args.g3_label)
 
     rc('text', usetex=True)
-    #rc('text.latex', preamble='\\usepackage{numprint}\n')
+    rc('text.latex', preamble='\\usepackage{numprint}\n')
     fig, ax = plt.subplots(constrained_layout=True)
     fig.set_figwidth(inch(width))
 

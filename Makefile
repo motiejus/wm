@@ -51,6 +51,9 @@ RIVERS = \
 		 salvis-wm-gdr50-ne \
 		 salvis-wm-220
 
+################################################################################
+# FIGURES
+################################################################################
 test-figures_1SELECT = wm_figures
 
 fig8-definition-of-a-bend_1SELECT = wm_debug where name='fig8' AND stage='afigures' AND gen=1
@@ -113,17 +116,35 @@ isolated-1-exaggerated_1SELECT = wm_debug where name='isolated-1' AND stage='afi
 isolated-1-exaggerated_2SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=1
 isolated-1-exaggerated_1COLOR = orange
 
+################################################################################
+# 250K
+################################################################################
+
+salvis-wm-250k-2x_1SELECT = wm_visuals where name='salvis-wm-220'
+salvis-wm-250k-2x_WIDTHDIV = 2
+
+salvis-wm-250k-10x_1SELECT = wm_visuals where name='salvis-wm-220'
+salvis-wm-250k-10x_WIDTHDIV = 10
+
+salvis-250k-10x_1SELECT = wm_visuals where name='salvis'
+salvis-250k-10x_WIDTHDIV = 10
+
+salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis-wm-220'
+salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis'
+salvis-wm-overlaid-250k-zoom_1COLOR = orange
+
+salvis-gdr250-2x_1SELECT = wm_visuals where name='salvis-gdr250'
+salvis-gdr250-2x_WIDTHDIV = 2
+
+################################################################################
+# 50K
+################################################################################
+
 salvis-25k_1SELECT = wm_visuals where name='salvis'
 salvis-25k_WIDTHDIV = 1
 
 salvis-50k_1SELECT = wm_visuals where name='salvis'
 salvis-50k_WIDTHDIV = 2
-
-salvis-250k-10x_1SELECT = wm_visuals where name='salvis'
-salvis-250k-10x_WIDTHDIV = 10
-
-salvis-gdr250-2x_1SELECT = wm_visuals where name='salvis-gdr250'
-salvis-gdr250-2x_WIDTHDIV = 2
 
 salvis-dp-64-50k_1SELECT = wm_visuals where name='salvis-dp-64'
 salvis-dp-64-50k_WIDTHDIV = 2
@@ -141,19 +162,13 @@ salvis-overlaid-dp-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-dp-cha
 salvis-overlaid-dp-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
 salvis-overlaid-dp-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-dp-64-chaikin-50k_WIDTHDIV = 2
-salvis-overlaid-dp-64-chaikin-50k_QUADRANT = 1
+salvis-overlaid-dp-64-chaikin-50k_QUADRANT = tl
 
 salvis-overlaid-vw-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-vw-chaikin-64'
 salvis-overlaid-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
 salvis-overlaid-vw-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-vw-64-chaikin-50k_WIDTHDIV = 2
-salvis-overlaid-vw-64-chaikin-50k_QUADRANT = 1
-
-salvis-wm-250k-2x_1SELECT = wm_visuals where name='salvis-wm-220'
-salvis-wm-250k-2x_WIDTHDIV = 2
-
-salvis-wm-250k-10x_1SELECT = wm_visuals where name='salvis-wm-220'
-salvis-wm-250k-10x_WIDTHDIV = 10
+salvis-overlaid-vw-64-chaikin-50k_QUADRANT = tl
 
 salvis-wm-50k_1SELECT = wm_visuals where name='salvis-wm-75'
 salvis-wm-50k_2SELECT = wm_visuals where name='salvis'
@@ -162,16 +177,12 @@ salvis-wm-50k_1COLOR = orange
 salvis-wm-50k-nw_1SELECT = wm_visuals where name='salvis-wm-75'
 salvis-wm-50k-nw_2SELECT = wm_visuals where name='salvis'
 salvis-wm-50k-nw_1COLOR = orange
-salvis-wm-50k-nw_QUADRANT = 2
+salvis-wm-50k-nw_QUADRANT = tr
 
 salvis-wm-50k-ne_1SELECT = wm_visuals where name='salvis-wm-75'
 salvis-wm-50k-ne_2SELECT = wm_visuals where name='salvis'
 salvis-wm-50k-ne_1COLOR = orange
-salvis-wm-50k-ne_QUADRANT = 1
-
-salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis-wm-220'
-salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis'
-salvis-wm-overlaid-250k-zoom_1COLOR = orange
+salvis-wm-50k-ne_QUADRANT = tl
 
 salvis-wm-gdr50_1SELECT = wm_visuals where name='salvis-wm-75'
 salvis-wm-gdr50_2SELECT = wm_visuals where name='salvis-gdr50'
@@ -186,7 +197,7 @@ salvis-wm-gdr50-ne_3SELECT = wm_visuals where name='salvis'
 salvis-wm-gdr50-ne_1COLOR = orange
 salvis-wm-gdr50-ne_2COLOR = green
 salvis-wm-gdr50-ne_3LINESTYLE = dotted
-salvis-wm-gdr50-ne_QUADRANT = 1
+salvis-wm-gdr50-ne_QUADRANT = tl
 
 salvis-wm-220_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-220_WIDTHDIV = 2
@@ -198,21 +209,31 @@ label_vw-chaikin = $(label_vw) and Chaikin
 label_dp-chaikin = $(label_dp) and Chaikin
 
 define wm_vwdp50k
-RIVERS += salvis-wm-$(1)-50k
-$(info $(RIVERS))
-salvis-wm-$(1)-50k_1SELECT    = wm_visuals where name='salvis-$(1)-64'
-salvis-wm-$(1)-50k_2SELECT    = wm_visuals where name='salvis-wm-75'
-salvis-wm-$(1)-50k_3SELECT    = wm_visuals where name='salvis'
-salvis-wm-$(1)-50k_1COLOR     = green
-salvis-wm-$(1)-50k_1LABEL     = $(label_$(1))
-salvis-wm-$(1)-50k_2COLOR     = orange
-salvis-wm-$(1)-50k_2LABEL     = $(label_wm)
-salvis-wm-$(1)-50k_3LINESTYLE = dotted
-#salvis-wm-$(1)-50k_3LABEL     = GRPK 1:\numprint{10000}
-salvis-wm-$(1)-50k_3LABEL     = GRPK 1:10000
-salvis-wm-$(1)-50k_LEGEND     = lower left
+RIVERS += salvis-wm-$(1)-50k$(2)
+salvis-wm-$(1)-50k$(2)_1SELECT    = wm_visuals where name='salvis-$(1)-64'
+salvis-wm-$(1)-50k$(2)_2SELECT    = wm_visuals where name='salvis-wm-75'
+salvis-wm-$(1)-50k$(2)_3SELECT    = wm_visuals where name='salvis'
+salvis-wm-$(1)-50k$(2)_1COLOR     = green
+salvis-wm-$(1)-50k$(2)_1LABEL     = $(label_$(1))
+salvis-wm-$(1)-50k$(2)_2COLOR     = orange
+salvis-wm-$(1)-50k$(2)_2LABEL     = $(label_wm)
+salvis-wm-$(1)-50k$(2)_3LINESTYLE = dotted
+salvis-wm-$(1)-50k$(2)_3LABEL     = GRPK 1:\numprint{10000}
+salvis-wm-$(1)-50k$(2)_3LABEL     = GRPK 1:10000
+ifneq ($(2),,)
+salvis-wm-$(1)-50k$(2)_QUADRANT   = $(2)
+endif
+ifneq ($(2),,)
+salvis-wm-$(1)-50k$(2)_LEGEND     = lower left
+else
+salvis-wm-$(1)-50k$(2)_LEGEND     = lower right
+endif
 endef
-$(foreach x,vw dp vw-chaikin dp-chaikin,$(eval $(call wm_vwdp50k,$(x))))
+$(foreach x,vw dp vw-chaikin dp-chaikin,\
+	$(eval $(call wm_vwdp50k,$(x),)) \
+	$(eval $(call wm_vwdp50k,$(x),tl)) \
+	$(eval $(call wm_vwdp50k,$(x),tr)) \
+)
 
 define FIG_template
 $(1).pdf: layer2img.py Makefile $(2)
