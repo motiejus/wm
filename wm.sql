@@ -254,7 +254,8 @@ begin
 
       -- To understand the block below, I suggest you take a pencil and paper,
       -- draw a self-crossing bend (fig6 from the article works well), and
-      -- figure out what happens here, by hand.
+      -- figure out what happens here, by hand. I know it's hard to follow.
+      -- Apologies.
       prev_length = array_length(bends, 1);
       if j < i then
         -- remove first vertex of the following bend, because the last
