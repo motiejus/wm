@@ -59,6 +59,9 @@ def main():
     group1 = read_layer(args.group1_table, args.group1_where)
     group2 = read_layer(args.group2_table, args.group2_where)
     group3 = read_layer(args.group3_table, args.group3_where)
+    c1 = {'cmap': 'coolwarm'} if args.group1_cmap else {'color': ORANGE}
+    c2 = {'cmap': 'coolwarm'} if args.group2_cmap else {'color': PURPLE}
+    c3 = {'cmap': 'coolwarm'} if args.group3_cmap else {'color': GREEN}
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
@@ -67,10 +70,6 @@ def main():
     if c := args.clip:
         ax.set_xlim(left=c[0], right=c[2])
         ax.set_ylim(bottom=c[1], top=c[3])
-
-    c1 = {'cmap': 'coolwarm'} if args.group1_cmap else {'color': ORANGE}
-    c2 = {'cmap': 'coolwarm'} if args.group2_cmap else {'color': PURPLE}
-    c3 = {'cmap': 'coolwarm'} if args.group3_cmap else {'color': GREEN}
 
     group1 is not None and group1.plot(ax=ax, **c1)
     group2 is not None and group2.plot(ax=ax, **c2)
