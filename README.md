@@ -10,7 +10,7 @@ Structure
 There will be 2 deliverables from this folder:
 
 - `wm.sql`, the implementation.
-- paper `mj-msc-full.pdf`, a MSc thesis, explaining the whole thing.
+- paper `mj-msc-full.pdf`, a MSc thesis, explaining it.
 
 It contains a few supporting files, notably:
 
@@ -53,13 +53,13 @@ Building the paper (pdf)
 ------------------------
 
 ```
-$ make -j$(nproc) mj-msc-full.pdf
+# make -j$(nproc) mj-msc-full.pdf
 ```
 
 `mj-msc.tex` results in `mj-msc-full.pdf`, which will be at some point
 published. It needs quite a few dependencies, including a functioning Docker
-environment, postgresql client, geopandas, and a pretty complete LaTeX
-installation.
+environment, postgresql client, geopandas, pygments, osm2pgsql, poppler, and a
+"quite extensive" LaTeX installation. This was tested on Debian 11.
 
 Contributing
 ------------
@@ -77,4 +77,4 @@ accept broader contributions, TODO:
 License
 -------
 
-Same as QGIS and PostGIS: GPL 2.0 or later.
+GPL 2.0 or later, same as PostGIS.
