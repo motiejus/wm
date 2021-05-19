@@ -306,7 +306,7 @@ begin
     end if;
 
     if dbgname is not null then
-      insert into debug_wm (stage, name, nbend, way, props) values(
+      insert into wm_debug (stage, name, nbend, way, props) values(
         'ebendattrs',
         dbgname,
         i,
@@ -355,7 +355,7 @@ begin
     stagenum = 1;
     while mutated loop
       if dbgname is not null then
-        insert into debug_wm (stage, name, gen, nbend, way) values(
+        insert into wm_debug (stage, name, gen, nbend, way) values(
           'afigures',
           dbgname,
           stagenum,
@@ -367,7 +367,7 @@ begin
       bends = detect_bends(lines[i]);
 
       if dbgname is not null then
-        insert into debug_wm(stage, name, gen, nbend, way) values(
+        insert into wm_debug(stage, name, gen, nbend, way) values(
           'bbends',
           dbgname,
           stagenum,
@@ -379,7 +379,7 @@ begin
       bends = fix_gentle_inflections(bends);
 
       if dbgname is not null then
-        insert into debug_wm(stage, name, gen, nbend, way) values(
+        insert into wm_debug(stage, name, gen, nbend, way) values(
           'cinflections',
           dbgname,
           stagenum,
@@ -391,7 +391,7 @@ begin
       select * from self_crossing(bends) into bends, mutated;
 
       if dbgname is not null then
-        insert into debug_wm(stage, name, gen, nbend, way) values(
+        insert into wm_debug(stage, name, gen, nbend, way) values(
           'dcrossings',
           dbgname,
           stagenum,

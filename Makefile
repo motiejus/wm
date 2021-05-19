@@ -22,7 +22,7 @@ clean:
 
 .PHONY: clean-tables
 clean-tables:
-	for t in $$(./db -c '\dt' | awk '/\y(demo_wm|debug_wm|figures)\y/{print $$3}'); do \
+	for t in $$(./db -c '\dt' | awk '/\ywm_\w+\y/{print $$3}'); do \
 		./db -c "drop table $$t"; \
 	done
 	-rm .faux_test
