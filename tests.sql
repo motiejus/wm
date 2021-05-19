@@ -43,7 +43,7 @@ insert into wm_figures (name, way) values ('fig6-combi',
       ST_Translate((select way from wm_figures where name='fig6'), 80, 90)
   )
 );
-insert into wm_figures (name, way) values('fig8', 'LINESTRING(173 12,174 10,180 8,186 8,186 13,191 11,189 6,201 5,203 11,216 16,216 6,222 7,229 3,236 2,239 6,243 8,248 6)'::geometry);
+insert into wm_figures (name, way) values('fig8', 'LINESTRING(173 12,174 10,180 8,186 8,186 13,191 11,189 6,201 5,203 11,216 16,216 6,222 6,229 3,236 2,239 6,243 8,248 6)'::geometry);
 insert into wm_figures (name, way) values ('inflection-1','LINESTRING(110 24,114 20,133 20,145 15,145 0,136 8,123 10,114 10,111 2)'::geometry);
 insert into wm_figures (name, way) values ('multi-island','MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'::geometry);
 
@@ -54,7 +54,7 @@ insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Tr
 delete from wm_debug where name in (select distinct name from wm_figures);
 delete from wm_demo where name in (select distinct name from wm_figures);
 insert into wm_demo (name, way) select name, ST_SimplifyWM(way, .1, name) from wm_figures where name != 'fig8';
-insert into wm_demo (name, way) select name, ST_SimplifyWM(way, 10, name) from wm_figures where name = 'fig8';
+insert into wm_demo (name, way) select name, ST_SimplifyWM(way, 11, name) from wm_figures where name = 'fig8';
 
 
 do $$
