@@ -10,6 +10,8 @@ begin
   end if;
 end $$ LANGUAGE plpgsql;
 
+-- to preview this somewhat conveniently in QGIS:
+-- stage || '_' || dbgname || ' i:' || coalesce(i,'<nil>') || ' j:'|| coalesce(j,'<nil>')
 drop table if exists debug_wm;
 create table debug_wm(stage text, dbgname text, i bigint, j bigint, way geometry, props json);
 
@@ -32,11 +34,9 @@ insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRI
 insert into figures (name, way) values ('multi-island',ST_GeomFromText('MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'));
 
 -- DETECT BENDS
-drop table if exists bends, demo_bends1;
+drop table if exists bends;
 create table bends (name text, ways geometry[]);
 insert into bends select name, detect_bends(way, name) from figures;
-create table demo_bends1 (name text, i bigint, way geometry);
-insert into demo_bends1 select name, generate_subscripts(ways, 1), unnest(ways) from bends;
 
 -- FIX BEND INFLECTIONS
 drop table if exists inflections, demo_inflections2;
@@ -70,7 +70,7 @@ do $$
 declare
   vbends geometry[];
 begin
-  select detect_bends((select way from figures where name='fig3')) into vbends;
+  select array((select way from debug_wm where dbgname='fig3' and stage='bbends')) into vbends;
   perform assert_equals(5, array_length(vbends, 1));
   perform assert_equals('LINESTRING(0 0,12 0,13 4)', st_astext(vbends[1]));
   perform assert_equals('LINESTRING(12 0,13 4,20 2,20 0)', st_astext(vbends[2]));
