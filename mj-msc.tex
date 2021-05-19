@@ -1312,9 +1312,9 @@ implementation. A single exaggeration increment is done as follows:
         is linearly interpolated between $[s,1]$, using the same rules as for
         the first half.
 
-        The first version of the algorithm used simple linear interpolation based
-        on the point's position in the line. The current version applies a few
-        coefficients, which were derived empirically, by observing the
+        The first version of the algorithm used simple linear interpolation
+        based on the point's position in the line. The current version applies
+        a few coefficients, which were derived empirically, by observing the
         resulting bend.
 
     \item Each point (except the beginning and end vertices of the bend) will
@@ -1323,15 +1323,30 @@ implementation. A single exaggeration increment is done as follows:
 
 \end{enumerate}
 
-Figure~\ref{fig:isolated-1-exaggerated} illustrates an exaggerated bend with
-the algorithm.
-
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.5\textwidth]{isolated-1-exaggerated}
     \caption{Example exaggerated isolated bend.}
     \label{fig:isolated-1-exaggerated}
 \end{figure}
+
+The technical implementation of the algorithm contains two implementations
+of exaggeration operator:
+
+\begin{description}
+
+    \item[\normalfont\textsc{wm\_exaggerate\_bend}] is the original one. It
+        uses simple linear interpolation. It is fast, but simple. It tends to
+        leave jagged bends.
+
+    \item[\normalfont\textsc{wm\_exaggerate\_bend2}] is a more computationally
+        expensive function, which leaves better-looking exaggerated bends.
+
+\end{description}
+
+Both functions are inter-change-able and can be found in listing~\ref{lst:wm.sql}.
+Figure~\ref{fig:isolated-1-exaggerated} illustrates an exaggerated bend using
+\textsc{wm\_exaggerate\_bend2}.
 
 \section{Results}
 \label{sec:results}
@@ -1349,8 +1364,7 @@ table~\ref{table:scale-halfcirlce-diameter}:
     \item 1:\numprint{250000}: 220.
 \end{itemize}
 
-The original feature is orange. As can be seen, some isolated bends are
-exaggerated, and some small bends are removed.
+\subsubsection{Medium-scale (1:\numprint{50000})}
 
 \begin{figure}[ht]
     \centering
@@ -1368,11 +1382,15 @@ exaggerated, and some small bends are removed.
     \label{fig:salvis-wm-50k}
 \end{figure}
 
-As one can see in figure~\ref{fig:salvis-wm-50k}, some of the small bends have
-been exaggerated, and some removed. It mostly works as expected, except some of
-the jagged lines approximately in the middle of the figure.
+As one can see in figure~\ref{fig:salvis-wm-50k}, the illustrations deliver
+what was promised by the algorithm, but with a few caveats. West-side of the
+river looks reasonably well simplified: long bends remain slightly curved,
+small bends are removed or slightly exaggerated.
+
+Approximately at the middle of the figure some jagged and sharp bends appear.
 Figure~\ref{fig:salvis-wm-50k-overlaid-zoom} zooms in, overlaying the original
-river (in orange).
+river (in orange). These will become more pronounced in even larger-scale
+simplification in the next section.
 
 \begin{figure}[ht]
     \centering
@@ -1380,12 +1398,6 @@ river (in orange).
     \caption{2x zoomed-in {\WM} for 1:\numprint{50000}.}
     \label{fig:salvis-wm-50k-overlaid-zoom}
 \end{figure}
-
-
-These will become
-more pronounced in large-scale simplification in the next section. Other than
-some sharp edges, this algorithm works reasonably well for mid-scale
-simplification.
 
 \subsubsection{Large-scale (1:\numprint{250000})}
 
@@ -1421,8 +1433,8 @@ simplification and overlays the original (in orange).
 A conglomeration of bends is visible, especially in north-east side of the
 center. We assume this was caused by two bends significantly exaggerated,
 leaving no space to exaggerate for those between the two. For the same reason,
-the 1:\numprint{50000} figure~\ref{fig:salvis-wm-50k} has many smaller bends
-at approximately the same location.
+the figure~\ref{fig:salvis-wm-50k} (of scale 1:\numprint{50000}) has many
+smaller bends at approximately the same location.
 
 \subsection{Comparison of Generalization Result with National Spatial Datasets}
 
