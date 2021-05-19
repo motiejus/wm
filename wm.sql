@@ -3,7 +3,7 @@ SET plpgsql.extra_errors TO 'all';
 
 -- detect_bends detects bends using the inflection angles. No corrections.
 drop function if exists detect_bends;
-create function detect_bends(line geometry, OUT bends geometry[]) as $$
+create function detect_bends(line geometry, dbgname text default null, OUT bends geometry[]) as $$
 declare
   pi constant real default radians(180);
   p geometry;
@@ -266,7 +266,7 @@ create type t_bend_attrs as (
   adjsize real,
   baselinelength real
 );
-create function bend_attrs(bends geometry[], dbg boolean default false) returns setof t_bend_attrs as $$
+create function bend_attrs(bends geometry[], dbgname text default null) returns setof t_bend_attrs as $$
 declare
   i int4;
   fourpi real;
@@ -300,9 +300,10 @@ begin
     if res.area > 0 then
       select (res.area*(0.75/res.cmp)) into res.adjsize;
     end if;
-    if dbg then
-      insert into debug_wm (name, way, props) values(
-        'bend_attrs_' || i,
+    if dbgname is not null then
+      insert into debug_wm (stage, dbgname, way, props) values(
+        'ebendattrs',
+        dbgname,
         bend,
         json_build_object(
           'area', res.area,
@@ -321,7 +322,7 @@ $$ language plpgsql;
 -- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
 -- 1998.
 drop function if exists ST_SimplifyWM;
-create function ST_SimplifyWM(geom geometry, dbg boolean default false) returns geometry as $$
+create function ST_SimplifyWM(geom geometry, dbgname text default null) returns geometry as $$
 declare
   dbg_stage integer;
   i integer;
@@ -344,36 +345,47 @@ begin
     mutated = true;
     dbg_stage = 1;
     while mutated loop
-      if dbg then
-        insert into debug_wm (name, way) values(
-          dbg_stage || 'afigures_' || i,
+      if dbgname is not null then
+        insert into debug_wm (stage, dbgname, i, way) values(
+          'afigures',
+          dbgname,
+          i,
           lines[i]
         );
       end if;
 
       bends = detect_bends(lines[i]);
 
-      if dbg then
-        insert into debug_wm(name, way) values(
-          dbg_stage || 'bbends_' || i || '_' || generate_subscripts(bends, 1),
+      if dbgname is not null then
+        insert into debug_wm(stage, dbgname, i, j, way) values(
+          'bbends',
+          dbgname,
+          i,
+          generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
 
       bends = fix_gentle_inflections(bends);
 
-      if dbg then
-        insert into debug_wm(name, way) values(
-          dbg_stage || 'cinflections' || i || '_' || generate_subscripts(bends, 1),
+      if dbgname is not null then
+        insert into debug_wm(stage, dbgname, i, j, way) values(
+          'cinflections',
+          dbgname,
+          i,
+          generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
 
       select * from self_crossing(bends) into bends, mutated;
 
-      if dbg then
-        insert into debug_wm(name, way) values(
-          dbg_stage || 'dcrossings' || i || '_' || generate_subscripts(bends, 1),
+      if dbgname is not null then
+        insert into debug_wm(stage, dbgname, i, j, way) values(
+          'dcrossings',
+          dbgname,
+          i,
+          generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
@@ -385,7 +397,7 @@ begin
       end if;
 
       -- self-crossing mutations are done, calculate bend properties
-      perform bend_attrs(bends, true);
+      perform bend_attrs(bends, dbgname);
     end loop;
 
   end loop;

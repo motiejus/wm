@@ -11,7 +11,7 @@ begin
 end $$ LANGUAGE plpgsql;
 
 drop table if exists debug_wm;
-create table debug_wm(name text, way geometry, props json);
+create table debug_wm(stage text, dbgname text, i bigint, j bigint, way geometry, props json);
 
 drop table if exists figures;
 create table figures (name text, way geometry);
@@ -34,7 +34,7 @@ insert into figures (name, way) values ('multi-island',ST_GeomFromText('MULTILIN
 -- DETECT BENDS
 drop table if exists bends, demo_bends1;
 create table bends (name text, ways geometry[]);
-insert into bends select name, detect_bends(way) from figures;
+insert into bends select name, detect_bends(way, name) from figures;
 create table demo_bends1 (name text, i bigint, way geometry);
 insert into demo_bends1 select name, generate_subscripts(ways, 1), unnest(ways) from bends;
 
@@ -57,14 +57,14 @@ do $$
 declare
   recs t_bend_attrs[];
 begin
-  select array(select bend_attrs(ways, true) from inflections) into recs;
+  select array(select bend_attrs(ways, name) from inflections) into recs;
 end
 $$ language plpgsql;
 
 -- COMBINED
 drop table if exists demo_wm;
 create table demo_wm (name text, i bigint, way geometry);
-insert into demo_wm (name, way) select name, ST_SimplifyWM(way, true) from figures;
+insert into demo_wm (name, way) select name, ST_SimplifyWM(way, name) from figures;
 
 do $$
 declare
