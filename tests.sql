@@ -19,11 +19,11 @@ insert into figures (name, way) values ('fig5',ST_GeomFromText('LINESTRING(0 39,
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
 
 -- DETECT BENDS
-drop table if exists bends;
+drop table if exists abends, bends;
+create table abends (name text, ways geometry[]);
+insert into abends select f.name, detect_bends(f.way) from figures f;
 create table bends (name text, way geometry);
-insert into bends select 'fig3', unnest(detect_bends((select way from figures where name='fig3')));
-insert into bends select 'fig5', unnest(detect_bends((select way from figures where name='fig5')));
-insert into bends select 'inflection-1', unnest(detect_bends((select way from figures where name='inflection-1')));
+insert into bends select a.name, unnest(a.ways) from abends a;
 
 do $$
 declare
@@ -41,11 +41,11 @@ begin
 end $$ language plpgsql;
 
 -- FIX BEND INFLECTIONS
-drop table if exists inflections;
+drop table if exists ainflections, inflections;
+create table ainflections (name text, ways geometry[]);
+insert into ainflections select a.name, fix_gentle_inflections(a.ways) from abends a;
 create table inflections (name text, way geometry);
-insert into inflections select 'fig3', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='fig3'))));
-insert into inflections select 'fig5', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='fig5'))));
-insert into inflections select 'inflection-1', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='inflection-1'))));
+insert into inflections select a.name, unnest(a.ways) from ainflections a;
 
 do $$
 declare
