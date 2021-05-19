@@ -176,7 +176,7 @@ salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 
 REF = $(shell git describe --abbrev=12 --always --dirty)
 version.inc.tex: Makefile $(shell git rev-parse --git-dir 2>/dev/null)
-	TZ=UTC date '+\gdef\VCDescribe{%F ($(REF))}%' > $@
+	TZ=UTC date '+\gdef\VCDescribe{%F (revision $(REF))}%' > $@
 
 vars.inc.tex: vars.awk wm.sql Makefile
 	awk -f $< wm.sql

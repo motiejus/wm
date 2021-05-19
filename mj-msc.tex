@@ -91,12 +91,11 @@
 \label{sec:abstract}
 
 Currently available line simplification algorithms are rooted in mathematics
-    and geometry, and are not fit bendy natural features like rivers and
-    coastlines. This paper discusses our implementation of {\WM} algorithm,
-    with notes that we would have been appreciated before starting the
-    re-implementation endeavor. This paper accompanies our implementation of
-    {\WM} algorithm and will be helpful to anyone trying to understand the
-    original {\WM} paper, or our implementation.
+    and geometry, and are unfit for natural features like rivers and
+    coastlines. {\WM} algorithm is derived from cartographic knowledge, and
+    thus is well suited for natural features. We also documented our
+    implementation, which allows anyone understand the algorithm and our
+    implementation in detail.
 
 \end{abstract}
 
@@ -120,18 +119,19 @@ Textwidth in cm: {\printinunitsof{cm}\prntlen{\textwidth}}
 When creating small-scale maps, often the detail of the data source is greater
 than desired for the map. While many features can be removed or simplified, it
 is more tricky with natural features that have many bends, like coastlines,
-rivers and forest boundaries.
+rivers or forest boundaries.
 
 To create a small-scale map from a large-scale data source, features need to be
-generalized: detail should be reduced. While performing the generalization, it
+generalized, i.e. detail should be reduced. While performing the generalization, it
 is important to retain the "defining" shape of the original feature. Otherwise,
 if the generalized feature looks too different than the original, the result
 will look unrealistic.
 
 For example, if a river is nearly straight, it should be nearly straight after
-generalization, otherwise a too straightened river will look like a canal.
-Conversely, if the river is highly wiggly, the number of bends should be
-reduced, but not removed altogether.
+generalization. A too straightened river will look like a canal, and the other
+way around --- too curvy would not reflect the natural shape. Conversely, if
+the river is highly wiggly, the number of bends should be reduced, but not
+removed altogether.
 
 Generalization problem for other objects can often be solved by other
 non-geometric means:
