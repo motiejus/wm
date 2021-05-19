@@ -185,11 +185,42 @@ The original \cite{wang1998line} leaves something to be desired for a practical
 implementation: it is not straightforward to implement the algorithm from the
 paper alone.
 
+Explanations in this document are meant to expand, rather than substitute, the
+original description in \cite{wang1998line}. Therefore familiarity with the
+original paper is assumed, and, for some sections, having it close-by is
+necessary to meaningfully follow this document.
+
 In this paper we describe {\WM} in a detail that is more useful for algorithm:
 each section will be expanded, with more elaborate and exact illustrations for
 every step of the algorithm.
 
 Algorithms discussed in this paper assume Euclidean geometry.
+
+\section{Vocabulary and terminology}
+
+This section defines vocabulary and terms as defined in the rest of the paper.
+
+\begin{description}
+
+    \item[Vertex] is a point on a plane, can be expressed by a pair of $(x,y)$
+        coordinates.
+
+    \item[Line Segment (or Segment)] joins two vertices by a straight line. A
+        segment can be expressed by two coordinate pairs: $(x_1, y_1)$ and
+        $(x_2, y_2)$. Line Segment and Segment are used interchangeably.
+
+    \item[Line] represents a single linear feature in the real world. For
+        example, a river or a coastline. {\tt LINESTRING} in GIS terms.
+
+        Geometrically, A line is a series of connected line segments, or,
+        equivalently, a series of connected vertices. Each vertex connects to
+        two other vertices, except those vertices at either ends of the line:
+        these two connect to a single other vertex.
+
+    \item[Bend] is a subset of a line that humans perceive as a curve. For the
+        purpose of this paper, the geometric definition is complex and is
+        discussed in section~\onpage{sec:definition-of-a-bend}.
+\end{description}
 
 \section{Automated tests}
 \label{sec:automated-tests}
@@ -214,31 +245,6 @@ direction.
 The full test suite can be executed with a single command, and completes in a
 few seconds. Having an easily accessible test suite boosts confidence that no
 unexpected bugs have snug in while modifying the algorithm.
-
-\section{Vocabulary and terminology}
-
-This section defines vocabulary and terms as defined in the rest of the paper.
-
-\begin{description}
-    \item[Vertex] is a point on a plane, can be expressed unambiguously by a
-        pair of $(x,y)$ coordinates.
-
-    \item[Line Segment (or Segment)] joins two vertices by a straight line. A
-        segment can be expressed by two coordinate pairs: $(x_1, y_1)$ and
-        $(x_2, y_2)$. Line Segment and Segment are used interchangeably.
-
-    \item[Line] represents a single linear feature in the real world. For
-        example, a river or a coastline. {\tt LINESTRING} in GIS terms.
-
-        Geometrically, A line is a series of connected line segments, or,
-        equivalently, a series of connected vertices. Each vertex connects to
-        two other vertices, except those vertices at either ends of the line:
-        these two connect to a single other vertex.
-
-    \item[Bend] is a subset of a line that humans perceive as a curve. For the
-        purpose of this paper, the geometric definition is complex and is
-        discussed in section~\onpage{sec:definition-of-a-bend}.
-\end{description}
 
 \chapter{Description of the implementation}
 
@@ -281,11 +287,8 @@ illustration of the detected bends.
 
 \section{Gentle Inflection at End of a Bend}
 
-The example in this section was clear, but insufficient: it does not specify
-how many vertices should be included when calculating the end-of-bend
-inflection. We chose the iterative approach -- as long as the angle is "right"
-and the distance is decreasing, the algorithm should keep going; practically
-not having an upper bound on the number of iterations.
+Figure~\ref{fig:fig5-gentle-inflection} visualizes original paper's Figure 5,
+when a single vertex is moved outwards the end of the bend.
 
 \begin{figure}[h]
     \centering
@@ -301,6 +304,31 @@ not having an upper bound on the number of iterations.
     \caption{Originally Figure 5: gentle inflections at the ends of the bend}
     \label{fig:fig5-gentle-inflection}
 \end{figure}
+
+The example in this section was clear, but insufficient: it does not specify
+how many vertices should be included when calculating the end-of-bend
+inflection. We chose the iterative approach -- as long as the angle is "right"
+and the distance is decreasing, the algorithm should keep going; practically
+not having an upper bound on the number of iterations.
+
+Additional example, not found in the original paper, is illustrated in
+figure~\onpage{fig:inflection-1-gentle-inflection}: it moves a few vertices.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.45\textwidth}
+        \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-before}
+        \caption{Before applying the inflection rule}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.45\textwidth}
+        \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-after}
+        \caption{After applying the inflection rule}
+    \end{subfigure}
+    \caption{Originally Figure 5: gentle inflections at the ends of the bend}
+    \label{fig:inflection-1-gentle-inflection}
+\end{figure}
+
 
 \section{Self-line Crossing When Cutting a Bend}
 
