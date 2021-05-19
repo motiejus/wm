@@ -124,28 +124,27 @@ is more tricky with natural features that have many bends, like coastlines,
 rivers or forest boundaries.
 
 To create a small-scale map from a large-scale data source, features need to be
-generalized, i.e. detail should be reduced. While performing the generalization, it
-is important to retain the "defining" shape of the original feature. Otherwise,
-if the generalized feature looks too different than the original, the result
-will look unrealistic.
+simplified, i.e., detail should be reduced. While performing the
+simplification, it is important to retain the "defining" shape of the original
+feature. Otherwise, if the simplified feature looks too different than the
+original, the result will look unrealistic.
 
-For example, if a river is nearly straight, it should be nearly straight after
-generalization. A too straightened river will look like a canal, and the other
-way around --- too curvy would not reflect the natural shape. Conversely, if
-the river is highly wiggly, the number of bends should be reduced, but not
-removed altogether.
+For example, if a river is nearly straight, it should remain such after
+simplification. An overly straightened river will look like a canal, and the
+other way around --- too curvy would not reflect the natural shape. Conversely,
+if the river originally is highly wiggly, the number of bends should be
+reduced, but not removed altogether.
 
-Generalization problem for other objects can often be solved by other
+Simplification problem for other objects can often be solved by other
 non-geometric means:
 
 \begin{itemize}
-    \item Towns and cities can be filtered and generalized by number of
-        inhabitants.
+    \item Towns and cities can be filtered by number of inhabitants.
     \item Roads can be eliminated by the road length, number of lanes, or
         classification of the road (local, regional, international).
 \end{itemize}
 
-To sum up, natural line generalization problem can be viewed as a task of
+To sum up, natural line simplification problem can be viewed as a task of
 finding a delicate balance between two competing goals:
 
 \begin{itemize}
@@ -153,13 +152,71 @@ finding a delicate balance between two competing goals:
     \item Retain enough detail, so the original is still recognize-able.
 \end{itemize}
 
-Given the discussed complexities, a fine line between under-generalization
-(leaving object as-is) and over-generalization (making a straight line) needs
-to be found. Therein lies the complexity of generalization algorithms: all have
+Given the discussed complexities, a fine line between under-simplification
+(leaving object as-is) and over-simplification (making a straight line) needs
+to be found. Therein lies the complexity of simplification algorithms: all have
 different trade-offs.
 
-\section{Literature review and problematic}
-\label{sec:literature-review}
+\section{Literature Review and Problematic}
+\label{sec:literature-review-problematic}
+
+\subsection{Simplification, Cartographic Simplification and Generalization}
+
+It is important to note the distinction between simplification, line
+generalization and cartographic generalization.
+
+Simplification reduces object's detail in isolation, not taking object's
+natural properties or surrounding objects into account. For example, if a
+river is simplified, it may have an approximate shape of the original river,
+but lose some shapes that define it. For example:
+
+\begin{itemize}
+
+  \item Low-water rivers in slender slopes have many small bends next to each
+    other. A non-cartographic line simplification may remove all of them, thus
+    losing an important river's characteristic feature.
+
+  \item Insignificant river bend river over a long distance differs
+    significantly from a completely straight canal. Non-cartographic line
+    simplification may replace a long and small bend with a straight line,
+    making the river more similar to a canal than a river.
+
+\end{itemize}
+
+In other words, simplification simplifies the line ignoring its cartographic
+features. It is works well when the features are man-made (e.g., roads,
+administrative boundaries, buildings)
+
+
+Line simplification solves a 
+
+Simplification is most frequently used when the topology
+mismatches are invisible or not a concern (huge scale maps), or when creating,
+for example, river-only maps.
+
+Conversely, cartographic generalization takes into account the surrounding
+object's topology. That way, when a river is generalized, objects around it are
+generalized with it. Keeping the river as an example:
+
+\begin{itemize}
+
+  \item "Minor" bridges will be removed. Important bridges will be generalized
+    together with the river and remain on the river. Roads or railways that
+    cross the bridge will be generalized together, and will make sense (a
+    railway will be relatively straight when crossing the river).
+
+  \item Towns will either disappear (if they are too small for the given
+    scale), or retain in the correct river side.
+
+\end{itemize}
+
+"Cartographic Line Generalization" is in the middle: it accepts 
+
+In essence, cartographic generalization cannot be done in isolation. However,
+full automatic feature generalization is not yet a solved problem <TODO:
+Reference needed>. This paper examines {\WM}'s \titlecite{wang1998line}, which
+has "generalization" in its title, but is a simplification following the rules
+above.
 
 A number of cartographic line generalization algorithms have been researched.
 The "classical" ones are {\DP}\cite{douglas1973algorithms} and
@@ -172,13 +229,15 @@ which only theorize, but do not provide an implementation.
 
 \subsection{Available algorithms}
 
+\subsection{Simplification requirements}
+
 \subsubsection{{\DP}, {\VW} and Chaikin's}
 
 {\DP}\cite{douglas1973algorithms} and {\VW}\cite{visvalingam1993line} are
-"classical" line generalization computer graphics algorithms. They are
+"classical" line simplification computer graphics algorithms. They are
 relatively simple to implement, require few runtime resources. Both of them
-accept only a single parameter, based on desired scale of the map, which makes
-them straightforward to adjust for different scales.
+accept a single parameter, based on desired scale of the map, which makes them
+straightforward to adjust for different scales.
 
 Both algorithms are part of PostGIS, a free-software GIS suite:
 \begin{itemize}
@@ -194,12 +253,11 @@ line smoothing algorithm\cite{chaikin1974algorithm} via
 \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
 \texttt{ST\_ChaikinSmoothing}}.
 
-To use in generalization examples, we will use two rivers: Šalčia and Visinčia.
-Figure~\ref{fig:salvis-25} illustrates the original two rivers without any
-processing.
-
-These rivers were chosen, because they have both large and small bends, and
-thus convenient to analyze for both small and large scale generalization.
+To use in generalization examples, we will use two rivers: Šalčia and Visinčia
+(Visinčia flows into Šalčia). These rivers were chosen, because they have both
+large and small bends, and thus convenient to analyze for both small and large
+scale generalization. Figure~\ref{fig:salvis-25} illustrates the original two
+rivers without any simplification.
 
 \begin{figure}[h]
     \centering
@@ -224,11 +282,12 @@ thus convenient to analyze for both small and large scale generalization.
     \label{fig:salvis-50-250}
 \end{figure}
 
-Same rivers, unprocessed, but with higher density (scales 1:\numprint{50000}
-and 1:\numprint{250000}) are depicted in figure~\onpage{fig:salvis-50-250}.
-Some river features are so compact that a reasonably thin line depicting the
-river is touching itself, creating a thicker line. As a result, generalization
-for this river for a smaller scale is worthy.
+Same rivers, unprocessed, but in higher scales (1:\numprint{50000} and
+1:\numprint{250000}) are depicted in figure~\onpage{fig:salvis-50-250}. Some
+river features are so compact that a reasonably thin line depicting the river
+is touching itself, creating a thicker line. We can assume that some
+simplification for scale 1:\numprint{50000} and especially for
+1:\numprint{250000} are worthwhile.
 
 \begin{figure}[h]
     \centering
@@ -246,7 +305,7 @@ for this river for a smaller scale is worthy.
 \end{figure}
 
 Figure~\onpage{fig:salvis-generalized-50k} illustrates the same river bend, but
-generalized using {\DP} and {\VW} algorithms. The resulting lines are jagged,
+simplified using {\DP} and {\VW} algorithms. The resulting lines are jagged,
 thus the resulting line looks unlike a real river. To smoothen the jaggedness,
 traditionally, Chaikin's\cite{chaikin1974algorithm} is applied after
 generalization, illustrated in
@@ -284,7 +343,7 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
 
 The resulting generalized and smoothened example
 (figure~\onpage{fig:salvis-generalized-chaikin-50k}) yields a more
-aesthetically pleasant result, however, it obscures natural river features.
+aesthetically pleasing result, however, it obscures natural river features.
 Given the absence of rocks, the only natural features that influence the river
 direction are topographic:
 
@@ -340,7 +399,7 @@ have emerged. These modern replacements fall into roughly two categories:
         as {\WM}'s algorithm.
 
     \item Mathematical shape transformation which yields a more cartographic
-        result. E.g. \titlecite{jiang2003line},
+        result. E.g., \titlecite{jiang2003line},
         \titlecite{dyken2009simultaneous}, \titlecite{mustafa2006dynamic},
         \titlecite{nollenburg2008morphing}.
 
