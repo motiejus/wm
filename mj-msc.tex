@@ -246,7 +246,7 @@ and the implementation.
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|}
         \hline
-        Degrees & $30^\circ$      & $45^\circ$      & $90^\circ$      & $180^\circ$ & $360^\circ$ \\
+        Degrees & $30^\circ$          & $45^\circ$          & $90^\circ$          & $180^\circ$ & $360^\circ$ \\
         \hline
         Radians & $\nicefrac{\pi}{6}$ & $\nicefrac{\pi}{4}$ & $\nicefrac{\pi}{2}$ & $\pi$       & $2\pi$ \\
         \hline
@@ -316,7 +316,6 @@ provides more technical details. Here are some non-obvious characteristics that
 are necessary when writing code to detect the bends:
 
 \begin{itemize}
-
     \item End segments of each line should also belong to bends. That way, all
         segments belong to 1 or 2 bends.
 
@@ -394,7 +393,8 @@ vertices to the next bend instead of one.
 
 To find and fix the gentle bends' inflections requires to run the algorithm in
 both directions; if implemented as documented, the steps will fail to match
-some bends that should be mutated. This implementation does it in the following way:
+some bends that should be mutated. This implementation does it in the following
+way:
 
 \begin{enumerate}
     \item Run the algorithm from beginning to the end.

@@ -1,5 +1,5 @@
-\set ON_ERROR_STOP on
-SET plpgsql.extra_errors TO 'all';
+--\set ON_ERROR_STOP on
+--SET plpgsql.extra_errors TO 'all';
 
 -- detect_bends detects bends using the inflection angles. No corrections.
 drop function if exists detect_bends;
@@ -251,6 +251,7 @@ begin
 
       -- vertices, segments and stars are aligned, we are changing the bend
       mutated = true;
+      raise notice 'splitting bend %', j;
 
       -- To understand the block below, I suggest you take a pencil and paper,
       -- draw a self-crossing bend (fig6 from the article works well), and
@@ -273,6 +274,10 @@ begin
         -- remove last vertex of the previous bend, because the last
         -- segment is duplicated with the i'th bend.
         bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
+        raise notice 'multi: %', st_astext(multi);
+        raise notice '2: removing first point from %', st_astext(st_geometryn(multi, st_numgeometries(multi)));
+        mutated = false;
+        --return; % continue debugging here
         bends[i] = st_makeline(
           st_pointn(bends[i], 1),
           st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
@@ -458,6 +463,7 @@ begin
         );
       end if;
 
+
       bends = detect_bends(lines[i], dbgname, stagenum);
       bends = fix_gentle_inflections(bends, dbgname, stagenum);
 
@@ -472,6 +478,7 @@ begin
           unnest(bends)
         );
       end if;
+
 
       if mutated then
         lines[i] = st_linemerge(st_union(bends));
