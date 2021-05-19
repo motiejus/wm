@@ -266,6 +266,21 @@ begin
 end
 $$ language plpgsql;
 
+drop function if exists bend_attrs;
+create function bend_attrs(bends geometry[], dbg boolean default false) returns table(polygon geometry, area real, cmp real) as $$
+declare
+  i int4;
+begin
+  for i in 1..array_length(bends, 1) loop
+    select st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i]))) into polygon;
+    if dbg then
+      insert into debug_wm (section, name, way) values('bend_attrs', i, polygon);
+    end if;
+    return next;
+  end loop;
+end;
+$$ language plpgsql;
+
 -- ST_SimplifyWM simplifies a given geometry using Wang & Müller's
 -- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
 -- 1998.
@@ -289,10 +304,6 @@ begin
     raise 'Unknown geometry type %', l_type;
   end if;
 
-  if dbg then
-    drop table if exists debug_wm;
-    create table debug_wm(name text, way geometry);
-  end if;
 
   for i in 1..array_length(lines, 1) loop
 
@@ -300,7 +311,8 @@ begin
     dbg_stage = 1;
     while mutated loop
       if dbg then
-        insert into debug_wm (name, way) values(
+        insert into debug_wm (section, name, way) values(
+          'simplifywm',
           dbg_stage || 'afigures_' || i,
           lines[i]
         );
@@ -309,7 +321,8 @@ begin
       bends = detect_bends(lines[i]);
 
       if dbg then
-        insert into debug_wm(name, way) values(
+        insert into debug_wm(section, name, way) values(
+          'simplifywm',
           dbg_stage || 'bbends_' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -318,7 +331,8 @@ begin
       bends = fix_gentle_inflections(bends);
 
       if dbg then
-        insert into debug_wm(name, way) values(
+        insert into debug_wm(section, name, way) values(
+          'simplifywm',
           dbg_stage || 'cinflections' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -327,7 +341,8 @@ begin
       select * from self_crossing(bends) into bends, mutated;
 
       if dbg then
-        insert into debug_wm(name, way) values(
+        insert into debug_wm(section, name, way) values(
+          'simplifywm',
           dbg_stage || 'dcrossings' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );

@@ -10,6 +10,9 @@ begin
   end if;
 end $$ LANGUAGE plpgsql;
 
+drop table if exists debug_wm;
+create table debug_wm(section text, name text, way geometry);
+
 drop table if exists figures;
 create table figures (name text, way geometry);
 -- to "normalize" a new line when it's in `f`:
@@ -26,9 +29,7 @@ insert into figures (name, way) values ('fig6-combi',
   ))
 );
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
-
-drop table if exists debug;
-create table debug (i bigint, way geometry);
+insert into figures (name, way) values ('multi-island',ST_GeomFromText('MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'));
 
 -- DETECT BENDS
 drop table if exists bends, demo_bends1;
@@ -51,9 +52,12 @@ insert into selfcrossing select name, (self_crossing(ways)).* from inflections;
 create table demo_selfcrossing3 (name text, i bigint, way geometry);
 insert into demo_selfcrossing3 select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;
 
+-- BEND ATTRS
+drop table if exists bendattrs;
+create table bendattrs (way geometry, area real, cmp real);
+insert into bendattrs (way, area, cmp) select (bend_attrs(ways, true)).* from inflections;
 
 -- COMBINED
-insert into figures (name, way) values ('multi-island',ST_GeomFromText('MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'));
 drop table if exists demo_wm;
 create table demo_wm (name text, i bigint, way geometry);
 insert into demo_wm (name, way) select name, ST_SimplifyWM(way, true) from figures where name='multi-island';

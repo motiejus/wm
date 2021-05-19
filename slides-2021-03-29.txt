@@ -1,0 +1,57 @@
+---
+title: Wang & Müller linijų generalizacijos algoritmo implementacija ir analizė Lietuvos upėms
+author:
+- Motiejus Jakštys
+description: |
+    foo bar
+
+    It consists of two paragraphs
+date: 2021-03-29
+lang: lt-LT
+...
+
+# Problema
+
+- Dabartiniai atvirai prieinami algoritmai
+  - Visvalingam-Whyatt
+  - Douglas-Peucker
+
+- Problemos
+  - nepritaikyti kartografiniams objektams
+  - prarandama geografinė teisybė
+
+- Alternatyvos
+  - egzistuoja teorinės
+  - nėra implementacijos
+  - neaiškūs parametrai
+
+# Aktualumas
+
+- Aprašyti Wang & Müller praktiniais parametrais.
+- Iš GDR10 sukurti GDR50 ir GDR250 analogus
+- Palyginti su GDR50 ir GDR250
+
+# Naujumas
+
+- Tinkamo algoritmo tiesiog nėra; čia bus vienintelė, nauja implementacija.
+
+# Progresas
+
+Užduotis                                                       Laikas  Statusas
+-------------------------------------------------------------  ------  --------
+Įlinkių atpažinimas                                            8       Padaryta
+Silpnas pasislinkimas įlinkio gale                             8       Padaryta
+Įlinkio kirtimas kitu įlinkiu                                  8       Padaryta
+Patikrinimas su    Nemunu, Šalčia ir Visinčia                  16      Padaryta
+Matavimai: dydis ir forma                                      8       Progrese
+Matavimas: izoliuoti, panaūs                                   8       -
+Pašalinimo  operatorius                                        8       -
+Kombinavimo operatorius                                        8       -
+Padinimo     operatorius                                       8       -
+Pritaikymas visoms Lietuvos upėms                              8       -
+MSc: proza                                                     40      -
+MSc: apipavidalinimas                                          4       -
+
+# Demonstracija
+
+# Klausimai
