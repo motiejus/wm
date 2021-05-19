@@ -330,31 +330,30 @@ $$ language plpgsql;
 
 create function isolated_bends(INOUT bendattrs t_bend_attrs[], dbgname text default null) as $$
 declare
-  isolation_threshold constant real default 0.2; -- if neighbor's curvatures are within, it's isolated
+  isolation_threshold constant real default 0.33; -- if neighbor's curvatures are within, it's isolated
   this real;
+  skip_next bool;
   res t_bend_attrs;
-  prev_i int4;
   i int4;
 begin
-  i = 2;
-  while i < array_length(bendattrs, 1)-1 loop
-    this = bendattrs[i].curvature * isolation_threshold;
-    prev_i = i;
-    if bendattrs[i-1].curvature < this and bendattrs[i+1].curvature < this then
-      raise notice '% %`th bend is isolated', dbgname, i;
-      res = bendattrs[i];
-      res.isolated = true;
-      bendattrs[i] = res;
-      i = i + 2;
+  for i in 2..array_length(bendattrs, 1)-1 loop
+    res = bendattrs[i];
+    if skip_next then
+      skip_next = false;
     else
-      i = i + 1;
+      this = bendattrs[i].curvature * isolation_threshold;
+      if bendattrs[i-1].curvature < this and bendattrs[i+1].curvature < this then
+        res.isolated = true;
+        bendattrs[i] = res;
+        skip_next = true;
+      end if;
     end if;
 
     if dbgname is not null then
       insert into wm_debug (stage, name, nbend, way, props) values(
         'fisolated_bends',
         dbgname,
-        prev_i,
+        i,
         res.bend,
         jsonb_build_object(
           'isolated', res.isolated

@@ -1,6 +1,6 @@
 SOURCE ?= lithuania-latest.osm.pbf
-#WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Žeimena' OR name='Lakaja'
-WHERE ?= name='Žeimena' OR name='Lakaja'
+WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Žeimena' OR name='Lakaja'
+#WHERE ?= name='Žeimena' OR name='Lakaja'
 SLIDES = slides-2021-03-29.pdf
 
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt

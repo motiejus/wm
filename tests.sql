@@ -22,7 +22,7 @@ end
 $$ language plpgsql;
 
 -- to preview this somewhat conveniently in QGIS:
--- stage || '_' || name || ' gen:' || coalesce(gen, 'Ø') || ' nbend:' || lpad(nbend, 2, '0')
+-- stage || '_' || name || ' gen:' || coalesce(gen, 'Ø') || ' nbend:' || lpad(nbend, 4, '0')
 drop table if exists wm_debug;
 create table wm_debug(stage text, name text, gen bigint, nbend bigint, way geometry, props jsonb);
 
