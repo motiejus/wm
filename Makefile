@@ -5,9 +5,9 @@ WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas'
 test: tests.sql .faux.db
 	./db -f tests.sql
 
-.PHONY: integration-test
-integration-test: .faux_filter_rivers
-	./db -f integration-tests.sql
+.PHONY: test-integration
+test-integration: .faux_filter-rivers
+	./db -f tests-integration.sql
 
 .faux_filter-rivers: .faux_import-osm
 	./db -v where="$(WHERE)" -f aggregate-rivers.sql

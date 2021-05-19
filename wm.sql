@@ -273,26 +273,27 @@ drop function if exists ST_SimplifyWM;
 create function ST_SimplifyWM(geom geometry) returns geometry as $$
 declare
   line geometry;
-  geoms geometry[];
+  lines geometry[];
   bends geometry[];
   mutated boolean;
   l_type text;
 begin
   l_type = st_geometrytype(geom);
   if l_type = 'ST_LineString' then
-    geoms = array[geom];
+    lines = array[geom];
   elseif l_type = 'ST_MultiLineString' then
-    geoms = array((select a.geom from st_dump(geom) a order by path[1] desc));
+    lines = array((select a.geom from st_dump(geom) a order by path[1] desc));
   else
     raise 'Unknown geometry type %', l_type;
   end if;
 
-  foreach line in array geoms loop
+  foreach line in array lines loop
     mutated = true;
     while mutated loop
       bends = detect_bends(line);
       bends = fix_gentle_inflections(bends);
       select * from self_crossing(bends) into bends, mutated;
+      line = st_linemerge(st_union(bends));
     end loop;
   end loop;
 
@@ -309,29 +310,43 @@ create function ST_SimplifyWM_DEBUG(geom geometry) returns geometry as $$
 declare
   i integer;
   line geometry;
-  geoms geometry[];
+  lines geometry[];
   bends geometry[];
   mutated boolean;
   l_type text;
 begin
   l_type = st_geometrytype(geom);
   if l_type = 'ST_LineString' then
-    geoms = array[geom];
+    lines = array[geom];
   elseif l_type = 'ST_MultiLineString' then
-    geoms = array((select a.geom from st_dump(geom) a order by path[1] desc));
+    lines = array((select a.geom from st_dump(geom) a order by path[1] desc));
   else
     raise 'Unknown geometry type %', l_type;
   end if;
 
   i = 1;
-  foreach line in array geoms loop
-    mutated = true;
+  mutated = true;
+  foreach line in array lines loop
     while mutated loop
-      execute format('create table figures_%I (name text, i bigint, way geometry)', i);
-      execute format('insert into figures_%I select name, generate_subscripts(ways)
+      execute format('drop table if exists demo_%sfigures0', i);
+      execute format('create table demo_%sfigures0 (way geometry)', i);
+      -- if anyone has suggestions how to insert a variable to a table without such
+      -- hackery, I'll be glad to know
+      execute format('insert into demo_%sfigures0 select $1;', i) using (select unnest(array[line]));
       bends = detect_bends(line);
+      execute format('drop table if exists demo_%sbends1', i);
+      execute format('create table demo_%sbends1 (i bigint, way geometry)', i);
+      execute format('insert into demo_%sbends1 (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
       bends = fix_gentle_inflections(bends);
+      execute format('drop table if exists demo_%sinflections2', i);
+      execute format('create table demo_%sinflections2 (i bigint, way geometry)', i);
+      execute format('insert into demo_%sinflections2 (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
       select * from self_crossing(bends) into bends, mutated;
+      execute format('drop table if exists demo_%sselfcrossing3', i);
+      execute format('create table demo_%sselfcrossing3 (i bigint, way geometry)', i);
+      execute format('insert into demo_%sselfcrossing3 (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
+      line = st_linemerge(st_union(bends));
+      i = i + 1;
     end loop;
   end loop;
 

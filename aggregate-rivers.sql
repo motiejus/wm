@@ -24,7 +24,7 @@ begin
 end
 $$ language plpgsql;
 
-create temporary table aggregate_rivers_tmp (osm_id bigint, name text, way geometry);
+create temporary table aggregate_rivers_tmp (osm_id bigint, name text, way geometry) on commit drop;
 create index aggregate_rivers_tmp_id on aggregate_rivers_tmp(osm_id);
 create index aggregate_rivers_tmp_gix on aggregate_rivers_tmp using gist(way) include(name);
 
@@ -34,4 +34,3 @@ insert into aggregate_rivers_tmp
 
 drop table if exists agg_rivers;
 create table agg_rivers as (select * from aggregate_rivers());
-drop table aggregate_rivers_tmp;
