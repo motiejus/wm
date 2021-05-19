@@ -270,8 +270,9 @@ $$ language plpgsql;
 -- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
 -- 1998.
 drop function if exists ST_SimplifyWM;
-create function ST_SimplifyWM(geom geometry) returns geometry as $$
+create function ST_SimplifyWM(geom geometry, dbg boolean default false) returns geometry as $$
 declare
+  dbg_stage integer;
   line geometry;
   lines geometry[];
   bends geometry[];
@@ -287,68 +288,55 @@ begin
     raise 'Unknown geometry type %', l_type;
   end if;
 
+  if dbg then
+    drop table if exists debug_wm;
+    create table debug_wm(name text, i bigint, way geometry);
+  end if;
+
+  dbg_stage = 1;
   foreach line in array lines loop
     mutated = true;
     while mutated loop
-      bends = detect_bends(line);
-      bends = fix_gentle_inflections(bends);
-      select * from self_crossing(bends) into bends, mutated;
-      line = st_linemerge(st_union(bends));
-    end loop;
-  end loop;
+      if dbg then
+        insert into debug_wm (name, way) values(
+          dbg_stage || 'afigures',
+          line
+        );
+      end if;
 
-  if l_type = 'ST_LineString' then
-    return st_linemerge(st_union(bends));
-  elseif l_type = 'ST_MultiLineString' then
-    return st_union(bends);
-  end if;
-end
-$$ language plpgsql;
-
-drop function if exists ST_SimplifyWM_DEBUG;
-create function ST_SimplifyWM_DEBUG(geom geometry) returns geometry as $$
-declare
-  i integer;
-  line geometry;
-  lines geometry[];
-  bend geometry;
-  bends geometry[];
-  mutated boolean;
-  l_type text;
-begin
-  l_type = st_geometrytype(geom);
-  if l_type = 'ST_LineString' then
-    lines = array[geom];
-  elseif l_type = 'ST_MultiLineString' then
-    lines = array((select a.geom from st_dump(geom) a order by path[1] asc));
-  else
-    raise 'Unsupported geometry type %', l_type;
-  end if;
-
-
-  i = 1;
-  foreach line in array lines loop
-    mutated = true;
-    while mutated loop
-      execute format('create table if not exists integ_%safigures (way geometry)', i);
-      -- if anyone has suggestions how to insert a variable to a table without
-      -- such hackery, I'll be glad to know
-      raise notice 'inserting: %', st_astext(unnest(array[line]));
-      execute format('insert into integ_%safigures select $1;', i) using (select unnest(array[line]));
-      raise notice 's: %', array((select st_summary(way) from integ_1afigures));
       bends = detect_bends(line);
 
-      execute format('create table if not exists integ_%sbbends (i bigint, way geometry)', i);
-      execute format('insert into integ_%sbbends (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
+      if dbg then
+        insert into debug_wm(name, i, way) values(
+          dbg_stage || 'bbends',
+          generate_subscripts(bends, 1),
+          unnest(bends)
+        );
+      end if;
+
       bends = fix_gentle_inflections(bends);
-      execute format('create table if not exists integ_%scinflections (i bigint, way geometry)', i);
-      execute format('insert into integ_%scinflections (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
+
+      if dbg then
+        insert into debug_wm(name, i, way) values(
+          dbg_stage || 'cinflections',
+          generate_subscripts(bends, 1),
+          unnest(bends)
+        );
+      end if;
+
       select * from self_crossing(bends) into bends, mutated;
-      execute format('create table if not exists integ_%sdselfcrossing (i bigint, way geometry)', i);
-      execute format('insert into integ_%sdselfcrossing (i, way) select generate_subscripts($1, 1), unnest($1)', i) using bends;
+
+      if dbg then
+        insert into debug_wm(name, i, way) values(
+          dbg_stage || 'dcrossings',
+          generate_subscripts(bends, 1),
+          unnest(bends)
+        );
+      end if;
+
       line = st_linemerge(st_union(bends));
     end loop;
-    i = i + 1;
+    dbg_stage = dbg_stage + 1;
   end loop;
 
   if l_type = 'ST_LineString' then

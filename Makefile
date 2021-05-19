@@ -16,7 +16,7 @@ clean:
 
 .PHONY: clean-tables
 clean-tables:
-	for t in $$(./db -c '\dt' | awk '/demo|integ/{print $$3}'); do \
+	for t in $$(./db -c '\dt' | awk '/demo|debug|integ/{print $$3}'); do \
 		./db -c "drop table $$t"; \
 	done
 
