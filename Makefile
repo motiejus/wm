@@ -187,14 +187,14 @@ salvis-douglas-64-chaikin-50k_WIDTHDIV = 2
 salvis-visvalingam-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-visvalingam-64-chaikin'
 salvis-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 
-salvis-overlaid-douglas-64-chaikin-50k_1SELECT = wm_visuals where name='salvis'
-salvis-overlaid-douglas-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-douglas-64-chaikin'
+salvis-overlaid-douglas-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-douglas-64-chaikin'
+salvis-overlaid-douglas-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
 salvis-overlaid-douglas-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-douglas-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-douglas-64-chaikin-50k_QUADRANT = 1
 
-salvis-overlaid-visvalingam-64-chaikin-50k_1SELECT = wm_visuals where name='salvis'
-salvis-overlaid-visvalingam-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-visvalingam-64-chaikin'
+salvis-overlaid-visvalingam-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-visvalingam-64-chaikin'
+salvis-overlaid-visvalingam-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
 salvis-overlaid-visvalingam-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
@@ -205,8 +205,8 @@ salvis-wm-50k_WIDTHDIV = 2
 salvis-wm-250k_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-250k_WIDTHDIV = 10
 
-salvis-wm-overlaid-50k-zoom_1SELECT = wm_visuals where name='salvis'
-salvis-wm-overlaid-50k-zoom_2SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-overlaid-50k-zoom_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-overlaid-50k-zoom_2SELECT = wm_visuals where name='salvis'
 salvis-wm-overlaid-50k-zoom_1COLOR = orange
 
 salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis-wm-220'
