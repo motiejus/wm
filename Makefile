@@ -5,7 +5,9 @@ SLIDES = slides-2021-03-29.pdf
 
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
 ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
-FIGURES = fig8-definition-of-a-bend.pdf
+FIGURES = fig8-definition-of-a-bend.pdf \
+		  fig5-gentle-inflection-before.pdf \
+		  fig5-gentle-inflection-after.pdf
 
 .PHONY: test
 test: .faux_test
@@ -44,6 +46,17 @@ mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
 	done
 	mv .tmp-$@ $@
 
+mj-msc-gray.pdf: mj-msc.pdf
+	gs \
+		-sOutputFile=$@ \
+		-sDEVICE=pdfwrite \
+		-sColorConversionStrategy=Gray \
+		-dProcessColorModel=/DeviceGray \
+		-dCompatibilityLevel=1.4 \
+		-dNOPAUSE \
+		-dBATCH \
+		$<
+
 test-figures.pdf: layer2img.py .faux_test
 	python ./layer2img.py --group1-table=wm_figures --outfile=$@
 
@@ -54,6 +67,21 @@ fig8-definition-of-a-bend.pdf: layer2img.py Makefile .faux_test
 		--group1-where="name='fig8' AND stage='bbends-polygon' AND gen=1" \
 		--group2-table=wm_debug \
 		--group2-where="name='fig8' AND stage='bbends' AND gen=1" \
+		--outfile=$@
+
+fig5-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
+	python ./layer2img.py \
+		--group1-table=wm_debug \
+		--group1-where="name='fig5' AND stage='bbends' AND gen=1" \
+		--group2-cmap=1 \
+		--group2-table=wm_debug \
+		--group2-where="name='fig5' AND stage='bbends-polygon' AND gen=1" \
+		--outfile=$@
+
+fig5-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
+	python ./layer2img.py \
+		--group1-table=wm_debug \
+		--group1-where="name='fig5' AND stage='cinflections' AND gen=1" \
 		--outfile=$@
 
 .faux_test: tests.sql wm.sql .faux_db

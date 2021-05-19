@@ -225,7 +225,7 @@ test cases.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{fig8-definition-of-a-bend}
-    \caption{Originally figure 8: detected bends are highlighted}
+    \caption{Originally Figure 8: detected bends are highlighted}
     \label{fig:fig8-definition-of-a-bend}
 \end{figure}
 
@@ -240,6 +240,27 @@ illustration of the detected bends. However, the original {\WM} paper did not
 have such an explanation or illustration.
 
 \section{Gentle Inflection at End of a Bend}
+
+The example in this section was clear, but insufficient: it does not specify
+how many vertices should be included when calculating the end-of-bend
+inflection. We chose the iterative approach -- as long as the angle is "right"
+and the distance is decreasing, the algorithm should keep going; practically
+not having an upper bound on the number of iterations.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.45\textwidth}
+        \includegraphics[width=\textwidth]{fig5-gentle-inflection-before}
+        \caption{Before applying the inflection rule}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.45\textwidth}
+        \includegraphics[width=\textwidth]{fig5-gentle-inflection-after}
+        \caption{After applying the inflection rule}
+    \end{subfigure}
+    \caption{Originally Figure 5: gentle inflections at the ends of the bend}
+    \label{fig:fig5-gentle-inflection}
+\end{figure}
 
 \section{Self-line Crossing When Cutting a Bend}
 
