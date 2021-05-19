@@ -63,7 +63,6 @@ def read_layer(select, width, maybe_quadrant):
 
     conn = psycopg2.connect(PSQL_CREDS)
     sql = "SELECT {way} as way1 FROM {select}".format(way=way, select=select)
-    print(sql)
     return geopandas.read_postgis(sql, con=conn, geom_col='way1')
 
 

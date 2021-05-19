@@ -70,7 +70,7 @@ slides: $(SLIDES)
 
 mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
 	$(LISTINGS) $(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
-	latexmk -shell-escape -g -pdf $<
+	latexmk -shell-escape -pdf $<
 
 ############################
 # Report's test dependencies

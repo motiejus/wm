@@ -729,21 +729,23 @@ compactness index is calculated as follows:
 
   \item Construct a polygon by joining first and last vertices of the bend.
 
-  \item Calculate area of the polygon.
+  \item Calculate area of the polygon $A_p$.
 
-  \item Calculate perimeter $u$ of the polygon. The same value is the
-      circumference of the circle.
+  \item Calculate perimeter $P$ of the polygon. The same value is the
+      circumference of the circle: $C = P$.
 
-  \item Given circle's perimeter $u$, circle's area $A$ is:
+  \item Given circle's circumference $C$, circle's area $A_c$ is:
 
     \[
-      A = \frac{u^2}{4\pi}
+      A_{c} = \frac{C^2}{4\pi}
     \]
 
-  \item Compactness index is $\nicefrac{P}{A}$:
+  \item Compactness index is $\frac{A_p}{A_c}$:
 
     \[
-      cmp = \frac{P}{A} = \frac{P}{ \frac{u^2}{4\pi} } = \frac{4\pi P}{u^2}
+      cmp = \frac{A_p}{A_c} =
+        \frac{A_p}{ \frac{C^2}{4\pi} } =
+        \frac{4\pi A_p}{C^2}
     \]
 
 \end{enumerate}

@@ -411,8 +411,8 @@ create function isolated_bends(
   dbgname text default null
 ) as $$
 declare
-  -- if neighbor's curvatures are within, it's isolated
-  isolation_threshold constant real default 0.25;
+  -- if neighbor's curvatures are within this fraction of the current bend
+  isolation_threshold constant real default 0.5;
   this real;
   skip_next bool;
   res t_bend_attrs;
@@ -438,6 +438,11 @@ begin
         i,
         res.bend,
         jsonb_build_object(
+          'area', res.area,
+          'cmp', res.cmp,
+          'adjsize', res.adjsize,
+          'baselinelength', res.baselinelength,
+          'curvature', res.curvature,
           'isolated', res.isolated
         )
       );
