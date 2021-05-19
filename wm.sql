@@ -333,8 +333,9 @@ begin
       execute format('create table if not exists integ_%safigures (way geometry)', i);
       -- if anyone has suggestions how to insert a variable to a table without
       -- such hackery, I'll be glad to know
-      execute format('insert into integ_%safigures select $1;', i) using (select unnest(array[line]));
       raise notice 'inserting: %', st_astext(unnest(array[line]));
+      execute format('insert into integ_%safigures select $1;', i) using (select unnest(array[line]));
+      raise notice 's: %', array((select st_summary(way) from integ_1afigures));
       bends = detect_bends(line);
 
       execute format('create table if not exists integ_%sbbends (i bigint, way geometry)', i);
