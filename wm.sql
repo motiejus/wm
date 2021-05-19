@@ -220,49 +220,32 @@ begin
       p2 = st_pointn(bends[j], 1);
       p3 = st_pointn(bends[j], -1);
 
-      raise notice 'j: %, i: %', j, i;
-
       -- do end vertices of bend[i] cross bend[j]?
       a = st_pointn(bends[i], 1);
       b = st_pointn(bends[i], -1);
       multi = st_split(bends[j], st_makeline(a, b));
-      raise notice 'bends[i]: %', st_astext(bends[i]);
-      raise notice 'bends[j]: %', st_astext(bends[j]);
-      raise notice 'a: %, b: %', st_astext(a), st_astext(b);
-      raise notice 'multi: %', st_astext(multi);
       continue when st_numgeometries(multi) = 1;
       continue when st_numgeometries(multi) = 2 and
         (st_contains(bends[j], a) or st_contains(bends[j], b));
 
-      -- real self-crossing detected! Remove it.
-      -- if j < i:
-      --   bends[j] = multi[1][1...n-1]; that will have all the vertices of
-      --     bends[j], except the crossing and what comes after it.
-      --   bends[j] = append(bends[j], bends[i][-1])
-      --   remove bends from bends[j+1] to bends[i] inclusive.
-      --   j := i+1
-      -- elif j > i:
-      --   bends[i-1] = st_removepoint(bends[i-1], -1)
-      --   bends[i] = bends[i][1]
-      --   bends[i] = append(bends[i], multi[2][2..n])
-      --   remove bends from bends[i+1] to bends[j] inclusive.
-
-
-      raise notice '';
       prev_length = array_length(bends, 1);
       if j < i then
+        -- remove first vertex of the following bend, because the last
+        -- segment is always duplicated with the i-th bend.
+        bends[i+1] = st_removepoint(bends[i+1], 0);
         bends[j] = st_geometryn(multi, 1);
         bends[j] = st_setpoint(bends[j], st_npoints(bends[j])-1,
                                st_pointn(bends[i], st_npoints(bends[i])));
         bends = bends[1:j] || bends[i+1:prev_length];
         j = i;
       else
+        -- remove last vertex of the previous bend, because the last
+        -- segment is duplicated with the i'th bend.
         bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
         bends[i] = st_makeline(
           st_pointn(bends[i], 1),
           st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
         );
-        --insert into debug select x.path[1], x.geom from st_dump(bends[i-1]) x;
         bends = bends[1:i] || bends[j+1:prev_length];
       end if;
       j = j - prev_length + array_length(bends, 1);
