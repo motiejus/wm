@@ -1,6 +1,5 @@
 OSM ?= lithuania-latest.osm.pbf
-#WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Merkys'
-WHERE ?= name='Šalčia' OR name='Visinčia'
+WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Merkys'
 #WHERE ?= name like '%'
 SLIDES = slides-2021-03-29.pdf
 
@@ -88,7 +87,7 @@ $(1).pdf: layer2img.py Makefile $(2)
 	)
 endef
 $(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
-$(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_test-rivers)))
+$(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
 
 test-figures_1SELECT = wm_figures
 
@@ -160,17 +159,21 @@ salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 
 
-.faux_test-rivers: test-rivers.sql wm.sql Makefile .faux_db
-	bash db -v scaledwidth=$(SCALEDWIDTH) -f $<
+.faux_db: db init.sql rivers.sql
+	bash db start
+	bash db -f init.sql -f rivers.sql
 	touch $@
 
 .faux_test: test.sql wm.sql .faux_db
 	bash db -f $<
 	touch $@
 
-.faux_db: db init.sql
-	bash db start
-	bash db -f init.sql -f rivers.sql
+.faux_visuals: visuals.sql wm.sql Makefile .faux_db
+	bash db -v scaledwidth=$(SCALEDWIDTH) -f $<
+	touch $@
+
+.faux_test-rivers: test-rivers.sql wm.sql Makefile .faux_db
+	bash db -f $<
 	touch $@
 
 ################################
@@ -219,8 +222,8 @@ mj-msc-gray.pdf: mj-msc.pdf
 .PHONY: clean
 clean: ## Clean the current working directory
 	-bash db stop
-	-rm -r .faux_test .faux_aggregate-rivers .faux_test-rivers .faux_db \
-		version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
+	-rm -r .faux_test .faux_aggregate-rivers .faux_test-rivers .faux_visuals \
+		.faux_db version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
 		_minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
 		$(addsuffix .pdf,$(FIGURES)) \
