@@ -61,31 +61,7 @@ insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Tr
 -- is used for geometric assertions later in the file.
 drop table if exists wm_demo;
 create table wm_demo (name text, i bigint, way geometry);
-
-do $$
-  declare
-    v_state   TEXT;
-    v_msg     TEXT;
-    v_detail  TEXT;
-    v_hint    TEXT;
-    v_context TEXT;
-begin
 insert into wm_demo (name, way) select name, ST_SimplifyWM(way, name) from wm_figures;
-exception when others then
-    get stacked diagnostics
-        v_state   = returned_sqlstate,
-        v_msg     = message_text,
-        v_detail  = pg_exception_detail,
-        v_hint    = pg_exception_hint,
-        v_context = pg_exception_context;
-
-    raise notice E'Got exception:
-        state  : %
-        message: %
-        detail : %
-        hint   : %
-        context: %', v_state, v_msg, v_detail, v_hint, v_context;
-end $$ language plpgsql;
 
 -- wm_visuals holds visual aids for the paper.
 drop table if exists wm_visuals;
