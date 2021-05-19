@@ -166,30 +166,46 @@ Given the discussed complexities, a fine line between under-simplification
 to be found. Therein lies the complexity of simplification algorithms: all have
 different trade-offs.
 
-% TODO:
-% [Magistrinio darbo tikslas - Wang-Müller algoritmo pagrindu realizuoti upių kartografinio generalizavimo sprendimą taikant atviro kodo programinę įrangą.]
-% 
-% [Magistro darbo uždaviniai:
-% * Atlikti egzistuojančių linijų supaprastinimo algoritmų vertinimą
-% * Identifikuoti, su kokiomis pagrindinėmis kartografinėmis problemomis susiduriama generalizuojant upes taikant klasikinius geometrijos supaprastinimo agloritmus
-% * Apibrėžti Wang-Müller algoritmo techninės realizacijos metodiką
-% * Realizuoti Wang-Müller algoritmą teoriškai ir techniškai detalizuojant jį sudarančias geometrijos keitimo operacijas
-% * Sukurtą algoritmo prototipą pritaikyti skirtingiems duomenų rinkiniams ir gautus rezultatus palyginti su valstybiniais duomenų rinkiniais]
-% 
-% [Mokslinis šio darbo aktualumas - detaliai išnagrinėti, praktiškai įgyvendinti ir aprašyti Wang-Müller algoritmu aprašomi linijų supaprastinimo procesai (žingsniai), kas leidžia išplėsti kartografinės teorijos žinias apie gamtinių objektų ribų generalizavimą atsižvelgiant į jų raiškumą. Wang-Müller straipsnyje, pristatančiame algoritmą, žingsniai sprendiniai nedetalizuojami taip, kad juos būtų galima praktiškai įgyvendinti konkretiems duomenis. Šiame darbe būtent ši dalis ir konkretizuojama. Praktinis šio darbo aktualumas - išplėstos galimybės pasinaudoti atviro kodo programine įranga atlikti kartografinės generalizacijos uždavinius. Sukurtas specializuotas kartografijai linijų supaprastinimo algoritmas gali būti pritaikytas kartografų realizuojant automatinius duomenų generalizavimo sprendimus.  
-% 
+The purpose of the thesis is to implement a river generalization algorithm
+on the basis of {\WM} algorithm using open-source software.
+
+Tasks of the thesis:
+
+\begin{itemize}
+    \item Evaluate existing line simplification algorithms.
+    \item Identify main river generalization problems using classical line
+        simplification algorithms.
+    \item Define methods of the {\WM} technical implementation.
+    \item Realize {\WM} algorithm technically, explaining the geometric
+        transformations in detail.
+    \item Apply the created algorithm for different datasets and compare
+        the results with national data sets.
+\end{itemize}
+
+Scientific relevance of this work --- the simplification processes (steps)
+described by the {\WM} algorithm are analyzed in detail, practically
+implemented and the implementation --- described. That expands the knowledge of
+cartographic theory about the generalization of natural objects' boundaries
+after their natural defining properties.
+
+In the original {\WM} article introducing the algorithm, the steps are not
+detailed in a way that can be put into practice for specific data; steps are
+specified in this work. Practically this work makes it possible to use open
+source software to perform cartographic line generalization. The developed
+specialized cartographic line simplification algorithm can be applied by
+cartographers to implement automatic data generalization solutions. Given the
+open-source nature of this work, the algorithm implementation can be modified
+freely.
+
 \section{Literature Review and Problematic}
 \label{sec:literature-review-problematic}
 
 \subsection{Available algorithms}
-TODO: numeracija 2.1(?) gal senas
 
 This section reviews the classical line simplification algorithms, which,
 besides being around for a long time, offer easily accessible implementations,
 as well as more modern ones, which only theorize, but do not provide an
 implementation.
-
-
 
 \subsubsection{{\DP}, {\VW} and Chaikin's}
 \label{sec:dp-vw-chaikin}
@@ -379,33 +395,23 @@ set, much less for use as a basis for creating new maps. To author's knowledge,
 purchase of the commercial product suite, without a way to license the
 standalone algorithm.
 
-% TODO BEGIN
-% Ši dalis turi keliauti į problematiką, nes su pačiais algoritmais mažai kuo susiję
-
-Lack of robust openly available generalization algorithm implementations poses
-a problem for map creation with free software: there is not a similar
-high-quality simplification algorithm to create down-scaled maps, so any
-cartographic work, which uses line generalization as part of its processing,
-will be of sub-par quality. We believe that availability of high-quality
-open-source tools is an important foundation for future cartographic
-experimentation and development, thus it it benefits the cartographic society
-as a whole.
-
-{\WM}'s commercial availability signals something about the value of the
-algorithm: at least the authors of the commercial software suite deemed it
-worthwhile to include it. However, not everyone has access to the commercial
-software suite, access to funds to buy the commercial suite, or access to the
-operating system required to run the commercial suite. PostGIS, in contrast, is
-free on itself, and runs on free platforms. Therefore, algorithm
-implementations that run on PostGIS or other free platforms are useful to a
-wider cartographic society than proprietary ones.
-
-% TODO END
-
 \subsection{Problematic with generalization of rivers}
-% TODO subscection: andriub: Į šį skyrių turi būti perkeltas tekstas iš From Simplification to Generalization ir mano pakomentuota dalis iš Modern approaches skyriaus.
+% DONE subscection: andriub: Į šį skyrių turi būti perkeltas tekstas iš From Simplification to Generalization ir mano pakomentuota dalis iš Modern approaches skyriaus.
 
-% TODO: [Skyriaus pradžioje pateikiama bendra informacija: Upių generalizavimo problemą galima skaidyti į dvi dalis: egzistuojantys algoritmai skirti geometrijos supaprastinimui, tačiau neturi kartografinės logikos; egzistuojantys sprendimai nėra laisvai prieinami. Atitinkamai tuomet seka tekstas iš From Simplification to Generalization skyriaus, o toliau - dalis iš Modern approaches skyriaus. 
+% DONE: [Skyriaus pradžioje pateikiama bendra informacija: Upių generalizavimo problemą galima skaidyti į dvi dalis: egzistuojantys algoritmai skirti geometrijos supaprastinimui, tačiau neturi kartografinės logikos; egzistuojantys sprendimai nėra laisvai prieinami. Atitinkamai tuomet seka tekstas iš From Simplification to Generalization skyriaus, o toliau - dalis iš Modern approaches skyriaus. 
+
+This section introduces the reader to simplification and generalization, and
+discusses two main problems with current-day cartographic line generalization:
+
+\begin{itemize}
+    \item Currently available line simplification algorithms were created
+        to simplify geometries, but have no cartographical knowledge.
+
+    \item Existing cartographic line generalization algorithms are not freely
+        accessible.
+\end{itemize}
+
+\subsubsection{Simplification versus Generalization}
 
 It is important to note the distinction between simplification, line
 generalization and cartographic generalization.
@@ -448,6 +454,28 @@ line generalization deals with a single feature class, but takes into account
 its geographic properties. This paper examines {\WM}'s
 \titlecite{wang1998line}, a cartographic line generalization algorithm.
 
+\subsubsection{Availablility of generalization algorithms}
+
+Lack of robust openly available generalization algorithm implementations poses
+a problem for map creation with free software: there is not a similar
+high-quality simplification algorithm to create down-scaled maps, so any
+cartographic work, which uses line generalization as part of its processing,
+will be of sub-par quality. We believe that availability of high-quality
+open-source tools is an important foundation for future cartographic
+experimentation and development, thus it it benefits the cartographic society
+as a whole.
+
+{\WM}'s commercial availability signals something about the value of the
+algorithm: at least the authors of the commercial software suite deemed it
+worthwhile to include it. However, not everyone has access to the commercial
+software suite, access to funds to buy the commercial suite, or access to the
+operating system required to run the commercial suite. PostGIS, in contrast, is
+free on itself, and runs on free platforms. Therefore, algorithm
+implementations that run on PostGIS or other free platforms are useful to a
+wider cartographic society than proprietary ones.
+
+\subsubsection{Unfitness of line simplification algorithms}
+
 Section~\ref{sec:dp-vw-chaikin} illustrates the current gaps with Line
 Simplification algorithms for real rivers. To sum up, we highlight the
 following cartographic problems from our examples:
@@ -463,8 +491,7 @@ following cartographic problems from our examples:
 
 \end{description}
 
-We are
-limiting the problem to cartographic line generalization. That is, full
+We are limiting the problem to cartographic line generalization. That is, full
 cartographic generalization, which takes topology and other feature classes
 into account, is out of scope.
 
