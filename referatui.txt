@@ -19,11 +19,11 @@ naudojamas kariškių.
 Turinys:
 - Pavadinimas: Wang & Müller linijų generalizacijos algoritmo implementacija ir
 analizė Lietuvos upėms.
-- Įvadinė (?)
+- Įvadas
 - Problema
   - esamų algoritmų apžvalga.
   - GDR50 ir GDR250 sudarymo principai.
-- Naujumas (?)
+- Naujumas: susiję su problema.
 - Tikslas/uždaviniai:
     1. Detalizuoti Wang & Müller generalizacijos teorinę realizaciją postgis
     priemonėmis.
@@ -36,7 +36,7 @@ analizė Lietuvos upėms.
       - galbūt duoti kartografijos ekspertams.
 - Pritaikomumas: GDR50 ir GDR250 yra tiesiogiai pritaikomi žemėlapiams. Jei
   algoritmas yra geresnis, žemėlapių geografinis pagrindas gali būti geresnis.
-- Literatūros apžvalga (?)
+- Literatūros apžvalga.
 - Metodika:
   - implementacijos paaiškinimas: tai, kas neparašyta straipsnyje, bet su kuo
     neišvengiamai susiduriama praktiškai rašant kodą.
