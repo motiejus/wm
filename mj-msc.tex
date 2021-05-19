@@ -326,9 +326,9 @@ generalization, illustrated in Figure~\ref{fig:salvis-generalized-chaikin-1x50k}
     \label{fig:salvis-overlaid-generalized-chaikin-1x50k}
 \end{figure}
 
-\begin{figure}[b!]
+\begin{figure}[b]
     \centering
-    \includegraphics[width=.9\textwidth]{amalgamate1}
+    \includegraphics[width=\textwidth]{amalgamate1}
     \caption{Narrow bends amalgamating into thick unintelligible blobs.}
     \label{fig:pixel-amalgamation}
 \end{figure}
@@ -368,6 +368,8 @@ For the reasons discussed in this section, the "classical" {\DP} and {\VW} are
 not well-suited for natural river generalization, and a more robust line
 generalization algorithm is worthwhile to look for.
 
+\clearpage
+
 \subsubsection{Modern Approaches}
 
 Due to their simplicity and ubiquity, {\DP} and {\VW} have been established as
@@ -398,7 +400,7 @@ standalone algorithm.
 into a computer algorithm. It has a few main properties which make it
 especially suitable for generalization of natural linear features:
 
-\begin{figure}[b]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=.8\textwidth]{wang125}
     \caption{Figure 12.5 in \cite{wang1998line}: example of cartographic line
@@ -539,13 +541,13 @@ to follow the algorithm implementation more closely: each section is expanded
 with additional commentary, and illustrations added for non-obvious steps. Corner
 cases are discussed, too.
 
-Assume Euclidean geometry throughout this document, unless noted otherwise.
-
 \subsection{Main Geometry Elements Used by Algorithm}
 \label{sec:vocab}
 
 This section defines and explains the geometry elements that are used
-throughout this paper and the implementation.
+throughout this paper and the implementation. Assume Euclidean geometry
+throughout this document, unless noted otherwise.
+
 
 \begin{description}
 
@@ -600,6 +602,8 @@ throughout this paper and the implementation.
         science by Donald Knuth\cite{knuth1976big} in the 1970s.
 
 \end{description}
+
+\clearpage
 
 \subsection{Algorithm Implementation Process}
 \label{sec:algorithm-implementation-process}
@@ -827,23 +831,6 @@ This implementation includes debugging facilities in a form of a table
 \textsc{wm\_debug}. The table's schema is written in
 listing~\ref{lst:wm-debug-sql}.
 
-\begin{listing}[h]
-    \begin{minted}[fontsize=\small]{sql}
-drop table if exists wm_debug;
-create table wm_debug(
-  id serial,
-  stage text not null,
-  name text not null,
-  gen bigint not null,
-  nbend bigint,
-  way geometry,
-  props jsonb
-);
-    \end{minted}
-    \caption{\textsc{wm\_debug} table definition}
-    \label{lst:wm-debug-sql}
-\end{listing}
-
 When debug mode is active, implementation steps will store their results, which
 can be useful to manually inspect the results of intermediate actions. Besides
 manual inspection, most of the figure illustrations in this article are
@@ -912,6 +899,24 @@ purpose of each column in \textsc{wm\_debug} is described below:
 When debug mode is turned off (that is, \textsc{dbgname} is left unspecified),
 \textsc{wm\_debug} is empty and the algorithm runs slightly faster.
 
+\begin{listing}[h!]
+    \begin{minted}[fontsize=\small]{sql}
+drop table if exists wm_debug;
+create table wm_debug(
+  id serial,
+  stage text not null,
+  name text not null,
+  gen bigint not null,
+  nbend bigint,
+  way geometry,
+  props jsonb
+);
+    \end{minted}
+    \caption{\textsc{wm\_debug} table definition}
+    \label{lst:wm-debug-sql}
+\end{listing}
+
+
 \subsection{Merging Pieces of a River into One}
 
 Example river geometries were sourced from OpenStreetMap\cite{openstreetmap}
@@ -964,13 +969,7 @@ scale, will not be simplified.
   \label{fig:half-circle}
 \end{figure}
 
-{\WM} algorithm does not have a notion of scale, but it does have a notion of
-distance: it accepts a single parameter $D$, the half-circle's diameter.
-Assuming measurement units in projected coordinate system are meters (for
-example, \titlecite{epsg3857}), some popular scales are highlighted in
-table~\ref{table:scale-halfcirlce-diameter}.
-
-\begin{table}[ht]
+\begin{table}[h!]
     \centering
     \begin{tabular}{ c  D{.}{.}{1} }
         Scale               & \multicolumn{1}{c}{$D(m)$}  \\ \hline
@@ -984,6 +983,11 @@ table~\ref{table:scale-halfcirlce-diameter}.
     \label{table:scale-halfcirlce-diameter}
 \end{table}
 
+{\WM} algorithm does not have a notion of scale, but it does have a notion of
+distance: it accepts a single parameter $D$, the half-circle's diameter.
+Assuming measurement units in projected coordinate system are meters (for
+example, \titlecite{epsg3857}), some popular scales are highlighted in
+table~\ref{table:scale-halfcirlce-diameter}.
 
 \subsection{Definition of a Bend}
 \label{sec:definition-of-a-bend}
@@ -997,22 +1001,7 @@ The original article describes a bend as follows:
     two end vertices being in opposite signs.
 \end{displaycquote}
 
-While it gives a good intuitive understanding of what the bend is, this section
-provides more technical details. Here are some non-obvious characteristics that
-are necessary when writing code to detect the bends:
-
-\begin{itemize}
-    \item End segments of each line should also belong to bends. That way, all
-        segments belong to 1 or 2 bends.
-
-    \item First and last segments of each bend (except for the two end-line
-        segments) are also the first vertex of the next bend.
-\end{itemize}
-
-Figure~\ref{fig:fig8-definition-of-a-bend} illustrates the article's figure 8,
-but with bends colored as polygons: each color is a distinctive bend.
-
-\begin{figure}[ht]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{fig8-definition-of-a-bend}
 
@@ -1022,9 +1011,18 @@ but with bends colored as polygons: each color is a distinctive bend.
     \label{fig:fig8-definition-of-a-bend}
 \end{figure}
 
-\subsection{Gentle Inflection at the End of a Bend}
+Here are some non-obvious characteristics that are necessary when writing code
+to detect the bends:
 
-The gist of the section is in the original article:
+\begin{itemize}
+    \item End segments of each line should also belong to bends. That way, all
+        segments belong to 1 or 2 bends.
+
+    \item First and last segments of each bend (except for the two end-line
+        segments) are also the first vertex of the next bend.
+\end{itemize}
+
+\subsection{Gentle Inflection at the End of a Bend}
 
 \begin{displaycquote}{wang1998line}
     But if the inflection that marks the end of a bend is quite small, people
@@ -1050,21 +1048,7 @@ when a single vertex is moved outwards the end of the bend.
     \label{fig:fig5-gentle-inflection}
 \end{figure}
 
-% TODO: figure should not split the text.
-
-The illustration for this section was clear but insufficient: it does not
-specify how many vertices should be included when calculating the end-of-bend
-inflection. The iterative approach was chosen: as long as the angle is
-"right" and the baseline is becoming shorter, the algorithm should keep
-re-assigning vertices to different bends. There is no upper bound
-on the number of iterations.
-
-To prove that the algorithm implementation is correct for multiple vertices,
-additional example was created and illustrated in
-Figure~\ref{fig:inflection-1-gentle-inflection}: the rule re-assigns two
-vertices to the next bend.
-
-\begin{figure}[ht]
+\begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-before}
@@ -1078,6 +1062,18 @@ vertices to the next bend.
     \caption{Gentle inflection at the end of the bend with multiple vertices.}
     \label{fig:inflection-1-gentle-inflection}
 \end{figure}
+
+The illustration for this section was clear but insufficient: it does not
+specify how many vertices should be included when calculating the end-of-bend
+inflection. The iterative approach was chosen: as long as the angle is
+"right" and the baseline is becoming shorter, the algorithm should keep
+re-assigning vertices to different bends. There is no upper bound
+on the number of iterations.
+
+To prove that the algorithm implementation is correct for multiple vertices,
+additional example was created and illustrated in
+Figure~\ref{fig:inflection-1-gentle-inflection}: the rule re-assigns two
+vertices to the next bend.
 
 Note that to find and fix the gentle bends' inflections, the algorithm should
 run twice, both ways. Otherwise, if it is executed only one way, the steps will
@@ -1254,6 +1250,7 @@ $q$:
 
 The smaller the distance $d$, the more similar the bends are.
 
+\clearpage
 \subsection{Elimination Operator}
 
 Figure~\ref{fig:elimination-through-iterations} illustrates steps of figure 8
@@ -1262,15 +1259,15 @@ beyond repeating the elimination steps in an illustrated example.
 
 \begin{figure}[ht]
     \centering
-    \begin{subfigure}[b]{.7\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \includegraphics[width=\textwidth]{fig8-elimination-gen1}
         \caption{Original}
     \end{subfigure}
-    \begin{subfigure}[b]{.7\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \includegraphics[width=\textwidth]{fig8-elimination-gen2}
         \caption{Iteration 1}
     \end{subfigure}
-    \begin{subfigure}[b]{.7\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \includegraphics[width=\textwidth]{fig8-elimination-gen3}
         \caption{Iteration 2 (result)}
     \end{subfigure}
@@ -1345,19 +1342,11 @@ implementation. A single exaggeration increment is done as follows:
     \label{fig:isolated-1-exaggerated}
 \end{figure}
 
-The technical implementation of the algorithm contains two implementations
-of exaggeration operator:
-
-\begin{description}
-
-    \item[\normalfont\textsc{wm\_exaggerate\_bend}] is the original one. It
-        uses simple linear interpolation. It is fast, but simple. It tends to
-        leave jagged bends.
-
-    \item[\normalfont\textsc{wm\_exaggerate\_bend2}] is a more computationally
-        expensive function, which leaves better-looking exaggerated bends.
-
-\end{description}
+The technical implementation of the algorithm contains two implementations of
+exaggeration operator: \textsc{wm\_exaggerate\_bend} is the original one. It
+uses simple linear interpolation. It is fast, but simple. It tends to leave
+jagged bends. \textsc{wm\_exaggerate\_bend2} is a more computationally
+expensive function, which leaves better-looking exaggerated bends.
 
 Both functions are interchangeable and can be found in listing~\ref{lst:wm.sql}.
 Figure~\ref{fig:isolated-1-exaggerated} illustrates an exaggerated bend using
@@ -1491,8 +1480,6 @@ future research and improvement:
 \end{itemize}
 
 \subsection{Comparison with National Spatial Datasets}
-
-\subsubsection{Background}
 
 There are a few datasets used in this comparison: GRPK10, GRPK50 and
 GRPK250. They are vector datasets which include rivers. They can be
