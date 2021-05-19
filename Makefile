@@ -204,6 +204,13 @@ clean-tables: ## Remove tables created during unit or rivers tests
 help: ## Print this help message
 	@awk -F':.*?## ' '/^[a-z0-9.-]*: *.*## */{printf "%-18s %s\n",$$1,$$2}' $(MAKEFILE_LIST)
 
+.PHONY: wc
+wc: mj-msc.pdf ## Character and page count
+	@pdftotext $< - | \
+		awk '/\yReferences\y/{exit}; {print}' | \
+		tr -d '[:space:]' | wc -c | \
+		awk '{printf("Chars: %d, pages: %.1f\n", $$1, $$1/1500)}'
+
 $(OSM):
 	wget http://download.geofabrik.de/europe/$@
 
