@@ -10,8 +10,21 @@ from matplotlib import rc
 CMAP = 'tab20c'
 
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
-BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
+
+COLORS = {
+    'black': '#000000',
+    'green': '#1b9e77',
+    'orange': '#d95f02',
+    'purple': '#7570b3',
+}
+
+
+def color(string):
+    if not string:
+        string = 'black'
+    return COLORS[string]
+
 
 # see `NOTICE` in the LaTeX document; this is the width of the main text block.
 TEXTWIDTH_CM = 12.12364
@@ -22,23 +35,25 @@ def inch(cm):
 
 
 def parse_args():
+    kwcolor = {'type': color, 'default': 'black'}
+
     parser = argparse.ArgumentParser(
             description='Convert a geometry to an image')
     parser.add_argument('--group1-select')
     parser.add_argument('--group1-linestyle')
-    parser.add_argument('--group1-color', default=BLACK)
+    parser.add_argument('--group1-color', **kwcolor)
 
     parser.add_argument('--group2-select')
     parser.add_argument('--group2-linestyle')
-    parser.add_argument('--group2-color', default=ORANGE)
+    parser.add_argument('--group2-color', **kwcolor)
 
     parser.add_argument('--group3-select')
     parser.add_argument('--group3-linestyle')
-    parser.add_argument('--group3-color', default=GREEN)
+    parser.add_argument('--group3-color', **kwcolor)
 
     parser.add_argument('--widthdiv',
                         default=1, type=float, help='Width divisor')
-    parser.add_argument('--quadrant', type=int, choices=(1,2,3,4))
+    parser.add_argument('--quadrant', type=int, choices=(1, 2, 3, 4))
 
     parser.add_argument('-o', '--outfile', metavar='<file>')
     return parser.parse_args()
