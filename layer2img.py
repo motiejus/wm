@@ -8,9 +8,8 @@ from matplotlib import rc
 
 INCH = 25.4  # mm
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
-GREEN, ORANGE, PURPLE = '#1b9e77', '#d95f02', '#7570b3'
+BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
-
 
 def plt_size(string):
     if not string:
@@ -60,7 +59,7 @@ def main():
     group2 = read_layer(args.group2_table, args.group2_where)
     group3 = read_layer(args.group3_table, args.group3_where)
     c1 = {'cmap': 'coolwarm'} if args.group1_cmap else {'color': ORANGE}
-    c2 = {'cmap': 'coolwarm'} if args.group2_cmap else {'color': PURPLE}
+    c2 = {'cmap': 'coolwarm'} if args.group2_cmap else {'color': BLACK}
     c3 = {'cmap': 'coolwarm'} if args.group3_cmap else {'color': GREEN}
 
     rc('text', usetex=True)

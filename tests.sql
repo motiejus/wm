@@ -28,8 +28,10 @@ create table wm_debug(stage text, name text, gen bigint, nbend bigint, way geome
 
 drop table if exists wm_figures;
 create table wm_figures (name text, way geometry);
+-- add fig8.gpkg to postgis:
+--   ogr2ogr -update -f PostgreSQL PG:"host=127.0.0.1 user=osm password=osm dbname=osm" fig8.gpkg
 -- to "normalize" a new line when it's in `f`:
---   select st_astext(st_snaptogrid(st_transscale(geometry, 80, 130, .3, .3), 1)) from f;
+--   select st_astext(st_snaptogrid(st_transscale(geometry, -19.5, .016, 4000, 4000), 1)) from f;
 insert into wm_figures (name, way) values ('fig3',ST_GeomFromText('LINESTRING(0 0,12 0,13 4,20 2,20 0,32 0,33 10,38 16,43 15,44 10,44 0,60 0)'));
 insert into wm_figures (name, way) values ('fig3-1',ST_GeomFromText('LINESTRING(0 0,12 0,13 4,20 2,20 0,32 0,33 10,38 16,43 15,44 10,44 0)'));
 insert into wm_figures (name, way) values ('fig5',ST_GeomFromText('LINESTRING(0 39,19 52,27 77,26 104,41 115,49 115,65 103,65 75,53 45,63 15,91 0)'));

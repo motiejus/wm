@@ -46,13 +46,13 @@ mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
 test-figures.pdf: layer2img.py .faux_test
 	python ./layer2img.py --group1-table=wm_figures --outfile=$@
 
-fig-definition-of-a-bend.pdf: layer2img.py Makefile .faux_test
+fig8-definition-of-a-bend.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--group1-table=wm_debug \
 		--group1-cmap=1 \
-		--group1-where="name='fig6' AND stage='bbends-polygon' AND gen=1" \
+		--group1-table=wm_debug \
+		--group1-where="name='fig8' AND stage='bbends-polygon' AND gen=1" \
 		--group2-table=wm_debug \
-		--group2-where="name='fig6' AND stage='bbends' AND gen=1" \
+		--group2-where="name='fig8' AND stage='bbends' AND gen=1" \
 		--outfile=$@
 
 .faux_test: tests.sql wm.sql .faux_db
