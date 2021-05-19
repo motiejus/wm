@@ -36,7 +36,7 @@ insert into wm_figures (name, way) values
   ('inflection-1',  'LINESTRING(110 24,114 20,133 20,145 15,145 0,136 8,123 10,114 10,111 2)'::geometry),
   ('multi-island',  'MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'::geometry),
   ('selfcrossing-1','LINESTRING(-27 180,-20 166,-21 142,-18 136,55 136,55 136,71 145,44 165,37 146,22 145,14 164,11 164,3 146,-12 146,-13 176,-18 184)'::geometry),
-  ('isolated-1',    'LINESTRING(-56 103,-54 102,-30 103,-31 105,-31 108,-27 108,-26 103,0 103,2 104)'::geometry),
+  ('isolated-1',    'LINESTRING(-50 103,-48 102,-30 103,-31 105,-31 107,-27 107,-26 103,-6 103,-4 104)'::geometry),
   ('isolated-2',    'LINESTRING(250 100,246 104,234 105,230 106,225 101,224 93,217 78,206 69)'::geometry);
 
 insert into wm_figures (name, way) values ('fig6-rev',ST_Reverse(

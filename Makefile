@@ -28,7 +28,9 @@ FIGURES = \
 		  fig6-selfcrossing-before \
 		  fig6-selfcrossing-after \
 		  selfcrossing-1-before \
-		  selfcrossing-1-after
+		  selfcrossing-1-after \
+		  isolated-1-before \
+		  isolated-1-after
 
 RIVERS = \
 		 salvis-25k \
@@ -156,6 +158,9 @@ selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='d
 selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-after_2LINESTYLE = invisible
 
+isolated-1-before_WIDTHDIV = 2
+isolated-1-before_1SELECT = wm_debug where name='isolated-1' AND stage='bbends' AND gen=1
+isolated-1-before_2SELECT = wm_debug where name='isolated-1' AND stage='gexaggeration' AND gen=1
 
 salvis-25k_1SELECT = wm_visuals where name='salvis'
 salvis-25k_WIDTHDIV = 1
