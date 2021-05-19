@@ -10,17 +10,20 @@ from matplotlib import rc
 CMAP = 'tab20c'
 
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
-INCH = 25.4  # mm
+INCH_MM = 25.4  # mm
 BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
 
+# see `NOTICE` in the LaTeX document; this is the width of the main text block.
+TEXTWIDTH_CM = 12.12364
+TEXTWIDTH_INCH = TEXTWIDTH_CM * 10 / INCH_MM
 
 def plt_size(string):
     if not string:
         return None
     try:
         w, h = string.split("x")
-        return float(w) / INCH, float(h) / INCH
+        return float(w) / INCH_MM, float(h) / INCH_MM
     except Exception as e:
         raise argparse.ArgumentTypeError from e
 
@@ -87,7 +90,8 @@ def main():
     if args.size:
         fig.set_size_inches(args.size)
     else:
-        fig.set_figwidth(8.27 / args.widthdiv)
+        w = TEXTWIDTH_INCH / args.widthdiv
+        fig.set_figwidth(TEXTWIDTH_INCH / args.widthdiv)
     if c := args.clip:
         ax.set_xlim(left=c[0], right=c[2])
         ax.set_ylim(bottom=c[1], top=c[3])

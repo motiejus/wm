@@ -81,10 +81,12 @@ Current open-source line generalization solutions have their roots in
 \section{Introduction}
 \label{sec:introduction}
 
-\begin{itemize}
-    \item Text width in pt: \prntlen{\textwidth}
-    \item Text width in cm: {\printinunitsof{cm}\prntlen{\textwidth}}
-\end{itemize}
+\iffalse
+NOTICE: this value should be copied to layer2img.py:TEXTWIDTH, so dimensions
+of inline images are reasonable.
+
+Text width in cm: {\printinunitsof{cm}\prntlen{\textwidth}}
+\fi
 
 When creating small-scale maps, often the detail of the data source is greater
 than desired for the map. This becomes especially acute for natural features
@@ -357,12 +359,12 @@ when a single vertex is moved outwards the end of the bend.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{.49\textwidth}
+    \begin{subfigure}[b]{.45\textwidth}
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-before}
         \caption{Before applying the inflection rule}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.49\textwidth}
+    \begin{subfigure}[b]{.45\textwidth}
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-after}
         \caption{After applying the inflection rule}
     \end{subfigure}
@@ -425,12 +427,12 @@ following the rules of the article.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{.4\textwidth}
+    \begin{subfigure}[b]{.45\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-before}
         \caption{Bend's baseline (dotted) is crossing a neighboring bend}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.4\textwidth}
+    \begin{subfigure}[b]{.45\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-after}
         \caption{Self-crossing removed following the algorithm}
     \end{subfigure}
@@ -445,12 +447,12 @@ figure~\onpage{fig:selfcrossing-1-non-neighbor}.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{.4\textwidth}
+    \begin{subfigure}[b]{.45\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-before}
         \caption{Bend's baseline (dotted) is crossing a non-neighboring bend}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{.4\textwidth}
+    \begin{subfigure}[b]{.45\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-after}
         \caption{Self-crossing removed following the algorithm}
     \end{subfigure}
