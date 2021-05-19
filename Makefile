@@ -75,7 +75,7 @@ fig8-definition-of-a-bend.pdf: layer2img.py Makefile .faux_test
 
 fig5-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--sizediv=2 \
+		--widthdiv=2 \
 		--group1-table=wm_debug \
 		--group1-where="name='fig5' AND stage='bbends' AND gen=1" \
 		--group2-cmap=1 \
@@ -85,7 +85,7 @@ fig5-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
 
 fig5-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--sizediv=2 \
+		--widthdiv=2 \
 		--group1-table=wm_debug \
 		--group1-where="name='fig5' AND stage='cinflections' AND gen=1" \
 		--group2-cmap=1 \
@@ -95,7 +95,7 @@ fig5-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
 
 inflection-1-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--sizediv=2 \
+		--widthdiv=2 \
 		--group1-table=wm_debug \
 		--group1-where="name='inflection-1' AND stage='bbends' AND gen=1" \
 		--group2-cmap=1 \
@@ -105,7 +105,7 @@ inflection-1-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
 
 inflection-1-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--sizediv=2 \
+		--widthdiv=2 \
 		--group1-table=wm_debug \
 		--group1-where="name='inflection-1' AND stage='cinflections' AND gen=1" \
 		--group2-cmap=1 \

@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--group3-where')
     parser.add_argument('--group3-cmap', type=bool)
 
-    parser.add_argument('--sizediv',
+    parser.add_argument('--widthdiv',
                         default=1, type=float, help='Size divisor')
 
     parser.add_argument('-o', '--outfile', metavar='<file>')
@@ -58,7 +58,7 @@ def main():
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
-    fig.set_figwidth(8.27 / args.sizediv)
+    fig.set_figwidth(8.27 / args.widthdiv)
     if c := args.clip:
         ax.set_xlim(left=c[0], right=c[2])
         ax.set_ylim(bottom=c[1], top=c[3])
