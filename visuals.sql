@@ -99,19 +99,19 @@ end $$ language plpgsql;
 delete from wm_debug where name like 'salvis%';
 delete from wm_visuals where name like 'salvis%';
 insert into wm_visuals(name, way) values
-  ('salvis', (
+  ('salvis-grpk10', (
     wm_salvisbbox(
       (select st_union(way) from wm_rivers where name in ('Šalčia', 'Visinčia')),
       :scaledwidth
     )
   )),
-  ('salvis-gdr50', (
+  ('salvis-grpk50', (
     wm_salvisbbox(
       (select st_union(way) from wm_rivers_50 where name in ('Šalčia', 'Visinčia')),
       :scaledwidth
     )
   )),
-  ('salvis-gdr250', (
+  ('salvis-grpk250', (
     wm_salvisbbox(
       (select st_union(way) from wm_rivers_250 where name in ('Šalčia', 'Visinčia')),
       :scaledwidth
@@ -126,8 +126,8 @@ declare
   geom3 geometry;
 begin
   foreach i in array array[16, 32, 64, 256] loop
-    geom1 = st_simplify((select way from wm_visuals where name='salvis'), i);
-    geom2 = st_simplifyvw((select way from wm_visuals where name='salvis'), i*i);
+    geom1 = st_simplify((select way from wm_visuals where name='salvis-grpk10'), i);
+    geom2 = st_simplifyvw((select way from wm_visuals where name='salvis-grpk10'), i*i);
     insert into wm_visuals(name, way) values
       ('salvis-dp-'         || i, geom1),
       ('salvis-dp-chaikin-' || i, st_chaikinsmoothing(geom1, 5)),
@@ -139,7 +139,7 @@ begin
   -- Šalčia-Visinčia crossing, and it "exaggerates" to the
   -- other river.
   foreach i in array array[75, 220] loop
-    geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i, 50, 'salvis-wm-' || i);
+    geom3 = st_simplifywm((select way from wm_visuals where name='salvis-grpk10'), i, 50, 'salvis-wm-' || i);
     insert into wm_visuals(name, way) values
       ('salvis-wm-'          || i, geom3);
   end loop;

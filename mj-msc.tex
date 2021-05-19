@@ -1487,8 +1487,8 @@ future research and improvement:
 
 \subsubsection{Background}
 
-There are a few datasets used in this comparison: GDB10LT, GDR50LT and
-GDR250LT. They are vector datasets, which include rivers. They can be
+There are a few datasets used in this comparison: GDB10LT, grpk50LT and
+grpk250LT. They are vector datasets, which include rivers. They can be
 downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
 
 \begin{description}
@@ -1496,9 +1496,9 @@ downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
     \item[GDB10LT] is dataset of highest detail. Suited for maps of scale
         1:\numprint{10000}.
 
-    \item[GDR50LT] is suited for maps of scale 1:\numprint{50000}.
+    \item[grpk50LT] is suited for maps of scale 1:\numprint{50000}.
 
-    \item[GDR250LT] offers least detail, and is suited for maps of
+    \item[grpk250LT] offers least detail, and is suited for maps of
         scale 1:\numprint{250000}.
 
 \end{description}
@@ -1506,41 +1506,41 @@ downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
 During the analysis, we ran {\WM} on GDB10LT for 2 destination scales:
 1:\numprint{50000} and 1:\numprint{250000}.\footnote{parameter calculation is
 detailed in section~\ref{sec:bend-scaling-and-dimensions}.} This section
-compares the resulting {\WM}--generalized rivers to GDR50LT and GDR250LT.
+compares the resulting {\WM}--generalized rivers to grpk50LT and grpk250LT.
 
 \subsubsection{Medium-scale (1:\numprint{50000})}
 
 For our research location, the national dataset GDB10LT is almost equivalent to
-GDR50LT, with a few nuances. Figure~\ref{fig:salvis-wm-gdr50} illustrates
-all three shapes: GDR50LT, {\WM}--simplified GDB10LT, and the original GDB10LT.
+grpk50LT, with a few nuances. Figure~\ref{fig:salvis-wm-grpk50} illustrates
+all three shapes: grpk50LT, {\WM}--simplified GDB10LT, and the original GDB10LT.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm-gdr50}
+    \includegraphics[width=\textwidth]{salvis-wm-grpk50}
 
-    \caption{2x zoomed-in GDR50LT (green), {\WM}--simplified GDB10LT (orange)
+    \caption{2x zoomed-in grpk50LT (green), {\WM}--simplified GDB10LT (orange)
     and original GDB10LT (dotted black).}
 
-    \label{fig:salvis-wm-gdr50}
+    \label{fig:salvis-wm-grpk50}
 \end{figure}
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{salvis-wm-gdr50-ne}
-    \caption{Top--right side of Figure~\ref{fig:salvis-wm-gdr50}.}
-    \label{fig:salvis-wm-gdr50-ne}
+    \includegraphics[width=\textwidth]{salvis-wm-grpk50-ne}
+    \caption{Top--right side of Figure~\ref{fig:salvis-wm-grpk50}.}
+    \label{fig:salvis-wm-grpk50-ne}
 \end{figure}
 
-Although figures are almost identical, Figure~\ref{fig:salvis-wm-gdr50-ne}
-illustrates two small bends that have been removed in GDR50LT, but have been
+Although figures are almost identical, Figure~\ref{fig:salvis-wm-grpk50-ne}
+illustrates two small bends that have been removed in grpk50LT, but have been
 exaggerated by our implementation.
 
 \subsubsection{Large-scale (1:\numprint{250000})}
 \label{sec:national-large-scale}
 
-Figure~\ref{fig:salvis-wm-250k} illustrates the original GDR250LT and the
+Figure~\ref{fig:salvis-wm-250k} illustrates the original grpk250LT and the
 {\WM}--simplified version. As section~\ref{sec:analyzed-large-scale} explains,
-the algorithm tries to exaggerate many bends to a great size. However, GDR250LT
+the algorithm tries to exaggerate many bends to a great size. However, grpk250LT
 takes the opposite approach --- only the very basic shapes of the largest bends
 are retained. Time and customers will tell, which approach is more appropriate,
 after the current {\WM} implementation receives some time and attention, as
@@ -1549,8 +1549,8 @@ desired in section~\ref{sec:future-suggestions}.
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
-        \includegraphics[width=\textwidth]{salvis-gdr250-2x}
-        \caption{GDR250LT.}
+        \includegraphics[width=\textwidth]{salvis-grpk250-2x}
+        \caption{grpk250LT.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
@@ -1558,7 +1558,7 @@ desired in section~\ref{sec:future-suggestions}.
         \includegraphics[width=\textwidth]{salvis-wm-220}
         \caption{{\WM}-simplified GDB10LT.}
     \end{subfigure}
-    \caption{GDR250LT and {\WM}--simplified GDB10LT.}
+    \caption{grpk250LT and {\WM}--simplified GDB10LT.}
     \label{fig:salvis-wm-250k}
 \end{figure}
 

@@ -34,7 +34,7 @@ RIVERS = \
 		 salvis-25k \
 		 salvis-50k \
 		 salvis-250k-10x \
-		 salvis-gdr250-2x \
+		 salvis-grpk250-2x \
 		 salvis-dp-64-50k \
 		 salvis-vw-64-50k \
 		 salvis-dp-64-chaikin-50k \
@@ -47,8 +47,8 @@ RIVERS = \
 		 salvis-wm-50k-nw \
 		 salvis-wm-50k-ne \
 		 salvis-wm-overlaid-250k-zoom \
-		 salvis-wm-gdr50 \
-		 salvis-wm-gdr50-ne \
+		 salvis-wm-grpk50 \
+		 salvis-wm-grpk50-ne \
 		 salvis-wm-220
 
 ################################################################################
@@ -126,24 +126,24 @@ salvis-wm-250k-2x_WIDTHDIV = 2
 salvis-wm-250k-10x_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-250k-10x_WIDTHDIV = 10
 
-salvis-250k-10x_1SELECT = wm_visuals where name='salvis'
+salvis-250k-10x_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-250k-10x_WIDTHDIV = 10
 
 salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis-wm-220'
-salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis'
+salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis-grpk10'
 salvis-wm-overlaid-250k-zoom_1COLOR = orange
 
-salvis-gdr250-2x_1SELECT = wm_visuals where name='salvis-gdr250'
-salvis-gdr250-2x_WIDTHDIV = 2
+salvis-grpk250-2x_1SELECT = wm_visuals where name='salvis-grpk250'
+salvis-grpk250-2x_WIDTHDIV = 2
 
 ################################################################################
 # 50K
 ################################################################################
 
-salvis-25k_1SELECT = wm_visuals where name='salvis'
+salvis-25k_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-25k_WIDTHDIV = 1
 
-salvis-50k_1SELECT = wm_visuals where name='salvis'
+salvis-50k_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-50k_WIDTHDIV = 2
 
 salvis-dp-64-50k_1SELECT = wm_visuals where name='salvis-dp-64'
@@ -159,45 +159,45 @@ salvis-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-vw-chaikin-64'
 salvis-vw-64-chaikin-50k_WIDTHDIV = 2
 
 salvis-overlaid-dp-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-dp-chaikin-64'
-salvis-overlaid-dp-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
+salvis-overlaid-dp-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-grpk10'
 salvis-overlaid-dp-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-dp-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-dp-64-chaikin-50k_QUADRANT = tl
 
 salvis-overlaid-vw-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-vw-chaikin-64'
-salvis-overlaid-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
+salvis-overlaid-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-grpk10'
 salvis-overlaid-vw-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-vw-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-vw-64-chaikin-50k_QUADRANT = tl
 
 salvis-wm-50k_1SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-50k_2SELECT = wm_visuals where name='salvis'
+salvis-wm-50k_2SELECT = wm_visuals where name='salvis-grpk10'
 salvis-wm-50k_1COLOR = orange
 
 salvis-wm-50k-nw_1SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-50k-nw_2SELECT = wm_visuals where name='salvis'
+salvis-wm-50k-nw_2SELECT = wm_visuals where name='salvis-grpk10'
 salvis-wm-50k-nw_1COLOR = orange
 salvis-wm-50k-nw_QUADRANT = tr
 
 salvis-wm-50k-ne_1SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-50k-ne_2SELECT = wm_visuals where name='salvis'
+salvis-wm-50k-ne_2SELECT = wm_visuals where name='salvis-grpk10'
 salvis-wm-50k-ne_1COLOR = orange
 salvis-wm-50k-ne_QUADRANT = tl
 
-salvis-wm-gdr50_1SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-gdr50_2SELECT = wm_visuals where name='salvis-gdr50'
-salvis-wm-gdr50_3SELECT = wm_visuals where name='salvis'
-salvis-wm-gdr50_1COLOR = orange
-salvis-wm-gdr50_2COLOR = green
-salvis-wm-gdr50_3LINESTYLE = dotted
+salvis-wm-grpk50_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-grpk50_2SELECT = wm_visuals where name='salvis-grpk50'
+salvis-wm-grpk50_3SELECT = wm_visuals where name='salvis-grpk10'
+salvis-wm-grpk50_1COLOR = orange
+salvis-wm-grpk50_2COLOR = green
+salvis-wm-grpk50_3LINESTYLE = dotted
 
-salvis-wm-gdr50-ne_1SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-gdr50-ne_2SELECT = wm_visuals where name='salvis-gdr50'
-salvis-wm-gdr50-ne_3SELECT = wm_visuals where name='salvis'
-salvis-wm-gdr50-ne_1COLOR = orange
-salvis-wm-gdr50-ne_2COLOR = green
-salvis-wm-gdr50-ne_3LINESTYLE = dotted
-salvis-wm-gdr50-ne_QUADRANT = tl
+salvis-wm-grpk50-ne_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-grpk50-ne_2SELECT = wm_visuals where name='salvis-grpk50'
+salvis-wm-grpk50-ne_3SELECT = wm_visuals where name='salvis-grpk10'
+salvis-wm-grpk50-ne_1COLOR = orange
+salvis-wm-grpk50-ne_2COLOR = green
+salvis-wm-grpk50-ne_3LINESTYLE = dotted
+salvis-wm-grpk50-ne_QUADRANT = tl
 
 salvis-wm-220_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-220_WIDTHDIV = 2
@@ -215,20 +215,20 @@ define wm_vwdp50k
 RIVERS += salvis-$(1)-$(2)-50k$(3)
 salvis-$(1)-$(2)-50k$(3)_1SELECT    = wm_visuals where name='salvis-$(1)'
 salvis-$(1)-$(2)-50k$(3)_2SELECT    = wm_visuals where name='salvis-$(2)'
-salvis-$(1)-$(2)-50k$(3)_3SELECT    = wm_visuals where name='salvis'
-salvis-$(1)-$(2)-50k$(3)_1COLOR     = green
-salvis-$(1)-$(2)-50k$(3)_1LABEL     = $(label_$(1))
-salvis-$(1)-$(2)-50k$(3)_2COLOR     = orange
-salvis-$(1)-$(2)-50k$(3)_2LABEL     = $(label_$(2))
+salvis-$(1)-$(2)-50k$(3)_3SELECT    = wm_visuals where name='salvis-grpk10'
+salvis-$(1)-$(2)-50k$(3)_1COLOR     = orange
+salvis-$(1)-$(2)-50k$(3)_1LABEL     = $(label_$(2))
+salvis-$(1)-$(2)-50k$(3)_2COLOR     = green
+salvis-$(1)-$(2)-50k$(3)_2LABEL     = $(label_$(1))
 salvis-$(1)-$(2)-50k$(3)_3LINESTYLE = dotted
 salvis-$(1)-$(2)-50k$(3)_3LABEL     = GRPK 1:\numprint{10000}
 salvis-$(1)-$(2)-50k$(3)_QUADRANT   = $(3)
 salvis-$(1)-$(2)-50k$(3)_LEGEND     = $(legend_$(3))
 endef
 $(foreach x,vw-64 dp-64 vw-chaikin-64 dp-chaikin-64,\
-	$(eval $(call wm_vwdp50k,$(x),wm-75,)) \
-	$(eval $(call wm_vwdp50k,$(x),wm-75,tl)) \
-	$(eval $(call wm_vwdp50k,$(x),wm-75,tr)) \
+	$(eval $(call wm_vwdp50k,wm-75,$(x),)) \
+	$(eval $(call wm_vwdp50k,wm-75,$(x),tl)) \
+	$(eval $(call wm_vwdp50k,wm-75,$(x),tr)) \
 )
 
 define FIG_template
@@ -401,5 +401,5 @@ refresh-$(1): aggregate-rivers.sql gdr2pgsql .faux_db_pre
 endef
 
 $(eval $(call rivers_template,rivers-10.sql,GDB10LT,wm_rivers))
-$(eval $(call rivers_template,rivers-50.sql,GDR50LT,wm_rivers_50))
-$(eval $(call rivers_template,rivers-250.sql,GDR250LT,wm_rivers_250))
+$(eval $(call rivers_template,rivers-50.sql,grpk50LT,wm_rivers_50))
+$(eval $(call rivers_template,rivers-250.sql,grpk250LT,wm_rivers_250))
