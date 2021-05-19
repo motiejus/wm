@@ -13,7 +13,13 @@ declare
   bend geometry;
   prev_sign int4;
   cur_sign int4;
+  l_type text;
 begin
+  --l_type = st_geometrytype(line);
+  --if l_type != 'ST_LineString' then
+  --  raise 'This function works with ST_LineString, got %', l_type;
+  --end if;
+
   -- The last vertex is iterated over twice, because the algorithm uses 3
   -- vertices to calculate the angle between them.
   --
@@ -323,7 +329,7 @@ $$ language plpgsql;
 drop function if exists ST_SimplifyWM;
 create function ST_SimplifyWM(geom geometry, dbgname text default null) returns geometry as $$
 declare
-  dbg_stage integer;
+  stagenum integer;
   i integer;
   line geometry;
   lines geometry[];
@@ -342,13 +348,13 @@ begin
 
   for i in 1..array_length(lines, 1) loop
     mutated = true;
-    dbg_stage = 1;
+    stagenum = 1;
     while mutated loop
       if dbgname is not null then
         insert into debug_wm (stage, name, gen, nbend, way) values(
           'afigures',
           dbgname,
-          dbg_stage,
+          stagenum,
           i,
           lines[i]
         );
@@ -360,20 +366,19 @@ begin
         insert into debug_wm(stage, name, gen, nbend, way) values(
           'bbends',
           dbgname,
-          dbg_stage,
+          stagenum,
           generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
 
-      raise notice 'before inflections: %', dbg_geomsummary(bends);
       bends = fix_gentle_inflections(bends);
 
       if dbgname is not null then
         insert into debug_wm(stage, name, gen, nbend, way) values(
           'cinflections',
           dbgname,
-          dbg_stage,
+          stagenum,
           generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -385,7 +390,7 @@ begin
         insert into debug_wm(stage, name, gen, nbend, way) values(
           'dcrossings',
           dbgname,
-          dbg_stage,
+          stagenum,
           generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -393,7 +398,7 @@ begin
 
       if mutated then
         lines[i] = st_linemerge(st_union(bends));
-        dbg_stage = dbg_stage + 1;
+        stagenum = stagenum + 1;
         continue;
       end if;
 

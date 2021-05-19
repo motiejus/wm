@@ -25,10 +25,10 @@ insert into figures (name, way) values ('fig5',ST_GeomFromText('LINESTRING(0 39,
 insert into figures (name, way) values ('fig6',ST_GeomFromText('LINESTRING(84 47,91 59,114 64,122 80,116 92,110 93,106 106,117 118,136 107,135 76,120 45,125 39,141 39,147 32)'));
 insert into figures (name, way) values ('fig6-rev',ST_Reverse(ST_Translate((select way from figures where name='fig6'), 60, 0)));
 insert into figures (name, way) values ('fig6-combi',
-  ST_LineMerge(ST_Union(
+  ST_Union(
       ST_Translate((select way from figures where name='fig6'), 0, 90),
       ST_Translate((select way from figures where name='fig6'), 80, 90)
-  ))
+  )
 );
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
 insert into figures (name, way) values ('multi-island',ST_GeomFromText('MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'));
@@ -64,7 +64,7 @@ $$ language plpgsql;
 -- COMBINED
 drop table if exists demo_wm;
 create table demo_wm (name text, i bigint, way geometry);
-insert into demo_wm (name, way) select name, ST_SimplifyWM(way, name) from figures where name='fig6-combi';
+insert into demo_wm (name, way) select name, ST_SimplifyWM(way, name) from figures;
 
 do $$
 declare
@@ -125,25 +125,10 @@ begin
     ) from (select unnest(vcrossings) way) a)
   );
 
-  elems1 = array((select way from debug_wm where stage='cinflections' and name='fig6-combi' and gen=1));
-  elems2 = (select ways from inflections where name='fig6-combi');
-
-  foreach elem in array elems1 loop
-    raise notice 'elem 1: %', st_astext(elem);
-  end loop;
-
-  foreach elem in array elems2 loop
-    raise notice 'elem 2: %', st_astext(elem);
-  end loop;
-
-
-  select (self_crossing(elems1)).* into vcrossings, mutated;
-  --select (self_crossing(elems2)).* into vcrossings, mutated;
-  --select (self_crossing((select ways from inflections where name='fig6-combi'))).* into vcrossings, mutated;
-  --select (self_crossing(array((select way from debug_wm where stage='cinflections' and name='fig6-combi')))).* into vcrossings, mutated;
+  select (self_crossing(array((select way from debug_wm where stage='cinflections' and name='fig6-combi' and gen=1)))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
-    'LINESTRING(84 137,91 149,114 154,120 135,125 129,141 129,147 122,164 137,171 149,194 154,200 135,205 129,221 129,227 122)',
+    'MULTILINESTRING((84 137,91 149,114 154,120 135,125 129,141 129,147 122),(164 137,171 149,194 154,200 135,205 129,221 129,227 122))',
     (select st_astext(
         st_linemerge(st_union(way))
     ) from (select unnest(vcrossings) way) a)
