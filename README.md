@@ -75,6 +75,8 @@ functioning Docker environment, postgresql client, geopandas, pygments,
 osm2pgsql, poppler, and a "quite extensive" LaTeX installation. Tested on
 Debian 11.
 
+`in-container` script may be helpful if the above sounds like too much.
+
 Contributing
 ------------
 
