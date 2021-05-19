@@ -335,8 +335,6 @@ begin
 
       lines[i] = st_linemerge(st_union(bends));
 
-      raise notice 'lines[i]: %', st_summary(lines[i]);
-
       dbg_stage = dbg_stage + 1;
     end loop;
   end loop;
