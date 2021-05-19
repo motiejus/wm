@@ -282,7 +282,7 @@ begin
   if l_type = 'ST_LineString' then
     lines = array[geom];
   elseif l_type = 'ST_MultiLineString' then
-    lines = array((select a.geom from st_dump(geom) a order by path[1] desc));
+    lines = array((select a.geom from st_dump(geom) a order by path[1] asc));
   else
     raise 'Unknown geometry type %', l_type;
   end if;
@@ -330,8 +330,8 @@ begin
     while mutated loop
       execute format('drop table if exists demo_%safigures', i);
       execute format('create table demo_%safigures (way geometry)', i);
-      -- if anyone has suggestions how to insert a variable to a table without such
-      -- hackery, I'll be glad to know
+      -- if anyone has suggestions how to insert a variable to a table without
+      -- such hackery, I'll be glad to know
       execute format('insert into demo_%safigures select $1;', i) using (select unnest(array[line]));
       bends = detect_bends(line);
       execute format('drop table if exists demo_%sbbends', i);
