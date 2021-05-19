@@ -7,7 +7,7 @@ set -euo pipefail
 #
 # Usage:
 #   ./in-container make help
-#   ./in-container make -j mj-msc-full.pdf
+#   ./in-container make -j2 mj-msc-full.pdf
 #   ...
 
 NAME=wm-mj-build
@@ -18,6 +18,6 @@ fi
 exec docker run -ti --rm \
     --net=host \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $(git rev-parse --show-toplevel):/x \
-    -w /x/$(basename ${PWD}) \
+    -v ${PWD}:/x \
+    -w /x \
     "$NAME" "$@"
