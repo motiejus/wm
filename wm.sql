@@ -5,7 +5,7 @@ SET plpgsql.extra_errors TO 'all';
 drop function if exists detect_bends;
 create function detect_bends(line geometry, OUT bends geometry[]) as $$
 declare
-  pi real;
+  pi constant real default radians(180);
   p geometry;
   p1 geometry;
   p2 geometry;
@@ -14,7 +14,6 @@ declare
   prev_sign int4;
   cur_sign int4;
 begin
-  pi = radians(180);
 
   -- the last vertex is iterated over twice, because the algorithm uses 3
   -- vertices to calculate the angle between them.
@@ -100,13 +99,12 @@ $$ language plpgsql;
 drop function if exists fix_gentle_inflections1;
 create function fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
-  pi real;
+  pi constant real default radians(180);
   small_angle real;
   ptail geometry; -- tail point of tail bend
   phead geometry[]; -- 3 tail points of head bend
   i int4; -- bends[i] is the current head
 begin
-  pi = radians(180);
   -- the threshold when the angle is still "small", so gentle inflections can
   -- be joined
   small_angle := radians(30);
@@ -170,7 +168,7 @@ create function self_crossing(
   OUT mutated boolean
 ) as $$
 declare
-  pi real;
+  pi constant real default radians(180);
   i int4;
   j int4;
   prev_length int4;
@@ -178,7 +176,6 @@ declare
   b geometry;
   multi geometry;
 begin
-  pi = radians(180);
   mutated = false;
 
   -- go through the bends and find one where sum of inflection angle is >180
@@ -244,17 +241,13 @@ $$ language plpgsql;
 drop function if exists inflection_angle;
 create function inflection_angle (IN bend geometry, OUT angle real) as $$
 declare
-  pi real;
+  pi constant real default radians(180);
   p0 geometry;
   p1 geometry;
   p2 geometry;
   p3 geometry;
 begin
-  pi = radians(180);
   angle = 0;
-  p1 = null;
-  p2 = null;
-  p3 = null;
   for p0 in (
     select geom from st_dumppoints(bend) order by path[1] asc
   ) loop
