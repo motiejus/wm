@@ -35,7 +35,7 @@
 \title{
     \includegraphics[width=60mm]{vu.png}\\[8ex]
     Cartographic Generalization of Lines using free software \\
-    (example of rivers) \\ \vspace{4mm}
+    (example of rivers)
 }
 
 \author{Motiejus Jakštys}
@@ -45,11 +45,11 @@
 }
 
 \begin{document}
-\maketitle
+\clearpage\maketitle
+\thispagestyle{empty}
 
 \begin{abstract}
 \label{sec:abstract}
-
 Current open-source line generalization solutions have their roots in
     mathematics and geometry, and are not fit for natural objects like rivers
     and coastlines. This paper discusses our implementation of {\WM} algorithm
@@ -116,15 +116,34 @@ The "classical" ones are {\DP} and {\VW}.
 \cite{douglas1973algorithms} and \cite{visvalingam1993line} are "classical"
 line generalization computer graphics algorithms. They are relatively simple to
 implement, require few runtime resources. Both of them accept only a single
-parameter, which makes them very simple to adjust for different scales.
+parameter, based on desired scale of the map, which makes them very simple to
+adjust for different scales.
 
-However, both of them are emitting insufficient 
+Both algorithms are part of PostGIS, a free-software GIS suite:
+\begin{itemize}
+    \item \cite{douglas1973algorithms} via
+        \href{https://postgis.net/docs/ST_Simplify.html}{PostGIS Simplify}.
+
+    \item \cite{visvalingam1993line} via
+        \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS SimplifyVW}.
+\end{itemize}
+
+Since both algorithms produce jagged output lines, it is worthwhile to process
+those through a widely available \cite{chaikin1974algorithm} smoothing
+algorithm via \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
+ChaikinSmoothing}.
+
+Even though {\DP} and {\VW} are simple to understand and computationally
+efficient, they have serious deficiencies for cartographic natural line
+generalization.
+
+<TODO: expand on deficiencies>
 
 \subsection{Modern approaches}
 
-After {\DP} and {\VW} have been established, 
-
-These fall into two rough categories:
+Due to their simplicity and ubiquity, {\DP} and {\VW} have been established as
+go-to algorithms for line generalization. During recent years, more modern
+replacement algorithms have emerged. These fall into roughly two categories:
 
 \begin{itemize}
     \item Cartographic knowledge was encoded to an algorithm (bottom-up
@@ -134,35 +153,20 @@ These fall into two rough categories:
         \cite{mustafa2006dynamic}, \cite{nollenburg2008morphing}.
 \end{itemize}
 
-During research for the mentioned articles, prototype code has been written for
-most of the algorithms. However, none of them seem to be available for use
-except for the two "classical" ones -- {\DP} and {\VW}.
+Authors of most of the aforementioned articles have implemented the
+generalization algorithm, at least to generate the visuals in the articles.
+However, I wasn't able to find code for any of those to evaluate with my
+desired data set, or use as a basis for my own maps. \cite{wang1998line} is
+available in a commercial product.
 
-\cite{wang1998line} is an algorithm specifically created for cartographic
-generalization and available for general use, though it is only currently
-available in a commercial product. This poses a problem for map creation in
-open source software: there is not a similar high-quality simplification
-algorithm to create down-scaled maps, so any cartographic work, which uses line
-generalization as part of its processing, will be of sub-par quality.
-We believe that availability of high-quality open-source tools is an important
-foundation for future cartographic experimentation and development, thus it
-it benefits the cartographic society as a whole.
-
-This paper will be reviewing and comparing two widely available algorithms that
-are often used for line generalization:
-\begin{itemize}
-    \item \cite{douglas1973algorithms} via
-        \href{https://postgis.net/docs/ST_Simplify.html}{PostGIS Simplify}.
-
-    \item \cite{visvalingam1993line} via
-        \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS SimplifyVW}.
-
-\end{itemize}
-
-Since both algorithms produce jaggy output lines, it is worthwhile to process
-those through a widely available \cite{chaikin1974algorithm} smoothing
-algorithm via \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
-ChaikinSmoothing}.
+The lack of robust openly available generalization algorithm implementations
+poses a problem for map creation with free software: there is not a similar
+high-quality simplification algorithm to create down-scaled maps, so any
+cartographic work, which uses line generalization as part of its processing,
+will be of sub-par quality. We believe that availability of high-quality
+open-source tools is an important foundation for future cartographic
+experimentation and development, thus it it benefits the cartographic society
+as a whole.
 
 \section{Methodology}
 \label{sec:methodology}
