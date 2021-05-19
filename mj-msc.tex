@@ -192,6 +192,7 @@ every step of the algorithm.
 Algorithms discussed in this paper assume Euclidean geometry.
 
 \section{Automated tests}
+\label{sec:automated-tests}
 
 As part of the algorithm realization, an automated test suite has been
 developed. Shapes to test each function have been hand-crafted and expected
@@ -234,9 +235,9 @@ This section defines vocabulary and terms as defined in the rest of the paper.
         two other vertices, except those vertices at either ends of the line:
         these two connect to a single other vertex.
 
-    \item[Bend] is a subset of a line that humans perceive as "bend". The
-        geometric definition is complex and is discussed in
-        section~\onpage{sec:definition-of-a-bend}.
+    \item[Bend] is a subset of a line that humans perceive as a curve. For the
+        purpose of this paper, the geometric definition is complex and is
+        discussed in section~\onpage{sec:definition-of-a-bend}.
 \end{description}
 
 \chapter{Description of the implementation}
@@ -244,16 +245,19 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 Like alluded in section~\onpage{sec:introduction}, \cite{wang1998line} paper
 skims over certain details, which are important to implement the algorithm.
 This section goes through each algorithm stage, illustrating the intermediate
-steps and explaining the author's desiderata for a detailed description.
+steps and explaining the author's desiderata for a more detailed description.
 
-Step illustrations of the following sections are extracted from the automated
-test cases.
+Illustrations of the following sections are extracted from the automated test
+cases, which were written during the algorithm implementation (as discussed in
+section~\onpage{sec:automated-tests}).
 
-Bends are illustrated using the following algorithm:
+Lines in illustrations are black, and bends are heavily colored after
+converting them to polygons. Bends are converted to polygons (for illustration
+purposes) using the following algorithm:
 
 \begin{itemize}
-    \item Join the first and last vertices of the line, creating a polygon.
-    \item Color the polygons.
+    \item Join the first and last vertices of the bend, creating a polygon.
+    \item Color the polygons using distinct colors.
 \end{itemize}
 
 \section{Definition of a Bend}
