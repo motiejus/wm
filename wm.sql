@@ -267,45 +267,54 @@ end
 $$ language plpgsql;
 
 drop function if exists bend_attrs;
-create function bend_attrs(bends geometry[], dbg boolean default false) returns table(bend geometry, area real, cmp real, adjsize real) as $$
+drop type if exists t_bend_attrs;
+create type t_bend_attrs as (
+  bend geometry,
+  area real,
+  cmp real,
+  adjsize real
+);
+create function bend_attrs(bends geometry[], dbg boolean default false) returns setof t_bend_attrs as $$
 declare
   i int4;
   fourpi real;
   polygon geometry;
+  bend geometry;
+  res t_bend_attrs;
 begin
   fourpi = 4*radians(180);
   for i in 1..array_length(bends, 1) loop
     bend = bends[i];
     if st_numpoints(bend) < 3 then
-      cmp = 0;
-      area = 0;
+      res.cmp = 0;
+      res.area = 0;
+      res.bend = null;
       polygon = null;
     else
       select st_makepolygon(st_addpoint(bend, st_startpoint(bend))) into polygon;
+      -- Compactness Index (cmp) is defined as "the ratio of the area of the
+      -- polygon over the circle whose circumference length is the same as the
+      -- length of the circumference of the polygon". I assume they meant the
+      -- area of the circle. So here goes:
+      -- 1. get polygon area P.
+      -- 2. get polygon perimeter = u. Pretend it's our circle's circumference.
+      -- 3. get A (area) of the circle from u: A = (u^2)/(4*pi)
+      -- 4. divide P by A: cmp = P/A = P/((u^2)*4*pi) = 4*pi*P/u^2
+      select st_area(polygon) into res.area;
+      select fourpi*res.area/(st_perimeter(polygon)^2) into res.cmp;
+      select bend into res.bend;
     end if;
-    -- Compactness Index (cmp) is defined as "the ratio of the area of the
-    -- polygon over the circle whose circumference length is the same as the
-    -- length of the circumference of the polygon". I assume they meant the
-    -- area of the circle. So here goes:
-    -- 1. get polygon area P.
-    -- 2. get polygon perimeter = u. Pretend it's our circle's circumference.
-    -- 3. get A (area) of the circle from circumference u := (u^2)/(4*pi)
-    -- 4. divide area by A: cmp = P/((u^2)*4*pi) = 4*pi*P/u^2
-    if polygon is not null then
-      select st_area(polygon) into area;
-      select fourpi*area/(st_perimeter(polygon)^2) into cmp;
-    end if;
-    if area > 0 then
-      select (area*(0.75/cmp)) into adjsize;
+    if res.area > 0 then
+      select (res.area*(0.75/res.cmp)) into res.adjsize;
     end if;
     if dbg then
       insert into debug_wm (name, way, props) values(
         'bend_attrs_' || i,
         bend,
-        json_build_object('area', area, 'cmp', cmp, 'adjsize', adjsize)
+        json_build_object('area', res.area, 'cmp', res.cmp, 'adjsize', res.adjsize)
       );
     end if;
-    return next;
+    return next res;
   end loop;
 end;
 $$ language plpgsql;

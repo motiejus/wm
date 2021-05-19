@@ -54,7 +54,11 @@ insert into demo_selfcrossing3 select name, generate_subscripts(ways, 1), unnest
 
 -- BEND ATTRS
 do $$
-begin perform bend_attrs(ways, true) from inflections; end
+declare
+  recs t_bend_attrs[];
+begin
+  select array(select bend_attrs(ways, true) from inflections) into recs;
+end
 $$ language plpgsql;
 
 -- COMBINED
