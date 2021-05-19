@@ -78,9 +78,9 @@ Debian 11.
 Contributing
 ------------
 
-This repository is frozen and will not accept contributions. Please fork it.
-If fork has improved the algorithm substantially, feel free to ping me, I will
-link to it in this README.
+This repository will soon be frozen and does not accept contributions. Please
+fork it. If fork has improved the algorithm substantially, feel free to ping
+me, I will link to it in this README.
 
 Credit
 ------
