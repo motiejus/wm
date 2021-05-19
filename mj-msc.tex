@@ -227,6 +227,8 @@ This section defines vocabulary and terms as defined in the rest of the paper.
         geometric definition is complex and is discussed in
         section~\onpage{sec:definition-of-a-bend}.
 
+    \item[Baseline] is a line between bend's first and last vertex.
+
 \end{description}
 
 \subsection{Radians and Degrees}
@@ -406,6 +408,9 @@ The "quite small angle" was arbitrarily chosen to $\smallAngle$.
 
 \subsection{Self-line Crossing When Cutting a Bend}
 
+When bend's baseline crosses another bend, it is called self-crossing. This is
+undesirable in the upcoming operators, and self-crossings should be removed.
+
 \subsection{Attributes of a Single Bend}
 
 \subsection{Shape of a Bend}
@@ -434,6 +439,8 @@ The "quite small angle" was arbitrarily chosen to $\smallAngle$.
 
 \section{Code listings}
 
+\subsection{Reproducing the generalizations in this paper}
+
 We strongly believe in the ability to reproduce the results is critical for any
     scientific work. To make it possible for this paper, all source files and
     accompanying scripts have been attached to the PDF. To re-generate this
@@ -443,6 +450,9 @@ We strongly believe in the ability to reproduce the results is critical for any
 \inputminted[fontsize=\small]{bash}{extract-and-generate}
 
 This was tested on Linux Debian 11 with upstream packages only.
+
+%\subsection{Algorithm code listings}
+%\inputminted[fontsize=\small]{plpgsql}{wm.sql}
 
 \end{appendices}
 \end{document}

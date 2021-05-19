@@ -320,7 +320,10 @@ create type t_bend_attrs as (
   curvature real,
   isolated boolean
 );
-create function bend_attrs(bends geometry[], dbgname text default null) returns setof t_bend_attrs as $$
+create function bend_attrs(
+  bends geometry[],
+  dbgname text default null
+) returns setof t_bend_attrs as $$
 declare
   fourpi constant real default 4*radians(180);
   i int4;
@@ -375,9 +378,13 @@ begin
 end;
 $$ language plpgsql;
 
-create function isolated_bends(INOUT bendattrs t_bend_attrs[], dbgname text default null) as $$
+create function isolated_bends(
+  INOUT bendattrs t_bend_attrs[],
+  dbgname text default null
+) as $$
 declare
-  isolation_threshold constant real default 0.25; -- if neighbor's curvatures are within, it's isolated
+  -- if neighbor's curvatures are within, it's isolated
+  isolation_threshold constant real default 0.25;
   this real;
   skip_next bool;
   res t_bend_attrs;
@@ -416,7 +423,10 @@ $$ language plpgsql;
 -- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
 -- 1998.
 drop function if exists ST_SimplifyWM;
-create function ST_SimplifyWM(geom geometry, dbgname text default null) returns geometry as $$
+create function ST_SimplifyWM(
+  geom geometry,
+  dbgname text default null
+) returns geometry as $$
 declare
   stagenum integer;
   i integer;
