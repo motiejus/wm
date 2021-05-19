@@ -1,15 +1,15 @@
 \documentclass[a4paper]{article}
 
-\usepackage[T1,T2A]{fontenc} % T2A is for Cyrillic characters
+\usepackage[T1]{fontenc}
 \usepackage[american]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage [autostyle, english=american]{csquotes}
+\usepackage [autostyle,english=american]{csquotes}
 \MakeOuterQuote{"}
 \usepackage[maxbibnames=99,style=numeric,sorting=none,alldates=edtf]{biblatex}
 \addbibresource{bib.bib}
 \usepackage[
     pdfusetitle,
-    pdfkeywords={Line Generalization,Cartographic Line Generalization,Wang--Mueller},
+    pdfkeywords={Line Generalization,Line Simplification,Wang--Mueller},
     pdfborderstyle={/S/U/W 0} % /S/U/W 1 to enable reasonable decorations
 ]{hyperref}
 \usepackage{enumitem}
@@ -29,6 +29,8 @@
 %\usepackage{setspace}
 %\doublespacing
 
+\input{version.inc}
+\input{vars.inc}
 \IfFileExists{./editorial-version}{\def \mjEditorial {}}{}
 \ifx \mjEditorial \undefined
 \usepackage{minted}
@@ -38,10 +40,6 @@
 \newcommand{\inputcode}[2]{\verbatiminput{#2}}
 \fi
 
-\input{version.inc}
-\input{vars.inc}
-
-
 \newcommand{\onpage}[1]{\ref{#1} on page~\pageref{#1}}
 \newcommand{\titlecite}[1]{\citetitle{#1}\cite{#1}}
 \newcommand{\DP}{Douglas \& Peucker}
@@ -50,7 +48,7 @@
 \newcommand{\WnM}{Wang and M{\"u}ller}
 % {\WM} algoritmo realizacija kartografinei upių generalizacijai
 \newcommand{\MYTITLE}{{\WM} algorithm realization for cartographic line generalization}
-\newcommand{\MYTITLESC}{wang--m{\"u}ller algorithm realization for cartographic line generalization}
+\newcommand{\MYTITLENOCAPS}{wang--m{\"u}ller algorithm realization for cartographic line generalization}
 \newcommand{\MYAUTHOR}{Motiejus Jakštys}
 
 \title{\MYTITLE}
@@ -76,7 +74,7 @@
         A thesis presented for the degree of Master in Cartography \\[8ex]
 
         \LARGE
-        \textbf{\textsc{\MYTITLESC}}
+        \textbf{\textsc{\MYTITLENOCAPS}}
 
         \vfill
 
@@ -444,25 +442,6 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 
 \end{description}
 
-\subsection{Radians and Degrees}
-
-This document contains a few constant angles expressed in radians.
-Table~\ref{table:radians} summarizes some of the values used in this document
-and the implementation.
-
-\begin{table}[h]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|}
-        \hline
-        Degrees & $30^\circ$          & $45^\circ$          & $90^\circ$          & $180^\circ$ & $360^\circ$ \\
-        \hline
-        Radians & $\nicefrac{\pi}{6}$ & $\nicefrac{\pi}{4}$ & $\nicefrac{\pi}{2}$ & $\pi$       & $2\pi$ \\
-        \hline
-    \end{tabular}
-    \caption{Some angular degree and radian values mentioned in this article.}
-    \label{table:radians}
-\end{table}
-
 \subsection{Automated tests}
 \label{sec:automated-tests}
 
@@ -771,13 +750,13 @@ be quite computationally expensive: naively implemented, complexity of checking
 every bend with every bend is $O(n^2)$. In other words, the time it takes to
 run the algorithm grows quadratically with the with the number of vertices.
 
-It is possible to optimize this step and skip checking most of the bends. Only
-bends whose sum of inner angles is larger than $\pi$ can ever self-cross. If
-the value is less than $\pi$, it cannot cross other bends. That way, only a
-fraction of bends need to be checked. The worst-case complexity is still
-$O(n^2)$, when all bends' inner angles are larger than $\pi$, but, assuming no
-more than $20\%$ of the bends' inner angles are larger than $\pi$, the time it
-takes to run this piece of the algorithm drops by $80\%$.
+It is possible to optimize this step and skip checking a large number of bends.
+Only bends whose sum of inner angles is larger than $180^\circ$ can ever
+self-cross. That way, only a fraction of bends need to be checked. The
+worst-case complexity is still $O(n^2)$, when all bends' inner angles are
+larger than $180^\circ$. Having this optimization, the algorithmic complexity
+(as a result, the time it takes to execute the algorithm) is drops by the
+fraction of bends whose sum of inner angles is smaller than $180^\circ$.
 
 \subsection{Attributes of a Single Bend}
 
