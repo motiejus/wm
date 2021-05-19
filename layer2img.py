@@ -24,7 +24,7 @@ def inch(cm):
 def parse_args():
     parser = argparse.ArgumentParser(
             description='Convert a geometry to an image')
-    parser.add_argument('--group1-select', required=True)
+    parser.add_argument('--group1-select')
     parser.add_argument('--group1-linestyle')
 
     simplify = parser.add_mutually_exclusive_group()
@@ -91,9 +91,9 @@ def main():
     fig, ax = plt.subplots()
     fig.set_figwidth(inch(width))
 
-    group1 is not None and group1.plot(ax=ax, **c1)
-    group2 is not None and group2.plot(ax=ax, **c2)
-    group3 is not None and group3.plot(ax=ax, **c3)
+    group1 is not None and group1.plot(ax=ax, linewidth=.75, **c1)
+    group2 is not None and group2.plot(ax=ax, linewidth=.75, **c2)
+    group3 is not None and group3.plot(ax=ax, linewidth=.75, **c3)
 
     ax.axis('off')
     ax.margins(0, 0)

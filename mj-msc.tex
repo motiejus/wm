@@ -34,6 +34,8 @@
 % does not require minted
 \usepackage{verbatim}
 \newcommand{\inputcode}[2]{\verbatiminput{#2}}
+\usepackage{setspace}
+\doublespacing
 \fi
 
 \input{version.inc}
@@ -192,12 +194,6 @@ thus convenient to analyze for both small and large scale generalization.
     \label{fig:salvis-25}
 \end{figure}
 
-Same rivers, unprocessed, but with higher density (scales 1:50000 and 1:250000)
-are depicted in figure~\ref{fig:salvis-50-250}. Some river features are so
-compact that a reasonably thin line depicting the river is overlapping with
-itself, creating a thicker line in print. As a result, generalization for this
-river for a smaller scale is worthy.
-
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
@@ -212,6 +208,50 @@ river for a smaller scale is worthy.
     \end{subfigure}
     \caption{Down-scaled original river (1:50000 and 1:250000).}
     \label{fig:salvis-50-250}
+\end{figure}
+
+Same rivers, unprocessed, but with higher density (scales 1:50000 and 1:250000)
+are depicted in figure~\onpage{fig:salvis-50-250}. Some river features are so
+compact that a reasonably thin line depicting the river is touching itself,
+creating a thicker line. As a result, generalization for this river for a
+smaller scale is worthy.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.49\textwidth}
+        \includegraphics[width=\textwidth]{salvis-douglas-64-50k}
+        \caption{Using {\DP}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.49\textwidth}
+        \includegraphics[width=\textwidth]{salvis-visvalingam-64-50k}
+        \caption{Using {\VW}}
+    \end{subfigure}
+    \caption{Generalized using classical algorithms (1:50000).}
+    \label{fig:salvis-generalized-50k}
+\end{figure}
+
+
+Figure~\onpage{fig:salvis-generalized-50k} illustrates the same river bend, but
+generalized using {\DP} and {\VW} algorithms. The resulting lines are jagged,
+thus the resulting line looks unlike a real river. To smoothen the jaggedness,
+traditionally, Chaikin's\cite{chaikin1974algorithm} is applied after
+generalization, illustrated in
+figure~\onpage{fig:salvis-generalized-chaikin-50k}.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{.49\textwidth}
+        \includegraphics[width=\textwidth]{salvis-douglas-64-chaikin-50k}
+        \caption{Using {\DP} and Chaikin's}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.49\textwidth}
+        \includegraphics[width=\textwidth]{salvis-visvalingam-64-chaikin-50k}
+        \caption{Using {\VW} and Chaikin's}
+    \end{subfigure}
+    \caption{Generalized and smoothened river (1:50000).}
+    \label{fig:salvis-generalized-chaikin-50k}
 \end{figure}
 
 \subsubsection{Modern approaches}
