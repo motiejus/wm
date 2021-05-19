@@ -280,11 +280,9 @@ declare
 begin
   fourpi = 4*radians(180);
   for i in 1..array_length(bends, 1) loop
+    res = null;
     bend = bends[i];
     if st_numpoints(bend) < 3 then
-      res.cmp = 0;
-      res.area = 0;
-      res.bend = null;
       polygon = null;
     else
       select st_makepolygon(st_addpoint(bend, st_startpoint(bend))) into polygon;
@@ -301,9 +299,11 @@ begin
       select fourpi*res.area/(st_perimeter(polygon)^2) into res.cmp;
       select bend into res.bend;
     end if;
+
     if res.area > 0 then
       select (res.area*(0.75/res.cmp)) into res.adjsize;
     end if;
+
     if dbgname is not null then
       insert into debug_wm (stage, name, nbend, way, props) values(
         'ebendattrs',
