@@ -169,7 +169,7 @@ clean: ## Clean the current working directory
 
 .PHONY: clean-tables
 clean-tables: ## Remove tables created during unit or integration tests
-	./db -c '\dt' | awk '/\ywm_\w+\y/{print "drop table "$$3";"}' | ./db -f -
+	./db -c '\dt wm_*' | awk '/_/{print "drop table "$$3";"}' | ./db -f -
 	-rm .faux_db
 
 .PHONY: help
