@@ -464,7 +464,7 @@ begin
         st_project(
           st_transform(point, 4326)::geography,
           st_distance(midpoint, point) * sss, azimuth)::geometry,
-        3857
+        st_srid(midpoint)
       );
       bend = st_setpoint(bend, i-1, point);
     end loop;
