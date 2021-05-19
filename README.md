@@ -68,7 +68,7 @@ Please reach out to me before contributing. As of writing, this is not ready to
 accept broader contributions, TODO:
 
 - [x] Elimination operator.
-- [ ] Exaggeration operator.
+- [x] Exaggeration operator.
 - [ ] Combination operator.
 - [ ] CI.
 - [ ] Known bug in `wm_self_crossing`: the program crashes with a river in
