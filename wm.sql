@@ -21,22 +21,22 @@ begin
   --
   -- Given 3 vertices p1, p2, p3:
   --
-  --         p1___ ...
-  --          /
-  -- ..._____/
-  --    p3   p2
+  --          p1___ ...
+  --           /
+  -- ... _____/
+  --     p3   p2
   --
-  -- This loop will use p1 as the head vertex, p2 will be the measured angle,
-  -- and p3 will be trailing. The line that will be added to the bend will
-  -- always be [p3,p2].
+  -- When looping over the line, p1 will be head (lead) vertex, p2 will be the
+  -- measured angle, and p3 will be trailing. The line that will be added to
+  -- the bend will always be [p3,p2].
   -- So once the p1 becomes the last vertex, the loop terminates, and the
   -- [p2,p1] line will not have a chance to be added. So the loop adds the last
   -- vertex twice, so it has a chance to become p2, and be added to the bend.
   --
   for p in (
-    (select (dp).geom from st_dumppoints(line) as dp order by (dp).path[1] asc)
+    (select geom from st_dumppoints(line) order by path[1] asc)
     union all
-    (select (dp).geom from st_dumppoints(line) as dp order by (dp).path[1] desc limit 1)
+    (select geom from st_dumppoints(line) order by path[1] desc limit 1)
   ) loop
     p3 = p2;
     p2 = p1;
@@ -61,8 +61,8 @@ begin
     prev_sign = cur_sign;
   end loop;
 
-  -- the last bend may be lost if there is no "final" inflection angle. Add it.
-  if (select count(1) from ((select st_dumppoints(bend) as a)) b) >= 2 then
+  -- the last line may be lost if there is no "final" inflection angle. Add it.
+  if (select count(1) >= 2 from st_dumppoints(bend)) then
     bends = bends || bend;
   end if;
 end
