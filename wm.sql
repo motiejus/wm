@@ -245,7 +245,8 @@ begin
         bends[i+1] = st_removepoint(bends[i+1], 0);
         bends[j] = st_geometryn(multi, 1);
         bends[j] = st_setpoint(
-          bends[j], st_npoints(bends[j])-1,
+          bends[j],
+          st_npoints(bends[j])-1,
           st_pointn(bends[i], st_npoints(bends[i]))
         );
         bends = bends[1:j] || bends[i+1:prev_length];
