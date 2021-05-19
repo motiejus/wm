@@ -228,6 +228,10 @@ begin
       continue when st_numgeometries(multi) = 2 and
         (st_contains(bends[j], a) or st_contains(bends[j], b));
 
+      -- Sincere apologies to someone who will need to debug the block below.
+      -- To understand it, I suggest you take a pencil and paper, draw a
+      -- self-crossing bend (fig6 from the article works well), and figure out
+      -- what happens here, by hand.
       prev_length = array_length(bends, 1);
       if j < i then
         -- remove first vertex of the following bend, because the last
@@ -251,7 +255,6 @@ begin
         bends = bends[1:i] || bends[j+1:prev_length];
       end if;
       j = j - prev_length + array_length(bends, 1);
-
     end loop;
 
   end loop;
