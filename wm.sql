@@ -38,8 +38,3 @@ begin
   end loop;
 end
 $$ language plpgsql;
-
-drop table if exists bends;
-
---create table bends as (select * from detect_bends((select way from figures where name='fig3')));
-create table bends as (select * from detect_bends((select way from figures where name='Žeimena')));
