@@ -173,8 +173,8 @@ However, I wasn't able to find code for any of those to evaluate with my
 desired data set, or use as a basis for my own maps. \cite{wang1998line} is
 available in a commercial product.
 
-The lack of robust openly available generalization algorithm implementations
-poses a problem for map creation with free software: there is not a similar
+Lack of robust openly available generalization algorithm implementations poses
+a problem for map creation with free software: there is not a similar
 high-quality simplification algorithm to create down-scaled maps, so any
 cartographic work, which uses line generalization as part of its processing,
 will be of sub-par quality. We believe that availability of high-quality
@@ -184,6 +184,37 @@ as a whole.
 
 \section{Methodology}
 \label{sec:methodology}
+
+In this paper we describe {\WM} in a detail that is more useful for algorithm
+developers than the original \cite{wang1998line}: sections will be expanded,
+with more detailed illustrations next to the descriptions.
+<TODO: expand>
+
+\subsection{Automated tests}
+
+\section{Description of the implementation}
+
+\subsection{Definition of a Bend}
+
+\subsection{Gentle Inflection at End of a Bend}
+
+\subsection{Self-line Crossing When Cutting a Bend}
+
+\subsection{Attributes of a Single Bend}
+
+\subsection{Shape of a Bend}
+
+\subsection{The Context of a Bend: Isolated and Similar Bends}
+
+\subsection{Elimination Operator}
+
+\subsection{Combination Operator}
+
+\subsection{Exaggeration Operator}
+
+\section{Program Implementation}
+
+\section{Results of Experiments}
 
 \section{Conclusions}
 \label{sec:conclusions}
@@ -197,15 +228,17 @@ as a whole.
 
 \section{Code listings}
 
-We strongly believe ability to reproduce the results is critical for any
-    scientific work. To make it possible for this algorithm, all source
-    files and accompanying scripts have been attached to the PDF. To preview
-    the code listings and re-generate this document, run this simple script:
+We strongly believe in the ability to reproduce the results is critical for any
+    scientific work. To make it possible for this paper, all source files and
+    accompanying scripts have been attached to the PDF. To preview the code
+    listings and re-generate this document (also, re-generate the included
+    graphics), run this script (assuming name of this document is {\tt
+    mj-msc-all.pdf}):
 
 \inputminted[fontsize=\small]{bash}{extract-and-generate}
 
 A reasonably up-to-date Linux or OS X system with a working Docker installation
-is required to re-generate this document.
+is required.
 
 \end{appendices}
 \end{document}

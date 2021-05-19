@@ -1,27 +1,13 @@
 #!/bin/bash
 set -euo pipefail
-
 dir=$(mktemp -d)
-fname=mj-msc-all.pdf
-
-echo "Extracting all files from $fname to $dir ..."
-pdfdetach -saveall -o "$dir" "$fname"
-
-echo "Generating $dir/$fname..."
-fail=0
-make -C "$dir" -j $(nproc) "$fname" > "$dir/make.log" 2>&1 || fail=1
-
-if [[ $fail == 1 ]]; then
-    >&2 echo "Generation failed. Here are the last 10 log lines:"
-    tail -10 "$dir/make.log"
+fname=${1:-mj-msc-all.pdf}
+echo "Extracting $fname to $dir/" && pdfdetach -saveall -o "$dir" "$fname"
+echo "Generating $dir/$fname ..."
+make -j $(nproc) -C "$dir" "$fname" &> "$dir/make.log" || {
+    echo "Generation failed. Here are the last 20 log lines:"
+    tail -20 "$dir/make.log"
     exit 1
-fi
-
-open=open
-[[ $(uname) == Linux ]] && open=xdg-open
-
-echo "Opening $dir/$fname ..."
-"$open" "$dir/$fname"
-
-echo "Editor has been closed. Removing $dir"
-rm -fr "$dir"
+}
+echo "Opening $dir/$fname ..." && xdg-open "$dir/$fname"
+echo "File has been closed. Removing $dir" && rm -fr "$dir"
