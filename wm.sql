@@ -262,8 +262,43 @@ begin
       end if;
       j = j - prev_length + array_length(bends, 1);
     end loop;
+  end loop;
+end
+$$ language plpgsql;
 
+-- ST_SimplifyWM simplifies a given geometry using Wang & Müller's
+-- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
+-- 1998.
+drop function if exists ST_SimplifyWM;
+create function ST_SimplifyWM(geometry geom) returns geometry as $$
+declare
+  line geometry;
+  geoms geometry[];
+  bends geometry[];
+  l_type text;
+begin
+  l_type = st_geometrytype(geom);
+  if l_type = 'ST_LineString' then
+    geoms = array(geom);
+  elseif l_type = 'ST_MultiLineString' then
+    geoms = array((select geom from st_dump(geom) order by path[1] desc));
+  else
+    raise 'Unknown geometry type %', l_type;
+  end if;
+
+  foreach line in array geoms loop
+    mutated = true;
+    while mutated loop
+      bends = detect_bends(line);
+      bends = fix_gentle_inflections(line);
+      bends, mutated = self_crossing(bends);
+    end loop;
   end loop;
 
+  if l_type = 'ST_LineString' then
+    return geoms[1];
+  elseif l_type = 'ST_MultiLineString' then
+    return st_union(geoms);
+  end if;
 end
 $$ language plpgsql;

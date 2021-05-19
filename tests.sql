@@ -88,8 +88,8 @@ end $$ language plpgsql;
 
 do $$
 declare
-  mutated boolean;
   vcrossings geometry[];
+  mutated boolean;
 begin
   select (self_crossing((select ways from inflections where name='fig6'))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
