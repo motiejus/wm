@@ -361,11 +361,6 @@ generalization algorithm is worthwhile for to look for.
 
 \subsubsection{Modern approaches}
 
-% TODO:
-% https://pdfs.semanticscholar.org/e80b/1c64345583eb8f7a6c53834d1d40852595d5.pdf
-% A New Algorithm for Cartographic Simplification of Streams and Lakes Using
-% Deviation Angles and Error Bands
-
 Due to their simplicity and ubiquity, {\DP} and {\VW} have been established as
 go-to algorithms for line generalization. During recent years, alternatives
 have emerged. These modern replacements fall into roughly two categories:
@@ -379,7 +374,7 @@ have emerged. These modern replacements fall into roughly two categories:
     \item Mathematical shape transformation which yields a more cartographic
         result. E.g., \titlecite{jiang2003line},
         \titlecite{dyken2009simultaneous}, \titlecite{mustafa2006dynamic},
-        \titlecite{nollenburg2008morphing}.
+        \titlecite{nollenburg2008morphing}, \titlecite{devangleserrorbends}.
 
 \end{itemize}
 
@@ -1364,6 +1359,7 @@ isolated bends are exaggerated, and some small bends are removed.
 % TODO: GDR50LT and GDR250LT
 
 \subsection{Testing results online}
+\label{sec:testing-results-online}
 
 An on-line tool\cite{openmapwm} has been developed to test incoming parameters
 to {\WM} algorithm. A user should select a river of interest, enter the
@@ -1397,6 +1393,20 @@ produces poorly simplified results for some geometries.
 \label{sec:related_work}
 
 % TODO: write after section~\ref{sec:conclusions} is complete.
+
+\section{Acknowledgments}
+\label{sec:acknowledgments}
+
+I would like to thank my thesis supervisor Andrius Balčiūnas for his help in
+formulating the requirements and providing early editorial feedback for the
+thesis.
+
+I am grateful to Tomas Straupis, who handed me the {\WM}\cite{wang1998line}
+paper in a warm pre-COVID summer evening. I got intrigued. He was also an early
+beta-tester of my implementation, and helped me understand where the initial
+algorithm descriptions were ambiguous.
+
+Many thanks to NŽT for providing the datasets with a very permissive license.
 
 \printbibliography
 
