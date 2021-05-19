@@ -60,7 +60,7 @@ slides: $(SLIDES)
 # The report, quick version
 ###########################
 
-mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
+mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex extract-and-generate bib.bib \
 	$(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
 	latexmk -shell-escape -g -pdf $<
 
@@ -133,16 +133,16 @@ salvis-250k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
 salvis-250k_WIDTHDIV = 10
 
 .faux_test-rivers: tests-rivers.sql wm.sql Makefile .faux_db
-	./db -v scaledwidth=$(SCALEDWIDTH) -f $<
+	bash db -v scaledwidth=$(SCALEDWIDTH) -f $<
 	touch $@
 
 .faux_test: tests.sql wm.sql .faux_db
-	./db -f $<
+	bash db -f $<
 	touch $@
 
 .faux_db: db init.sql
-	./db start
-	./db -f init.sql -f rivers.sql
+	bash db start
+	bash db -f init.sql -f rivers.sql
 	touch $@
 
 ################################
@@ -186,7 +186,7 @@ mj-msc-gray.pdf: mj-msc.pdf
 
 .PHONY: clean
 clean: ## Clean the current working directory
-	-./db stop
+	-bash db stop
 	-rm -r .faux_test .faux_aggregate-rivers .faux_test-rivers .faux_db \
 		version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
 		_minted-mj-msc \
@@ -197,7 +197,7 @@ clean: ## Clean the current working directory
 
 .PHONY: clean-tables
 clean-tables: ## Remove tables created during unit or rivers tests
-	./db -c '\dt wm_*' | awk '/_/{print "drop table "$$3";"}' | ./db -f -
+	bash db -c '\dt wm_*' | awk '/_/{print "drop table "$$3";"}' | bash db -f -
 	-rm .faux_db
 
 .PHONY: help
@@ -217,7 +217,7 @@ $(OSM):
 .PHONY: refresh-rivers
 refresh-rivers: aggregate-rivers.sql $(OSM) .faux_db ## Refresh rivers.sql from Open Street Maps
 	PGPASSWORD=osm osm2pgsql -c --multi-geometry -H 127.0.0.1 -d osm -U osm $(OSM)
-	./db -v where="$(WHERE)" -f $<
+	bash db -v where="$(WHERE)" -f $<
 	(\
 		echo '-- Generated at $(shell TZ=UTC date +"%FT%TZ") on $(shell whoami)@$(shell hostname -f)'; \
 		echo '-- Select: $(WHERE)'; \
