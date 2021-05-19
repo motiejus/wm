@@ -254,7 +254,7 @@ simplification.
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \centering
-        \includegraphics[width=.2\textwidth]{salvis-250k}
+        \includegraphics[width=.2\textwidth]{salvis-250k-10x}
         \caption{Example scaled 1:\numprint{250000}.}
     \end{subfigure}
     \caption{Down-scaled original river.}
@@ -1416,6 +1416,7 @@ To sum up, mid-scale simplification works well for some geometries, but creates
 sharp edges for others.
 
 \subsubsection{Large-scale (1:\numprint{250000})}
+\label{sec:analyzed-large-scale}
 
 As visible in figure~\ref{fig:salvis-wm-250k}, for large-scale map, some of the
 resulting bends look significantly exaggerated. Why is that?
@@ -1426,7 +1427,7 @@ simplification and overlays the original.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \centering
-        \includegraphics[width=.2\textwidth]{salvis-250k}
+        \includegraphics[width=.2\textwidth]{salvis-250k-10x}
         \caption{Original.}
     \end{subfigure}
     \hfill
@@ -1521,6 +1522,32 @@ illustrates two small bends that have been removed in GDR50LT, but have been
 exaggerated by our implementation.
 
 \subsubsection{Large-scale (1:\numprint{250000})}
+\label{sec:national-large-scale}
+
+Figure~\ref{fig:salvis-wm-250k} illustrates the original GDR250LT and the
+{\WM}--simplified version. As section~\ref{sec:analyzed-large-scale} explains,
+the algorithm tries to exaggerate many bends to a great size. However, GDR250LT
+takes the opposite approach --- only the very basic shapes of the largest bends
+are retained. Time and customers will tell, which approach is more appropriate,
+after the current {\WM} implementation receives some time and attention, as
+desired in section~\ref{sec:future-suggestions}.
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{.49\textwidth}
+        \includegraphics[width=\textwidth]{salvis-gdr250-2x}
+        \caption{GDR250LT.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{salvis-wm-220}
+        \caption{{\WM}-simplified GDB10LT.}
+    \end{subfigure}
+    \caption{GDR250LT and {\WM}--simplified GDB10LT.}
+    \label{fig:salvis-wm-250k}
+\end{figure}
+
 
 \subsection{Testing Results Online}
 \label{sec:testing-results-online}
@@ -1577,6 +1604,10 @@ implementation:
     \item Fine-tune parameters for bend exaggeration.
         Section~\ref{sec:generalization-results-of-analyzed-rivers} contains
         a exaggerated bends that became sharp and includes some future ideas.
+
+    \item What are the exaggeration limits when working with large scales?
+        Section~\ref{sec:national-large-scales} discusses examples that some
+        limits are necessary.
 
     \item Research when bends should be marked as \textsc{isolated}. As is
         seen from examples, the current criteria is not robust enough.

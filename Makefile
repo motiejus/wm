@@ -33,20 +33,23 @@ FIGURES = \
 RIVERS = \
 		 salvis-25k \
 		 salvis-50k \
-		 salvis-250k \
+		 salvis-250k-10x \
+		 salvis-gdr250-2x \
 		 salvis-douglas-64-50k \
 		 salvis-visvalingam-64-50k \
 		 salvis-douglas-64-chaikin-50k \
 		 salvis-visvalingam-64-chaikin-50k \
 		 salvis-overlaid-douglas-64-chaikin-50k \
 		 salvis-overlaid-visvalingam-64-chaikin-50k \
-		 salvis-wm-250k \
+		 salvis-wm-250k-10x \
+		 salvis-wm-250k-2x \
 		 salvis-wm-50k \
 		 salvis-wm-50k-nw \
 		 salvis-wm-50k-ne \
 		 salvis-wm-overlaid-250k-zoom \
 		 salvis-wm-gdr50 \
-		 salvis-wm-gdr50-ne
+		 salvis-wm-gdr50-ne \
+		 salvis-wm-220
 
 #################################
 # The thesis, publishable version
@@ -174,8 +177,11 @@ salvis-25k_WIDTHDIV = 1
 salvis-50k_1SELECT = wm_visuals where name='salvis'
 salvis-50k_WIDTHDIV = 2
 
-salvis-250k_1SELECT = wm_visuals where name='salvis'
-salvis-250k_WIDTHDIV = 10
+salvis-250k-10x_1SELECT = wm_visuals where name='salvis'
+salvis-250k-10x_WIDTHDIV = 10
+
+salvis-gdr250-2x_1SELECT = wm_visuals where name='salvis-gdr250'
+salvis-gdr250-2x_WIDTHDIV = 2
 
 salvis-douglas-64-50k_1SELECT = wm_visuals where name='salvis-douglas-64'
 salvis-douglas-64-50k_WIDTHDIV = 2
@@ -201,8 +207,11 @@ salvis-overlaid-visvalingam-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 
-salvis-wm-250k_1SELECT = wm_visuals where name='salvis-wm-220'
-salvis-wm-250k_WIDTHDIV = 10
+salvis-wm-250k-2x_1SELECT = wm_visuals where name='salvis-wm-220'
+salvis-wm-250k-2x_WIDTHDIV = 2
+
+salvis-wm-250k-10x_1SELECT = wm_visuals where name='salvis-wm-220'
+salvis-wm-250k-10x_WIDTHDIV = 10
 
 salvis-wm-50k_1SELECT = wm_visuals where name='salvis-wm-75'
 salvis-wm-50k_2SELECT = wm_visuals where name='salvis'
@@ -235,6 +244,8 @@ salvis-wm-gdr50-ne_1COLOR = orange
 salvis-wm-gdr50-ne_2COLOR = green
 salvis-wm-gdr50-ne_QUADRANT = 1
 
+salvis-wm-220_1SELECT = wm_visuals where name='salvis-wm-220'
+salvis-wm-220_WIDTHDIV = 2
 
 .faux_db_pre: db init.sql
 	bash db start
