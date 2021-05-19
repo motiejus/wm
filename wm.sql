@@ -314,7 +314,7 @@ begin
         dbgname,
         i,
         bend,
-        json_build_object(
+        jsonb_build_object(
           'area', res.area,
           'cmp', res.cmp,
           'adjsize', res.adjsize,
@@ -333,11 +333,14 @@ declare
   isolation_threshold constant real default 0.2; -- if neighbor's curvatures are within, it's isolated
   this real;
   res t_bend_attrs;
+  prev_i int4;
   i int4;
 begin
   i = 2;
   while i < array_length(bendattrs, 1)-1 loop
+    raise notice 'number of bends in %: %', dbgname, array_length(bendattrs, 1);
     this = bendattrs[i].curvature * isolation_threshold;
+    prev_i = i;
     if bendattrs[i-1].curvature < this and bendattrs[i+1].curvature < this then
       res = bendattrs[i];
       res.isolated = true;
@@ -346,6 +349,19 @@ begin
     else
       i = i + 1;
     end if;
+
+    if dbgname is not null then
+      insert into wm_debug (stage, name, nbend, way, props) values(
+        'fisolated_bends',
+        dbgname,
+        prev_i,
+        res.bend,
+        jsonb_build_object(
+          'isolated', res.isolated
+        )
+      );
+    end if;
+
   end loop;
 end
 $$ language plpgsql;
@@ -433,6 +449,7 @@ begin
       -- self-crossing mutations are done, calculate bend properties
       bend_attrs = array((select bend_attrs(bends, dbgname)));
 
+      perform isolated_bends(bend_attrs, dbgname);
     end loop;
 
   end loop;
