@@ -1,11 +1,7 @@
-# HACK HACK
-EMPTY :=
-SPACE := $(EMPTY) $(EMPTY)
-
-RIVERS ?= Visinčia Šalčia Žeimena Lakaja Nemunas
+WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas'
 
 .faux_filter-rivers: .faux_import-osm
-	./filter-rivers-query.awk $(RIVERS) | ./db -f -
+	./db -v where="$(WHERE)" -f aggregate-rivers.sql
 	touch $@
 
 .faux_import-osm: lithuania-latest.osm.pbf .faux.db
