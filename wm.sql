@@ -6,7 +6,7 @@ drop function if exists wm_detect_bends;
 create function wm_detect_bends(
   line geometry,
   dbgname text default null,
-  dbgstagenum integer default null,
+  dbggen integer default null,
   OUT bends geometry[]
 ) as $$
 declare
@@ -79,7 +79,7 @@ begin
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'bbends',
         dbgname,
-        dbgstagenum,
+        dbggen,
         i,
         bends[i]
       );
@@ -91,7 +91,7 @@ begin
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'bbends-polygon',
         dbgname,
-        dbgstagenum,
+        dbggen,
         i,
         dbgpolygon
       );
@@ -109,10 +109,11 @@ $$ language plpgsql;
 --
 -- The implementation could be significantly optimized to avoid `st_reverse`
 -- and array reversals, trading for complexity in wm_fix_gentle_inflections1.
-create or replace function wm_fix_gentle_inflections(
+drop function if exists wm_fix_gentle_inflections;
+create function wm_fix_gentle_inflections(
   INOUT bends geometry[],
   dbgname text default null,
-  dbgstagenum integer default null
+  dbggen integer default null
 ) as $$
 declare
   len int4;
@@ -136,7 +137,7 @@ begin
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'cinflections',
         dbgname,
-        dbgstagenum,
+        dbggen,
         i,
         bends[i]
       );
@@ -149,7 +150,7 @@ begin
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'cinflections-polygon',
         dbgname,
-        dbgstagenum,
+        dbggen,
         i,
         dbgpolygon
       );
@@ -335,9 +336,9 @@ begin
 end
 $$ language plpgsql;
 
-
 drop function if exists wm_bend_attrs;
 drop function if exists wm_isolated_bends;
+drop function if exists wm_elimination;
 drop type if exists wm_t_bend_attrs;
 create type wm_t_bend_attrs as (
   bend geometry,
@@ -404,6 +405,72 @@ begin
     return next res;
   end loop;
 end;
+$$ language plpgsql;
+
+create function wm_elimination(
+  INOUT bendattrs wm_t_bend_attrs[],
+  dhalfcircle float,
+  dbgname text,
+  dbggen int4,
+  OUT mutated boolean
+) as $$
+declare
+  area_threshold float;
+  leftsize float;
+  rightsize float;
+  i int4;
+  j int4;
+  tmpbendattrs wm_t_bend_attrs;
+  dbgbends geometry[];
+begin
+  area_threshold = radians(180) * ((dhalfcircle/2)^2)/2;
+  mutated = false;
+  i = 1;
+  while i < array_length(bendattrs, 1)-1 loop
+    i = i + 1;
+    continue when area_threshold >= bendattrs[i].adjsize;
+
+    if i = 2 then
+      leftsize = bendattrs[i].adjsize + 1;
+    else
+      leftsize = bendattrs[i-1].adjsize;
+    end if;
+
+    if i = array_length(bendattrs, 1)-1 then
+      rightsize = bendattrs[i].adjsize + 1;
+    else
+      rightsize = bendattrs[i+1].adjsize;
+    end if;
+
+    continue when leftsize <= bendattrs[i].adjsize;
+    continue when rightsize <= bendattrs[i].adjsize;
+
+    -- Local minimum. Elminate!
+    mutated = true;
+    tmpbendattrs.bend = st_makeline(
+      st_pointn(bendattrs[i].bend, 1),
+      st_pointn(bendattrs[i].bend, -1)
+    );
+    bendattrs[i] = tmpbendattrs;
+    -- jump over the next bend, because the current bend disappeared,
+    -- and there is no way the other one can be a "local minima".
+    i = i + 1;
+  end loop;
+
+  if dbgname is not null then
+    for j in 1..array_length(bendattrs, 1) loop
+      dbgbends[j] = bendattrs[j].bend;
+    end loop;
+    
+    insert into wm_debug(stage, name, gen, nbend, way) values(
+      'eelimination',
+      dbgname,
+      dbggen,
+      generate_subscripts(dbgbends, 1),
+      unnest(dbgbends)
+    );
+  end if;
+end
 $$ language plpgsql;
 
 create function wm_isolated_bends(
@@ -484,22 +551,23 @@ $$ language plpgsql;
 -- 1998.
 -- Input parameters:
 -- - geom: ST_LineString or ST_MultiLineString: the geometry to be simplified
--- - diameter: the diameter of a half-circle, whose area is an approximate
+-- - dhalfcircle: the diameter of a half-circle, whose area is an approximate
 --   threshold for small bend elimination. If bend's area is larger than that,
 --   the bend will be left alone.
 drop function if exists ST_SimplifyWM;
 create function ST_SimplifyWM(
   geom geometry,
-  diameter float,
+  dhalfcircle float,
   dbgname text default null
 ) returns geometry as $$
 declare
-  stagenum integer;
+  gen integer;
   i integer;
+  j integer;
   line geometry;
   lines geometry[];
   bends geometry[];
-  bend_attrs wm_t_bend_attrs[];
+  bendattrs wm_t_bend_attrs[];
   mutated boolean;
   l_type text;
 begin
@@ -514,20 +582,20 @@ begin
 
   for i in 1..array_length(lines, 1) loop
     mutated = true;
-    stagenum = 1;
+    gen = 1;
     while mutated loop
       if dbgname is not null then
         insert into wm_debug (stage, name, gen, nbend, way) values(
           'afigures',
           dbgname,
-          stagenum,
+          gen,
           i,
           lines[i]
         );
       end if;
 
-      bends = wm_detect_bends(lines[i], dbgname, stagenum);
-      bends = wm_fix_gentle_inflections(bends, dbgname, stagenum);
+      bends = wm_detect_bends(lines[i], dbgname, gen);
+      bends = wm_fix_gentle_inflections(bends, dbgname, gen);
 
       select * from wm_self_crossing(bends) into bends, mutated;
 
@@ -535,7 +603,7 @@ begin
         insert into wm_debug(stage, name, gen, nbend, way) values(
           'dcrossings',
           dbgname,
-          stagenum,
+          gen,
           generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -543,30 +611,25 @@ begin
 
       if mutated then
         lines[i] = st_linemerge(st_union(bends));
-        stagenum = stagenum + 1;
+        gen = gen + 1;
         continue;
       end if;
 
-      --select * from wm_elimination(bends, diameter) into bends, mutated;
+      bendattrs = array((select wm_bend_attrs(bends, dbgname)));
 
-      --if dbgname is not null then
-      --  insert into wm_debug(stage, name, gen, nbend, way) values(
-      --    'eelimination',
-      --    dbgname,
-      --    stagenum,
-      --    generate_subscripts(bends, 1),
-      --    unnest(bends)
-      --  );
-      --end if;
+      select * from wm_elimination(
+        bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
 
-      --if mutated then
-      --  lines[i] = st_linemerge(st_union(bends));
-      --  stagenum = stagenum + 1;
-      --  continue;
-      --end if;
+      if mutated then
+        for j in 1..array_length(bendattrs, 1) loop
+          bends[j] = bendattrs[j].bend;
+        end loop;
+        lines[i] = st_linemerge(st_union(bends));
+        gen = gen + 1;
+        continue;
+      end if;
 
-      bend_attrs = array((select wm_bend_attrs(bends, dbgname)));
-      perform wm_isolated_bends(bend_attrs, dbgname);
+      perform wm_isolated_bends(bendattrs, dbgname);
     end loop;
 
   end loop;

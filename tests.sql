@@ -53,7 +53,7 @@ insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Tr
 
 delete from wm_debug where name in (select distinct name from wm_figures);
 delete from wm_demo where name in (select distinct name from wm_figures);
-insert into wm_demo (name, way) select name, ST_SimplifyWM(way, null, name) from wm_figures;
+insert into wm_demo (name, way) select name, ST_SimplifyWM(way, 100, name) from wm_figures;
 
 do $$
   declare fig6b1 geometry;
