@@ -44,6 +44,10 @@ To execute the algorithm, run:
 Building the paper (pdf)
 ------------------------
 
+```
+$ make -j$(nproc) mj-msc-full.pdf
+```
+
 `mj-msc.tex` results in `mj-msc-full.pdf`, which will be at some point
 published. It needs quite a few dependencies, including a functioning Docker
 environment.
