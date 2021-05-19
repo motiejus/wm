@@ -183,7 +183,7 @@ thus convenient to analyze for both small and large scale generalization.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{salvis-25k}
-    \caption{Example rivers for visual tests (1:25000)}
+    \caption{Example rivers for visual tests (1:25000).}
     \label{fig:salvis-25}
 \end{figure}
 
@@ -197,15 +197,15 @@ river for a smaller scale is worthy.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-50k}
-        \caption{Example scaled 1:50000}
+        \caption{Example scaled 1:50000.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \centering
         \includegraphics[width=.2\textwidth]{salvis-250k}
-        \caption{Example scaled 1:250000}
+        \caption{Example scaled 1:250000.}
     \end{subfigure}
-    \caption{Down-scaled original river (1:50000 and 1:250000)}
+    \caption{Down-scaled original river (1:50000 and 1:250000).}
     \label{fig:salvis-50-250}
 \end{figure}
 
@@ -276,6 +276,7 @@ many cases, corner cases are discussed and clarified.
 Assume Euclidean geometry throughout this document, unless noted otherwise.
 
 \subsection{Vocabulary and terminology}
+\label{sec:vocab}
 
 This section defines vocabulary and terms as defined in the rest of the paper.
 
@@ -289,7 +290,7 @@ This section defines vocabulary and terms as defined in the rest of the paper.
         $(x_2, y_2)$. Line Segment and Segment are used interchangeably
         throughout the paper.
 
-    \item[Line] (or \textsc{linestring}) represents a single linear feature in
+    \item[Line], or \textsc{linestring}, represents a single linear feature in
         the real world. For example, a river or a coastline.
 
         Geometrically, A line is a series of connected line segments, or,
@@ -304,6 +305,16 @@ This section defines vocabulary and terms as defined in the rest of the paper.
     \item[Baseline] is a line between bend's first and last vertex.
 
     \item[Sum of inner angles] TBD.
+
+    \item[Algorithmic Complexity] also called \textsc{big o notation}, is a
+        relative measure to explain how long will the algorithm run depending
+        on it's input. For example, given $n$ objects and time complexity of
+        $O(n)$, the time it takes to execute the algorithm is proportional to
+        $n$. Conversely, if complexity is $O(n^2)$, then the time it takes to
+        execute the algorithm is quadratic. $O$ notation was first suggested by
+        Bachmann\cite{bachmann1894analytische} in late XIX'th century, and
+        adopted for computer science by Donald Knuth\cite{knuth1976big} in
+        1970s.
 
 \end{description}
 
@@ -341,13 +352,32 @@ figure~\ref{fig:test-figures}.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{test-figures}
-    \caption{Line geometries for automated test cases}
+    \caption{Line geometries for automated test cases.}
     \label{fig:test-figures}
 \end{figure}
 
 The full test suite can be executed with a single command, and completes in a
 few seconds. Having an easily accessible test suite boosts confidence that no
 unexpected bugs have snug in while modifying the algorithm.
+
+\subsection{Reproducing generalizations in this paper}
+\label{sec:reproducing-the-paper}
+
+It is widely believed that the ability to reproduce the results of a published
+study is important to the scientific community. In practice, however, it is
+often hard to impossible: research methodologies, as well as algorithms
+themselves, are explained in prose, which, due to the nature of the non-machine
+language, lends itself to inexact interpretations.
+
+This article, besides explaining the algorithm in prose, \emph{includes} the
+program of the algorithm in a way that can be executed on reader's workstation.
+On top of it, all the illustrations in this paper are generated using that
+algorithm, from a predefined list of test geometries (test geometries were
+explained in section~\ref{sec:automated-tests}).
+
+Instructions how to re-generate all the visualizations are found in
+appendix~\ref{sec:code-regenerate}. The visualization code serves as a good
+example reference for anyone willing to start using the algorithm.
 
 \section{Description of the implementation}
 
@@ -411,7 +441,7 @@ but with bends colored as polygons: each color is a distinctive bend.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{fig8-definition-of-a-bend}
-    \caption{Originally figure 8: detected bends are highlighted}
+    \caption{Originally figure 8: detected bends are highlighted.}
     \label{fig:fig8-definition-of-a-bend}
 \end{figure}
 
@@ -431,14 +461,14 @@ when a single vertex is moved outwards the end of the bend.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-before}
-        \caption{Before applying the inflection rule}
+        \caption{Before applying the inflection rule.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-after}
-        \caption{After applying the inflection rule}
+        \caption{After applying the inflection rule.}
     \end{subfigure}
-    \caption{Originally figure 5: gentle inflections at the ends of the bend}
+    \caption{Originally figure 5: gentle inflections at the ends of the bend.}
     \label{fig:fig5-gentle-inflection}
 \end{figure}
 
@@ -458,15 +488,15 @@ vertices to the next bend.
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-before}
-        \caption{Before applying the inflection rule}
+        \caption{Before applying the inflection rule.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{inflection-1-gentle-inflection-after}
-        \caption{After applying the inflection rule}
+        \caption{After applying the inflection rule.}
     \end{subfigure}
     \caption{Gentle inflection at the end of the bend when multiple vertices
-    are moved}
+    are moved.}
     \label{fig:inflection-1-gentle-inflection}
 \end{figure}
 
@@ -494,56 +524,63 @@ The "quite small angle" was arbitrarily chosen to $\smallAngle$.
 \subsection{Self-line Crossing When Cutting a Bend}
 
 When bend's baseline crosses another bend, it is called self-crossing.
-Self-crossing is undesirable in the upcoming operators, thus should be removed
-following the rules of the article.
+Self-crossing is undesirable for the upcoming bend manipulation operators, thus
+should be removed. There are a few rules on when and how they should be removed
+--- this section explains them in higher detail, discusses their time
+complexity and applied optimizations. Figure~\ref{fig:fig6-selfcrossing} is
+copied from the original article.
 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-before}
-        \caption{Bend's baseline (dotted) is crossing a neighboring bend}
+        \caption{Bend's baseline (dotted) is crossing a neighboring bend.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{fig6-selfcrossing-after}
-        \caption{Self-crossing removed following the algorithm}
+        \caption{Self-crossing removed.}
     \end{subfigure}
-    \caption{Originally figure 6: simple case of self-line crossing}
+    \caption{Originally figure 6: simple case of self-line crossing.}
     \label{fig:fig6-selfcrossing}
 \end{figure}
-
-The original description does not go into detail which bends may self-cross, and which <TBD>
-
-The self-line-crossing may happen not by the neighboring bend, but by any other
-bend in the line. For example, the baseline of the bend may cross different
-bends in between, as depicted in figure~\ref{fig:selfcrossing-1-non-neighbor}.
 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-before}
-        \caption{Bend's baseline (dotted) is crossing a non-neighboring bend}
+        \caption{Bend's baseline (dotted) is crossing a non-neighboring bend.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{selfcrossing-1-after}
-        \caption{Self-crossing removed following the algorithm}
+        \caption{Self-crossing removed.}
     \end{subfigure}
-    \caption{Self-crossing with non-neighboring bend}
+    \caption{Self-crossing with non-neighboring bend.}
     \label{fig:selfcrossing-1-non-neighbor}
 \end{figure}
 
-Naively implemented, checking every bend with every bend is costs $O(n^2)$. In
-other words, the time it takes to run the algorithm grows quadratically with
-the with the number of vertices.
+Looking at the {\WM} paper alone, it may seem like self-crossing may happen
+only with the neighboring bend. This would mean an efficient $O(n)$
+implementation\footnote{where $n$ is the number of bends in a line. See
+explanation of \textsc{algorithmic complexity} in section~\ref{sec:vocab}.}.
+However, as one can see in figure~\ref{fig:selfcrossing-1-non-neighbor}, it may
+not be the case: any other bend in the line may be crossing it.
 
-It is possible to optimize this step and skip checking some of the bends. Only
-bends whose sum of inner angles is $\pi$ can ever self-cross. If the value is
-less than $\pi$, it cannot cross other bends. That way, only a fraction of
-bends need to be checked.
+If one translates the requirements to code in a straightforward way, it would
+be quite computationally expensive: naively implemented, complexity of checking
+every bend with every bend is $O(n^2)$. In other words, the time it takes to
+run the algorithm grows quadratically with the with the number of vertices.
+
+It is possible to optimize this step and skip checking most of the bends. Only
+bends whose sum of inner angles is larger than $\pi$ can ever self-cross. If
+the value is less than $\pi$, it cannot cross other bends. That way, only a
+fraction of bends need to be checked. The worst-case complexity is still
+$O(n^2)$, when all bends' inner angles are larger than $\pi$, but, assuming no
+more than $20\%$ of the bends' inner angles are larger than $\pi$, the time it
+takes to run this piece of the algorithm drops by $80\%$.
 
 \subsection{Attributes of a Single Bend}
-
 
 
 \textsc{Compactness Index} is "the ratio of the area of the polygon over the
@@ -555,10 +592,10 @@ compactness index is calculated as follows:
 
   \item Construct a polygon by joining first and last vertices of the bend.
 
-  \item Calculate area of the polygon $P$.
+  \item Calculate area of the polygon.
 
-  \item Calculate perimeter of the polygon $u$. The same value is the
-    circumference of the circle.
+  \item Calculate perimeter $u$ of the polygon. The same value is the
+      circumference of the circle.
 
   \item Given circle's perimeter $u$, circle's area $A$ is:
 
@@ -599,8 +636,8 @@ Two conditions must be true to claim that a bend is isolated:
 
 \begin{enumerate}
     \item \textsc{average curvature} of neighboring bends, should be larger
-        than the "candidate" bend's curvature; this implementation arbitrarily
-        chose $\isolationThreshold$.
+        than the "candidate" bend's curvature. The article did not offer a
+        value, this implementation arbitrarily chose $\isolationThreshold$.
 
     \item Bends on both sides of the "candidate" should be longer than a
         certain value. This implementation does not (yet) define such a
@@ -617,7 +654,7 @@ To find out whether two bends are similar, they are compared by 3 components:
     \item Baseline length
 \end{enumerate}
 
-These 3 components represent a point in the 3-dimensional space, and Euclidean
+Components 1, 2 and 3 represent a point in a 3-dimensional space, and Euclidean
 distance $d$ between those is calculated to differentiate between bends $p$ and
 $q$:
 
@@ -627,7 +664,7 @@ $q$:
                    (baseline_p-baseline_q)^2}
 \]
 
-The more similar the bends are, the smaller the distance $d$.
+The smaller the distance $d$, the more similar the bends are.
 
 \subsection{Elimination Operator}
 
@@ -651,19 +688,17 @@ The more similar the bends are, the smaller the distance $d$.
 
 \section{Code listings}
 
-\subsection{Reproducing the generalizations in this paper}
+\subsection{Re-generating this paper}
+\label{sec:code-regenerate}
 
-We strongly believe in the ability to reproduce the results is critical for any
-    scientific work. To make it possible for this paper, all source files and
-    accompanying scripts have been attached to the PDF. To re-generate this
-    document and its accompanying graphics, run this script (assuming name of
-    this document is {\tt mj-msc-full.pdf}):
+Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
+    this paper are generated from a small list of sample geometries. To observe
+    the source geometries or regenerate this paper, run this script (assuming
+    name of this document is {\tt mj-msc-full.pdf}):
 
 \inputcode{bash}{extract-and-generate}
 
-This was tested on Linux Debian 11 with upstream packages only.
-
-\subsection{Algorithm code listings}
+%\subsection{Algorithm code listings}
 %\inputcode{postgresql}{wm.sql}
 
 \end{appendices}
