@@ -128,9 +128,6 @@ begin
   elems1 = array((select way from debug_wm where stage='cinflections' and name='fig6-combi' and iter=1));
   elems2 = (select ways from inflections where name='fig6-combi');
 
-  raise notice 'input 1: %', array_length(elems1, 1);
-  raise notice 'input 2: %', array_length(elems2, 1);
-
   foreach elem in array elems1 loop
     raise notice 'elem 1: %', st_astext(elem);
   end loop;
@@ -140,8 +137,10 @@ begin
   end loop;
 
 
+  select (self_crossing(elems1)).* into vcrossings, mutated;
+  --select (self_crossing(elems2)).* into vcrossings, mutated;
   --select (self_crossing((select ways from inflections where name='fig6-combi'))).* into vcrossings, mutated;
-  select (self_crossing(array((select way from debug_wm where stage='cinflections' and name='fig6-combi')))).* into vcrossings, mutated;
+  --select (self_crossing(array((select way from debug_wm where stage='cinflections' and name='fig6-combi')))).* into vcrossings, mutated;
   perform assert_equals(true, mutated);
   perform assert_equals(
     'LINESTRING(84 137,91 149,114 154,120 135,125 129,141 129,147 122,164 137,171 149,194 154,200 135,205 129,221 129,227 122)',
