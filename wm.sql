@@ -270,16 +270,17 @@ $$ language plpgsql;
 -- "Line Generalization Based on Analysis of Shape Characteristics" algorithm,
 -- 1998.
 drop function if exists ST_SimplifyWM;
-create function ST_SimplifyWM(geometry geom) returns geometry as $$
+create function ST_SimplifyWM(geom geometry) returns geometry as $$
 declare
   line geometry;
   geoms geometry[];
   bends geometry[];
+  mutated boolean;
   l_type text;
 begin
   l_type = st_geometrytype(geom);
   if l_type = 'ST_LineString' then
-    geoms = array(geom);
+    geoms = array[geom];
   elseif l_type = 'ST_MultiLineString' then
     geoms = array((select geom from st_dump(geom) order by path[1] desc));
   else
