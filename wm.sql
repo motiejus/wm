@@ -76,11 +76,13 @@ $$ language plpgsql;
 -- commulative inflection angle small (see variable below).
 create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
 declare
+  pi real;
   small_angle real;
   phead geometry; -- head point of head bend
   ptail geometry[]; -- 3 head points of tail bend
   i int4; -- bends[i] is the current head
 begin
+  pi = radians(180);
   -- the threshold when the angle is still "small", so gentle inflections can
   -- be joined
   small_angle := radians(30);
@@ -116,7 +118,7 @@ begin
     select geom from st_dumppoints(bends[i]) order by path[1] desc limit 1 into phead;
     while true loop
       -- copy last 3 points of bends[i-1] (tail) to ptail
-      select array_agg(geom) from st_dumppoints(bends[i-1]) order by path[1] desc limit 3 into ptail;
+      select array(select geom from st_dumppoints(bends[i-1]) order by path[1] desc limit 3) into ptail;
 
       -- if inflection angle between ptail[1:3] "large", stop processing this bend
       if abs(st_angle(ptail[1], ptail[2], ptail[2], ptail[3]) - pi) > small_angle then

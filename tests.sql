@@ -48,6 +48,6 @@ begin
   drop table if exists inflections;
   create table inflections (way geometry);
   --insert into inflections select unnest(fix_gentle_inflections(vbends));
-  select fix_gentle_inflections(vbends);
+  insert into inflections select unnest(fix_gentle_inflections(vbends));
 
 end $$ language plpgsql;
