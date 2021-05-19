@@ -44,7 +44,7 @@ begin
     if p3 is null then
       continue;
     end if;
-    cur_sign = sign(pi - st_angle(p1, p2, p3));
+    cur_sign = sign(pi - st_angle(p1, p2, p2, p3));
 
     if bend is null then
       bend = st_makeline(p3, p2);
@@ -75,6 +75,17 @@ $$ language plpgsql;
 -- equally be one or many. This function is adjusting many, as long as the
 -- commulative inflection angle small (see variable below).
 create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
+declare
+  bends1 geometry[];
+begin
+  bends1 = fix_gentle_inflections1(bends);
+  bends1 = array_reverse(fix_gentle_inflections1(array_reverse(bends1)));
+end
+$$ language plpgsql;
+
+-- fix_gentle_inflections1 fixes gentle inflections of an array of lines in
+-- one direction. This is an implementation detail of fix_gentle_inflections.
+create or replace function fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
   pi real;
   small_angle real;
@@ -129,6 +140,8 @@ begin
       exit when st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]);
 
       -- detected a gentle inflection. Move head of the tail to the tail of head
+      raise notice 'fixing a gentle inflection of angle %', degrees(abs(st_angle(phead[1], phead[2], phead[3]) - pi));
+
       bends[i] = st_removepoint(bends[i], 0);
       bends[i-1] = st_addpoint(bends[i-1], phead[3]);
     end loop;
@@ -136,3 +149,15 @@ begin
   end loop;
 end
 $$ language plpgsql;
+
+-- https://wiki.postgresql.org/wiki/Array_reverse
+create or replace function array_reverse(anyarray) returns anyarray as $$
+select array(
+    select $1[i]
+    from generate_series(
+        array_lower($1,1),
+        array_upper($1,1)
+    ) as s(i)
+    order by i desc
+);
+$$ language 'sql' strict immutable;
