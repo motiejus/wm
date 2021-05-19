@@ -449,20 +449,6 @@ figure~\onpage{fig:selfcrossing-1-non-neighbor}.
     \label{fig:selfcrossing-1-non-neighbor}
 \end{figure}
 
-
-\begin{figure}[h]
-    \centering
-    \begin{BVerbatim}
-    \  \
-    B\ |     _       __
-     | |    / \     /  \
-     | |___/   \___/A  |
-     \_________________|
-    \end{BVerbatim}
-    \caption{A baseline crossing non-neighboring in-between bends}
-    \label{fig:ascii-selfcross}
-\end{figure}
-
 Naively implemented, checking every bend with every bend is costs $O(n^2)$.
 
 It is possible to optimize this step and skip checking some of the bends. Only
