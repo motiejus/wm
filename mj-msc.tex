@@ -48,7 +48,8 @@
 \newcommand{\DP}{Douglas \& Peucker}
 \newcommand{\VW}{Visvalingam--Whyatt}
 \newcommand{\WM}{Wang--M{\"u}ller}
-\newcommand{\MYTITLE}{Cartographic Line Generalization (example of rivers)}
+% {\WM} algoritmo realizacija kartografinei upių generalizacijai vykdyti (PostGIS programinės įrangos pagrindu)
+\newcommand{\MYTITLE}{{\WM} algorithm realization for cartographic line generalization}
 \newcommand{\MYAUTHOR}{Motiejus Jakštys}
 
 \title{\MYTITLE}
@@ -374,7 +375,7 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 
         $O$ notation was first suggested by
         Bachmann\cite{bachmann1894analytische} and
-        Landau\cite{landau2000handbuch} in late XIX'th century, and clarified
+        Landau\cite{landau1911} in late XIX'th century, and clarified
         and popularized for computing science by Donald
         Knuth\cite{knuth1976big} in the 1970s.
 
@@ -760,8 +761,8 @@ Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
 
 \inputcode{bash}{extract-and-generate}
 
-%\subsection{Algorithm code listings}
-%\inputcode{postgresql}{wm.sql}
+\subsection{Algorithm code listings}
+\inputcode{postgresql}{wm.sql}
 
 \end{appendices}
 \end{document}
