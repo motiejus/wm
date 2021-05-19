@@ -102,10 +102,13 @@ fig8-definition-of-a-bend_2SELECT = wm_debug where name='fig8' AND stage='bbends
 
 fig8-elimination-gen1_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
 fig8-elimination-gen1_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
+fig8-elimination-gen1_2LINESTYLE = dotted
 fig8-elimination-gen2_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=2
 fig8-elimination-gen2_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=2
+fig8-elimination-gen2_2LINESTYLE = dotted
 fig8-elimination-gen3_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=3
 fig8-elimination-gen3_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=3
+fig8-elimination-gen3_2LINESTYLE = dotted
 
 fig5-gentle-inflection-before_WITHDIV = 2
 fig5-gentle-inflection-before_1SELECT = wm_debug where name='fig5' AND stage='bbends' AND gen=1

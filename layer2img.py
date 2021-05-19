@@ -70,8 +70,16 @@ def plot_args(geom, color, maybe_linestyle):
     if geom is None:
         return
 
+    # polygons either have fillings or lines
     if geom.geom_type[0] == 'Polygon':
-        return {'cmap': CMAP}
+        if maybe_linestyle:
+            return {
+                'edgecolor': 'black',
+                'linestyle': maybe_linestyle,
+                'color': (0, 0, 0, 0),
+            }
+        else:
+            return {'cmap': CMAP}
 
     r = {'color': color}
     if maybe_linestyle == 'invisible':
