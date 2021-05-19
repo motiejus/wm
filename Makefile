@@ -27,22 +27,6 @@ RIVERS = \
 		 salvis-gdr50 \
 		 salvis-gdr250
 
-# paper sizes in mm
-A4p = 210x297
-A4l = 297x210
-A5p = 148x210
-A5l = 148x210
-A6p = 105x148
-A6l = 148x105
-A7p = 74x105
-A7l = 105x74
-A8p = 52x74
-A8l = 74x52
-# interesting scales:
-# - 1:10000 (GDR10)
-# - 1:50000 (GDR50)
-# - 1:250000 (GDR250)
-
 #################################
 # The thesis, publishable version
 #################################
@@ -92,7 +76,7 @@ $(1).pdf: layer2img.py Makefile $(2)
 			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
-$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig).faux_test)))
+$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
 $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_test-rivers)))
 
 test-figures_1SELECT = wm_figures
@@ -145,7 +129,6 @@ salvis-gdr50_WMCLIP = salcia-visincia:GDR50
 
 salvis-gdr250_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
 salvis-gdr250_WMCLIP = salcia-visincia:GDR250
-
 
 
 .faux_test-rivers: tests-rivers.sql wm.sql .faux_db
