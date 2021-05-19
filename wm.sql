@@ -236,12 +236,7 @@ begin
 
     -- go through each bend in the given line, and see if has a potential to
     -- cross bends[i].
-    j = 0;
-    while j < array_length(bends, 1) loop
-      j = j + 1;
-      continue when i = j;
-
-      -- do end vertices of bend[i] cross bend[j]?
+    for j in 1..i-1 loop
       a = st_pointn(bends[i], 1);
       b = st_pointn(bends[i], -1);
       multi = st_split(bends[j], st_makeline(a, b));
@@ -257,35 +252,46 @@ begin
       -- figure out what happens here, by hand. I know it's hard to follow.
       -- Apologies.
       prev_length = array_length(bends, 1);
-      if j < i then
-        -- remove first vertex of the following bend, because the last
-        -- segment is always duplicated with the i'th bend.
-        bends[i+1] = st_removepoint(bends[i+1], 0);
-        bends[j] = st_geometryn(multi, 1);
-        bends[j] = st_setpoint(
-          bends[j],
-          st_npoints(bends[j])-1,
-          st_pointn(bends[i], st_npoints(bends[i]))
-        );
-        bends = bends[1:j] || bends[i+1:prev_length];
-        j = i;
-      else
-        -- remove last vertex of the previous bend, because the last
-        -- segment is duplicated with the i'th bend.
-        bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
-        -- continue debugging the selfcrossing-1 here.
-        --raise notice 'previous bend: %', st_astext(bends[i-1]);
-        --raise notice 'multi: %', st_astext(multi);
-        --raise notice '2: removing first point from %', st_astext(st_geometryn(multi, st_numgeometries(multi)));
-        --mutated = false;
-        --return;
-        bends[i] = st_makeline(
-          st_pointn(bends[i], 1),
-          st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
-        );
-        bends = bends[1:i] || bends[j+1:prev_length];
-      end if;
-      j = j - prev_length + array_length(bends, 1);
+
+      -- remove first vertex of the following bend, because the last
+      -- segment is always duplicated with the i'th bend.
+      bends[i+1] = st_removepoint(bends[i+1], 0);
+      bends[j] = st_geometryn(multi, 1);
+      bends[j] = st_setpoint(
+        bends[j],
+        st_npoints(bends[j])-1,
+        st_pointn(bends[i], st_npoints(bends[i]))
+      );
+      bends = bends[1:j] || bends[i+1:prev_length];
+      exit;
+    end loop;
+
+    for j in reverse array_length(bends, 1)..i+1 loop
+      a = st_pointn(bends[i], 1);
+      b = st_pointn(bends[i], -1);
+      multi = st_split(bends[j], st_makeline(a, b));
+      continue when st_numgeometries(multi) = 1;
+      continue when st_numgeometries(multi) = 2 and
+        (st_contains(bends[j], a) or st_contains(bends[j], b));
+
+      -- vertices, segments and stars are aligned, we are changing the bend
+      mutated = true;
+
+      -- To understand the block below, I suggest you take a pencil and paper,
+      -- draw a self-crossing bend (fig6 from the article works well), and
+      -- figure out what happens here, by hand. I know it's hard to follow.
+      -- Apologies.
+      prev_length = array_length(bends, 1);
+      -- remove last vertex of the previous bend, because the last
+      -- segment is duplicated with the i'th bend.
+      bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
+      -- continue debugging the selfcrossing-1 here.
+      bends[i] = st_makeline(
+        st_pointn(bends[i], 1),
+        st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
+      );
+      bends = bends[1:i] || bends[j+1:prev_length];
+      exit;
     end loop;
   end loop;
 end
