@@ -109,6 +109,8 @@ selfcrossing-1-before_2LINESTYLE = dotted
 selfcrossing-1-before_3SELECT = wm_visuals where name='selfcrossing-1-newline'
 selfcrossing-1-after_WIDTHDIV = 4
 selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='dcrossings' AND gen=1
+selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
+selfcrossing-1-after_2LINESTYLE = invisible
 
 .faux_test-integration: tests-integration.sql wm.sql .faux_aggregate-rivers
 	./db -f $<

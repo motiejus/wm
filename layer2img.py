@@ -50,8 +50,11 @@ def plot_args(color, maybe_cmap, maybe_linestyle):
     else:
         r = {'color': color}
 
-    if maybe_linestyle:
+    if maybe_linestyle == 'invisible':
+        r['color'] = (0, 0, 0, 0)
+    elif maybe_linestyle:
         r['linestyle'] = maybe_linestyle
+
     return r
 
 def main():
