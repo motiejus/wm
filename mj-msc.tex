@@ -49,6 +49,7 @@
 \newcommand{\VW}{Visvalingam--Whyatt}
 \newcommand{\WM}{Wang--M{\"u}ller}
 \newcommand{\WnM}{Wang and M{\"u}ller}
+\newcommand{\WirM}{Wang ir M{\"u}ller}
 % {\WM} algoritmo realizacija kartografinei upių generalizacijai
 \newcommand{\MYTITLE}{{\WM} algorithm realization for cartographic line generalization}
 \newcommand{\MYTITLENOCAPS}{wang--m{\"u}ller algorithm realization for cartographic line generalization}
@@ -100,7 +101,17 @@
     documented it in great detail. Our implementation makes {\WM} algorithm
     freely available in PostGIS, and this paper explains it.
 
-\end{abstract}
+    \vfill
+
+    Šiuo metu prieinami linijų supaprastinimo algoritmai yra kilę iš
+    matematikos ir geometrijos, bei yra netinkami lankstiems geografiniams
+    objektams, tokiems kaip upės ir pakrantės. {\WirM} ištyrė, kaip kartografai
+    vykdo upių generalizaciją, ir sukūrė algoritmą. Mes realizavome šį
+    algoritmą ir išsamiai jį dokumentavome. Mūsų {\WM} realizacija ir
+    dokumentacija yra nemokami ir laisvai prieinami naudojant PostGIS
+    platformą.
+
+ \end{abstract}
 
 \newpage
 
@@ -1436,7 +1447,7 @@ leaving no space to exaggerate for those between the two. For the same reason,
 the figure~\ref{fig:salvis-wm-50k} (of scale 1:\numprint{50000}) has many
 smaller bends at approximately the same location.
 
-\subsection{Comparison of Generalization Result with National Spatial Datasets}
+\subsection{Comparing Generalized Result with National Spatial Datasets}
 
 % TODO: GDR50LT and GDR250LT
 
