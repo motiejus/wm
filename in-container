@@ -10,6 +10,6 @@ fi
 exec docker run -ti --rm \
     --net=host \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v ${PWD}:/x \
-    -w /x \
+    -v $(git rev-parse --show-toplevel):/x \
+    -w /x/$(basename ${PWD}) \
     "$NAME" "$@"

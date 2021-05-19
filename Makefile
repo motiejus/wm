@@ -83,7 +83,7 @@ mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
 
 define FIG_template
 $(1).pdf: layer2img.py Makefile $(2)
-	python ./layer2img.py --outfile=$(1).pdf \
+	python3 ./layer2img.py --outfile=$(1).pdf \
 		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
 		$$(if $$($(1)_QUADRANT),--quadrant=$$($(1)_QUADRANT)) \
 		$$(foreach i,1 2 3, \
