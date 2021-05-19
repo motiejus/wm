@@ -73,7 +73,8 @@ slides: $(SLIDES)
 # The report, quick version
 ###########################
 
-mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib $(addsuffix .pdf,$(FIGURES))
+mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
+	$(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
 	latexmk -shell-escape -g -pdf $<
 
 ############################
@@ -200,6 +201,7 @@ clean: ## Clean the current working directory
 		_minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
 		$(addsuffix .pdf,$(FIGURES)) \
+		$(addsuffix .pdf,$(RIVERS)) \
 		$(SLIDES)
 
 .PHONY: clean-tables
