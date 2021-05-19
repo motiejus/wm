@@ -148,19 +148,15 @@ begin
 
       -- if inflection angle between ptail[1:3] "large", stop processing this bend
       if abs(st_angle(phead[1], phead[2], phead[3]) - pi) > small_angle then
-        --raise notice 'quitting % because angle between % % %', st_astext(ptail), st_astext(phead[1]), st_astext(phead[2]), st_astext(phead[3]);
         exit;
       end if;
 
       -- distance from head's first vertex should be larger than from second vertex
       if st_distance(ptail, phead[2]) < st_distance(ptail, phead[3]) then
-        --raise notice 'quitting % because distance', st_astext(ptail);
         exit;
       end if;
 
       -- detected a gentle inflection. Move head of the tail to the tail of head
-      --raise notice 'fixing a gentle inflection of angle %', degrees(abs(st_angle(phead[1], phead[2], phead[3]) - pi));
-
       bends[i] = st_removepoint(bends[i], 0);
       bends[i-1] = st_addpoint(bends[i-1], phead[3]);
     end loop;

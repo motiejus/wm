@@ -18,14 +18,13 @@ insert into figures (name, way) values ('fig3-1',ST_GeomFromText('LINESTRING(0 0
 insert into figures (name, way) values ('fig5',ST_GeomFromText('LINESTRING(0 39,19 52,27 77,26 104,41 115,49 115,65 103,65 75,53 45,63 15,91 0)'));
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
 
--- tables are for manual inspection using, say, qgis
+-- DETECT BENDS
 drop table if exists bends;
 create table bends (name text, way geometry);
 insert into bends select 'fig3', unnest(detect_bends((select way from figures where name='fig3')));
 insert into bends select 'fig5', unnest(detect_bends((select way from figures where name='fig5')));
 insert into bends select 'inflection-1', unnest(detect_bends((select way from figures where name='inflection-1')));
 
--- DETECT BENDS
 do $$
 declare
   vbends geometry[];
@@ -41,13 +40,13 @@ begin
   perform assert_equals(3, array_length(vbends, 1));
 end $$ language plpgsql;
 
+-- FIX BEND INFLECTIONS
 drop table if exists inflections;
 create table inflections (name text, way geometry);
 insert into inflections select 'fig3', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='fig3'))));
 insert into inflections select 'fig5', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='fig5'))));
 insert into inflections select 'inflection-1', unnest(fix_gentle_inflections(detect_bends((select way from figures where name='inflection-1'))));
 
--- FIX BEND INFLECTIONS
 do $$
 declare
   vbends geometry[];
