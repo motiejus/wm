@@ -321,6 +321,13 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \label{fig:salvis-overlaid-generalized-chaikin-50k}
 \end{figure}
 
+\begin{figure}[b!]
+    \centering
+    \includegraphics[width=.9\textwidth]{amalgamate1}
+    \caption{Narrow bends amalgamating into large unintelligible blobs.}
+    \label{fig:pixel-amalgamation}
+\end{figure}
+
 The resulting simplified and smoothened example
 (figure~\onpage{fig:salvis-generalized-chaikin-50k}) yields a more
 aesthetically pleasing result, however, it obscures natural river features.
@@ -351,12 +358,6 @@ classical algorithms would remove these bends altogether. A cartographer would
 retain a few of those distinctive bends, but would increase the distance
 between the bends, remove some of the bends, or both.
 
-\begin{figure}[ht]
-    \includegraphics[width=\textwidth]{amalgamate1}
-    \caption{Narrow bends amalgamating into large unintelligible blobs.}
-    \label{fig:pixel-amalgamation}
-\end{figure}
-
 For the reasons discussed in this section, the "classical" {\DP} and {\VW} are
 not well suited for natural river generalization, and a more robust line
 generalization algorithm is worthwhile for to look for.
@@ -385,8 +386,6 @@ have emerged. These modern replacements fall into roughly two categories:
 
 \end{itemize}
 
-% TODO:  [Šioje vietoje turi būti WM algoritmo pristatymas su iliustracijomis. Turi būti bent minimalus, ne sakinio, paaiškinimas, kodėl algoritmas tinkamas kartografijai. Kodėl jis pasirinktas realizuoti - o čia ir Tomas ir aš buvome parašę email: išlaikant raiškius naturalių objektų kontūrus, generalizacijos rezultatas žemėlapyje geriau atspindi gamtinės aplinkos savybes, pvz. upių vingiuotumą, kuris gali atspindėti reljefo bei kitas paviršiaus savybes ir pan.]
-
 Authors of most of the aforementioned articles have implemented the
 generalization algorithm, at least to generate the illustrations in the
 articles. However, code is not available for evaluation with a desired data
@@ -394,6 +393,34 @@ set, much less for use as a basis for creating new maps. To author's knowledge,
 {\WM}\cite{wang1998line} is available in a commercial product, but requires a
 purchase of the commercial product suite, without a way to license the
 standalone algorithm.
+
+{\WM} algorithm was created by encoding professional cartographers' knowledge
+into a computer algorithm. It has a few main properties which make it
+especially suitable for generalization of natural linear features:
+
+\begin{itemize}
+    \item Small bends are not always removed, but either combined (for example,
+        3 bends into 2), exaggerated, or removed, depending on the neighboring
+        bends.
+    \item Long and gentle bends are not straightened, but kept as-is.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.8\textwidth]{wang125}
+    \caption{Originally figure 12.5: cartographic line generalization example.}
+    \label{fig:wang125}
+\end{figure}
+
+As a result of these properties, {\WM} algorithm retains the defining
+properties of the natural features; high-current rivers keep their appearance
+as such, instead of becoming canals; low-stream bendy rivers retain their
+frequent small bends.
+
+Figure~\ref{fig:wang125} (from the original \titlecite{wang1998line})
+illustrates the {\WM} algorithm (the figure labeled "proposed method").
+
+% TODO DONE:  [Šioje vietoje turi būti WM algoritmo pristatymas su iliustracijomis. Turi būti bent minimalus, ne sakinio, paaiškinimas, kodėl algoritmas tinkamas kartografijai. Kodėl jis pasirinktas realizuoti - o čia ir Tomas ir aš buvome parašę email: išlaikant raiškius naturalių objektų kontūrus, generalizacijos rezultatas žemėlapyje geriau atspindi gamtinės aplinkos savybes, pvz. upių vingiuotumą, kuris gali atspindėti reljefo bei kitas paviršiaus savybes ir pan.]
 
 \subsection{Problematic with generalization of rivers}
 % DONE subscection: andriub: Į šį skyrių turi būti perkeltas tekstas iš From Simplification to Generalization ir mano pakomentuota dalis iš Modern approaches skyriaus.
@@ -495,18 +522,9 @@ We are limiting the problem to cartographic line generalization. That is, full
 cartographic generalization, which takes topology and other feature classes
 into account, is out of scope.
 
-Figure~\ref{fig:wang125} illustrates {\WM} algorithm from their original
+Figure~\onpage{fig:wang125} illustrates {\WM} algorithm from their original
 paper. Note how the long bends retain curvy, and how some small bends got
 exaggerated.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=.8\textwidth]{wang125}
-
-    \caption{Originally figure 12.5: cartographic line generalization example.}
-
-    \label{fig:wang125}
-\end{figure}
 
 \section{Methodology}
 \label{sec:methodology}
