@@ -36,11 +36,11 @@ begin
   -- So once the p1 becomes the last vertex, the loop terminates, and the
   -- [p2,p1] line will not have a chance to be added. So the loop adds the last
   -- vertex twice, so it has a chance to become p2, and be added to the bend.
-  for p in (
-    (select geom from st_dumppoints(line) order by path[1] asc)
-    union all
-    (select geom from st_dumppoints(line) order by path[1] desc limit 1)
-  ) loop
+  for p in
+      (select geom from st_dumppoints(line) order by path[1] asc)
+      union all
+      (select geom from st_dumppoints(line) order by path[1] desc limit 1)
+     loop
     p3 = p2;
     p2 = p1;
     p1 = p;
@@ -250,7 +250,7 @@ declare
   p3 geometry;
 begin
   angle = 0;
-  for p0 in (select geom from st_dumppoints(bend) order by path[1] asc) loop
+  for p0 in select geom from st_dumppoints(bend) order by path[1] asc loop
     p3 = p2;
     p2 = p1;
     p1 = p0;
@@ -330,7 +330,7 @@ $$ language plpgsql;
 
 create function isolated_bends(INOUT bendattrs t_bend_attrs[], dbgname text default null) as $$
 declare
-  isolation_threshold constant real default 0.33; -- if neighbor's curvatures are within, it's isolated
+  isolation_threshold constant real default 0.25; -- if neighbor's curvatures are within, it's isolated
   this real;
   skip_next bool;
   res t_bend_attrs;
