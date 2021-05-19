@@ -319,9 +319,9 @@ begin
   if l_type = 'ST_LineString' then
     lines = array[geom];
   elseif l_type = 'ST_MultiLineString' then
-    lines = array((select a.geom from st_dump(geom) a order by path[1] desc));
+    lines = array((select a.geom from st_dump(geom) a order by path[1] asc));
   else
-    raise 'Unknown geometry type %', l_type;
+    raise 'Unsupported geometry type %', l_type;
   end if;
 
   i = 1;
