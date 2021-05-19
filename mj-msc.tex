@@ -1,4 +1,4 @@
-\documentclass[a4paper]{report}
+\documentclass[a4paper]{article}
 
 \usepackage[T1]{fontenc}
 %\usepackage[bitstream-charter]{mathdesign}
@@ -78,7 +78,7 @@ Current open-source line generalization solutions have their roots in
 
 \newpage
 
-\chapter{Introduction}
+\section{Introduction}
 \label{sec:introduction}
 
 When creating small-scale maps, often the detail of the data source is greater
@@ -118,13 +118,13 @@ Given the discussed complexities, a fine line between under-generalization
 found. Therein lies the complexity of generalization algorithms: all have
 different trade-offs.
 
-\chapter{Literature review}
+\section{Literature review}
 \label{sec:literature-review}
 
 A number of cartographic line generalization algorithms have been researched.
 The "classical" ones are {\DP} and {\VW}.
 
-\section{{\DP} and {\VW}}
+\subsection{{\DP} and {\VW}}
 
 \cite{douglas1973algorithms} and \cite{visvalingam1993line} are "classical"
 line generalization computer graphics algorithms. They are relatively simple to
@@ -152,7 +152,7 @@ generalization.
 
 <TODO: expand on deficiencies>
 
-\section{Modern approaches}
+\subsection{Modern approaches}
 
 Due to their simplicity and ubiquity, {\DP} and {\VW} have been established as
 go-to algorithms for line generalization. During recent years, alternatives
@@ -181,7 +181,7 @@ open-source tools is an important foundation for future cartographic
 experimentation and development, thus it it benefits the cartographic society
 as a whole.
 
-\chapter{Methodology}
+\section{Methodology}
 \label{sec:methodology}
 
 The original \cite{wang1998line} leaves something to be desired for a practical
@@ -199,7 +199,7 @@ every step of the algorithm.
 
 Algorithms discussed in this paper assume Euclidean geometry.
 
-\section{Vocabulary and terminology}
+\subsection{Vocabulary and terminology}
 
 This section defines vocabulary and terms as defined in the rest of the paper.
 
@@ -227,7 +227,7 @@ This section defines vocabulary and terms as defined in the rest of the paper.
 
 \end{description}
 
-\section{Automated tests}
+\subsection{Automated tests}
 \label{sec:automated-tests}
 
 As part of the algorithm realization, an automated test suite has been
@@ -251,7 +251,7 @@ The full test suite can be executed with a single command, and completes in a
 few seconds. Having an easily accessible test suite boosts confidence that no
 unexpected bugs have snug in while modifying the algorithm.
 
-\chapter{Description of the implementation}
+\section{Description of the implementation}
 
 Like alluded in section~\onpage{sec:introduction}, \cite{wang1998line} paper
 skims over certain details, which are important to implement the algorithm.
@@ -271,7 +271,7 @@ purposes) using the following algorithm:
     \item Color the polygons using distinct colors.
 \end{itemize}
 
-\section{Definition of a Bend}
+\subsection{Definition of a Bend}
 \label{sec:definition-of-a-bend}
 
 The original article describes a bend as:
@@ -310,7 +310,7 @@ but with bends colored as polygons: each color is a distinctive bend.
     \label{fig:fig8-definition-of-a-bend}
 \end{figure}
 
-\section{Gentle Inflection at End of a Bend}
+\subsection{Gentle Inflection at End of a Bend}
 
 The gist of the section is in the original article:
 
@@ -378,41 +378,40 @@ some bends that should be mutated. This implementation does it in the following 
 
 The current implementation is the most straightforward, but not optimal:
 reversing of lines and bends could be avoided by walking backwards the lines.
-In this case, steps \ref{rev1} and \ref{rev2} could be remove. That would save
-both memory and computation time.
+In this case, steps \ref{rev1} and \ref{rev2} could be spared, thus saving
+memory and computation time.
 
-The "quite small angle", as mentioned in the article, was arbitrarily chosen to
-$\smallAngle$.
+The "quite small angle" was arbitrarily chosen to $\smallAngle$.
 
-\section{Self-line Crossing When Cutting a Bend}
+\subsection{Self-line Crossing When Cutting a Bend}
 
-\section{Attributes of a Single Bend}
+\subsection{Attributes of a Single Bend}
 
-\section{Shape of a Bend}
+\subsection{Shape of a Bend}
 
-\section{The Context of a Bend: Isolated and Similar Bends}
+\subsection{The Context of a Bend: Isolated and Similar Bends}
 
-\section{Elimination Operator}
+\subsection{Elimination Operator}
 
-\section{Combination Operator}
+\subsection{Combination Operator}
 
-\section{Exaggeration Operator}
+\subsection{Exaggeration Operator}
 
-\chapter{Program Implementation}
+\section{Program Implementation}
 
-\chapter{Results of Experiments}
+\section{Results of Experiments}
 
-\chapter{Conclusions}
+\section{Conclusions}
 \label{sec:conclusions}
 
-\chapter{Related Work and future suggestions}
+\section{Related Work and future suggestions}
 \label{sec:related_work}
 
 \printbibliography
 
 \begin{appendices}
 
-\chapter{Code listings}
+\section{Code listings}
 
 We strongly believe in the ability to reproduce the results is critical for any
     scientific work. To make it possible for this paper, all source files and
