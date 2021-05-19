@@ -205,6 +205,7 @@ salvis-wm220_WIDTHDIV = 2
 label_wm75 = Wang--Müller
 label_vw64 = Visvalingam--Whyatt
 label_dp64 = Douglas \& Peucker
+label_grpk10 = GRPK 1:\numprint{10000}
 label_vw64chaikin = $(label_vw64) and Chaikin
 label_dp64chaikin = $(label_dp64) and Chaikin
 legend_   = lower left
@@ -212,23 +213,23 @@ legend_tr = lower right
 legend_tl = lower right
 
 define wm_vwdp50k
-RIVERS += salvis-$(1)-$(2)-50k$(3)
-salvis-$(1)-$(2)-50k$(3)_1SELECT    = wm_visuals where name='salvis-$(1)'
-salvis-$(1)-$(2)-50k$(3)_2SELECT    = wm_visuals where name='salvis-$(2)'
-salvis-$(1)-$(2)-50k$(3)_3SELECT    = wm_visuals where name='salvis-grpk10'
-salvis-$(1)-$(2)-50k$(3)_1COLOR     = orange
-salvis-$(1)-$(2)-50k$(3)_1LABEL     = $(label_$(2))
-salvis-$(1)-$(2)-50k$(3)_2COLOR     = green
-salvis-$(1)-$(2)-50k$(3)_2LABEL     = $(label_$(1))
-salvis-$(1)-$(2)-50k$(3)_3LINESTYLE = dotted
-salvis-$(1)-$(2)-50k$(3)_3LABEL     = GRPK 1:\numprint{10000}
-salvis-$(1)-$(2)-50k$(3)_QUADRANT   = $(3)
-salvis-$(1)-$(2)-50k$(3)_LEGEND     = $(legend_$(3))
+RIVERS += salvis-$(1)-$(2)-$(3)-50k$(4)
+salvis-$(1)-$(2)-$(3)-50k$(4)_1SELECT    = wm_visuals where name='salvis-$(1)'
+salvis-$(1)-$(2)-$(3)-50k$(4)_2SELECT    = wm_visuals where name='salvis-$(2)'
+salvis-$(1)-$(2)-$(3)-50k$(4)_3SELECT    = wm_visuals where name='salvis-$(3)'
+salvis-$(1)-$(2)-$(3)-50k$(4)_1COLOR     = orange
+salvis-$(1)-$(2)-$(3)-50k$(4)_1LABEL     = $(label_$(1))
+salvis-$(1)-$(2)-$(3)-50k$(4)_2COLOR     = green
+salvis-$(1)-$(2)-$(3)-50k$(4)_2LABEL     = $(label_$(2))
+salvis-$(1)-$(2)-$(3)-50k$(4)_3LINESTYLE = dotted
+salvis-$(1)-$(2)-$(3)-50k$(4)_3LABEL     = $(label_$(3))
+salvis-$(1)-$(2)-$(3)-50k$(4)_QUADRANT   = $(4)
+salvis-$(1)-$(2)-$(3)-50k$(4)_LEGEND     = $(legend_$(4))
 endef
 $(foreach x,vw64 dp64 vwchaikin64 dpchaikin64,\
-	$(eval $(call wm_vwdp50k,wm75,$(x),)) \
-	$(eval $(call wm_vwdp50k,wm75,$(x),tl)) \
-	$(eval $(call wm_vwdp50k,wm75,$(x),tr)) \
+	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,)) \
+	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tl)) \
+	$(eval $(call wm_vwdp50k,wm75,$(x),grpk10,tr)) \
 )
 
 define FIG_template
