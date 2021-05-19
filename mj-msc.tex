@@ -34,20 +34,13 @@
 \usetikzlibrary{shapes.geometric,arrows,positioning}
 \usepackage{fancyvrb}
 \usepackage{layouts}
+\usepackage{minted}
 %\usepackage{charter}
 %\usepackage{setspace}
 %\doublespacing
 
 \input{version.inc}
 \input{vars.inc}
-\IfFileExists{./editorial-version}{\def \mjEditorial {}}{}
-\ifx \mjEditorial \undefined
-\usepackage{minted}
-\newcommand{\inputcode}[2]{\inputminted[fontsize=\small]{#1}{#2}}
-\else
-\usepackage{verbatim}
-\newcommand{\inputcode}[2]{\verbatiminput{#2}}
-\fi
 
 \newcommand{\onpage}[1]{\ref{#1} on page~\pageref{#1}}
 \newcommand{\titlecite}[1]{\citetitle{#1}\cite{#1}}
@@ -60,6 +53,7 @@
 \newcommand{\MYTITLE}{{\WM} algorithm realization for cartographic line generalization}
 \newcommand{\MYTITLENOCAPS}{wang--m{\"u}ller algorithm realization for cartographic line generalization}
 \newcommand{\MYAUTHOR}{Motiejus Jakštys}
+\newcommand{\inputcode}[2]{\inputminted[fontsize=\small]{#1}{#2}}
 
 \title{\MYTITLE}
 \author{\MYAUTHOR}
@@ -420,7 +414,7 @@ frequent small bends.
 Figure~\ref{fig:wang125} (from the original \titlecite{wang1998line})
 illustrates the {\WM} algorithm (the figure labeled "proposed method").
 
-% TODO DONE:  [Šioje vietoje turi būti WM algoritmo pristatymas su iliustracijomis. Turi būti bent minimalus, ne sakinio, paaiškinimas, kodėl algoritmas tinkamas kartografijai. Kodėl jis pasirinktas realizuoti - o čia ir Tomas ir aš buvome parašę email: išlaikant raiškius naturalių objektų kontūrus, generalizacijos rezultatas žemėlapyje geriau atspindi gamtinės aplinkos savybes, pvz. upių vingiuotumą, kuris gali atspindėti reljefo bei kitas paviršiaus savybes ir pan.]
+% DONE:  [Šioje vietoje turi būti WM algoritmo pristatymas su iliustracijomis. Turi būti bent minimalus, ne sakinio, paaiškinimas, kodėl algoritmas tinkamas kartografijai. Kodėl jis pasirinktas realizuoti - o čia ir Tomas ir aš buvome parašę email: išlaikant raiškius naturalių objektų kontūrus, generalizacijos rezultatas žemėlapyje geriau atspindi gamtinės aplinkos savybes, pvz. upių vingiuotumą, kuris gali atspindėti reljefo bei kitas paviršiaus savybes ir pan.]
 
 \subsection{Problematic with generalization of rivers}
 % DONE subscection: andriub: Į šį skyrių turi būti perkeltas tekstas iš From Simplification to Generalization ir mano pakomentuota dalis iš Modern approaches skyriaus.
@@ -528,14 +522,12 @@ exaggerated.
 
 \section{Methodology}
 \label{sec:methodology}
-% andriub: Šio skyriaus poskyriai turėtų būti išdėstyti tokia tvarka:
+% TODO DONE
 % 3.1 Main geometry elements used by algorithm
 % 3.2 Algorithm implementation process
 % 3.3 Technical implementation (naujas poskyris)
 % 3.4 Automated tests
 % 3.5 Reproducibility (dabartinis Reproducing generalizations <...>)
-% 
-% Susižiūrėk tekste ir pakoreguok.
 
 The original {\WM}'s algorithm \cite{wang1998line} leaves something to be
 desired for a practical implementation: it is not straightforward to implement
@@ -607,84 +599,9 @@ throughout this paper and the implementation.
         computing science by Donald Knuth\cite{knuth1976big} in the 1970s.
 
 \end{description}
-% TODO: [3.3 Technical implementation. Šiame skyriuje turėtum trumpai pristatyti, kokiai programinei įrangai realizavai sprendimą, kokią programavimo kalbą ir kodėl naudojai, kokia sprendimo architektūra (sukurtas funkcijų rinkinys iškviečiamas postgis aplinkoje, pernaudojama dalis postgis aplinkoje esančios geometrijos apdorojimo funkcijos), pažymėti, kad realizuotas techninis sprendimas gali būti pernaudotas ir kituos sprendimui, nes yra universalus (SQL Procedural Language)]
 
-\subsection{Automated tests}
-\label{sec:automated-tests}
 
-As part of the algorithm realization, an automated test suite has been
-developed. Shapes to test each function have been hand-crafted and expected
-results have been manually calculated. The test suite executes parts of the
-algorithm against a predefined set of geometries, and asserts that the output
-matches the resulting hand-calculated geometry.
-
-The full set of test geometries is visualized in figure~\ref{fig:test-figures}.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth]{test-figures}
-    \caption{Geometries for automated test cases.}
-    \label{fig:test-figures}
-\end{figure}
-
-The full test suite can be executed with a single command, and completes in
-about a second Having an easily accessible test suite boosts confidence that no
-unexpected bugs have snug in while modifying the algorithm.
-
-We will explain two instances on when automated tests were very useful during
-the implementation:
-\begin{itemize}
-
-    \item Created a function \textsc{wm\_exaggeration}, which exaggerates bends
-      following the rules. It worked well over simple geometries, but, due to a
-      subtle bug, created a self-crossing bend in Visinčia. We copied the
-      offending bend to the automated test suite and fixed the bug. The test
-      suite has the bend itself (a hook-looking bend on the right-hand side of
-      figure~\ref{fig:test-figures}) and code to verify that it was correctly
-      exaggerated.
-
-        Later, while adding a feature to exaggeration code, I introduced a
-        different bug, which was automatically captured by the same bend.
-
-    \item During algorithm development, I run automated tests about once a
-        minute. They quickly find logical and syntax errors. In contrast,
-        running the algorithm with real rivers takes a few minutes, which is
-        increases the feedback loop, and takes longer to fix the "simple"
-        errors.
-
-\end{itemize}
-
-Whenever I find and fix a bug, I aim to create an automated test case for it,
-so the same bug is not re-introduced by whoever works next on the same piece of
-code.
-
-Besides testing for specific cases, an automated test suite ensures future
-stability and longevity of the implementation itself: when new contributors
-start changing code, they have higher assurance they have not broken
-already-working code.
-
-\subsection{Reproducibility}
-\label{sec:reproducing-the-paper}
-
-% TODO: andriub: Turi būti aiškiai nurodytos instrukcijos, kaip atkartoti veiksmus. Tam gali įdėti trumpą tekstą, kad rezultatais pasidalinta github, projekto pasileidimui reikalavimai nurodyti programinio kodo readme apraše.
-
-It is widely believed that the ability to reproduce the results of a published
-study is important to the scientific community. In practice, however, it is
-often hard to impossible: research methodologies, as well as algorithms
-themselves, are explained in prose, which, due to the nature of the non-machine
-language, lends itself to inexact interpretations.
-
-This article, besides explaining the algorithm in prose, includes the program
-of the algorithm in a way that can be executed on reader's workstation. On top
-of it, all the illustrations in this paper are generated using that algorithm,
-from a predefined list of test geometries (test geometries were explained in
-section~\ref{sec:automated-tests}).
-
-Instructions how to re-generate all the visualizations are found in
-appendix~\ref{sec:code-regenerate}. The visualization code serves as a good
-example reference for anyone willing to start using the algorithm.
-
-\subsection{Implementation workflow}
+\subsection{Algorithm implementation process}
 
 \tikzset{
   startstop/.style={trapezium,text centered,minimum height=2em,
@@ -766,6 +683,137 @@ implementation uses more memory (because it needs to have the full line before
 processing), and some steps are unnecessarily repeated, like re-computing the
 bend's attributes.
 
+\subsection{Technical implementation}
+\label{sec:technical-implementation}
+
+% TODO DONE: [3.3 Technical implementation. Šiame skyriuje turėtum trumpai
+% pristatyti, kokiai programinei įrangai realizavai sprendimą, kokią
+% programavimo kalbą ir kodėl naudojai, kokia sprendimo architektūra (sukurtas
+% funkcijų rinkinys iškviečiamas postgis aplinkoje, pernaudojama dalis postgis
+% aplinkoje esančios geometrijos apdorojimo funkcijos), pažymėti, kad
+% realizuotas techninis sprendimas gali būti pernaudotas ir kituos sprendimui,
+% nes yra universalus (SQL Procedural Language)]
+
+Technical algorithm realization was created in \titlecite{postgis311}. PostGIS
+is a PostgreSQL extension for working with spatial data.
+
+PostgreSQL is an open-source relational database, widely used in industry and
+academia. PostgreSQL can be interfaced from nearly any programming language,
+therefore solutions written in PostgreSQL (and their extensions) are very
+universal. Other than that, PostGIS has implements a rich set of
+functions\cite{postgisref} for working with geometric and geographic objects.
+
+Due to its wide applicability and rich set of functions, I choise PostGIS as
+the {\WM} algorithm implementation language. The main algorithm consists of the
+"entrypoint" function \textsc{st\_simplifywm}:
+
+\begin{minted}[fontsize=\small]{sql}
+create function ST_SimplifyWM(
+  geom geometry,
+  dhalfcircle float,
+  intersect_patience integer default 10,
+  dbgname text default null
+) returns geometry
+\end{minted}
+
+This function accepts the following parameters:
+\begin{description}
+
+    \item[\normalfont\texttt{geom}] is the input geometry. Either
+        \textsc{linestring} or \textsc{multilinestring}.
+
+    \item[\normalfont\texttt{dhalfcircle}] is the diameter of the half-circle.
+        Explained in section~\ref{sec:bend-scaling-and-dimensions}.
+
+    \item[\normalfont\texttt{intersect\_patience}] is an optional parameter to
+        exaggeration operator, explained in
+        section~\ref{sec:exaggeration-operator}.
+
+    \item[\normalfont\texttt{dbgname}] is an optional human-readable name of
+        the figure. Explained in section~\ref{sec:debugging}.
+
+\end{description}
+
+The function \texttt{ST\_SimplifyWM} calls into helper functions, which detect,
+transform or remove bends. These helper functions are also defined in the
+implementation and are part of the algorithm technical realization, and heavily
+use geometry manipulation functions provided by PostGIS.
+
+\subsection{Automated tests}
+\label{sec:automated-tests}
+
+As part of the algorithm realization, an automated test suite has been
+developed. Shapes to test each function have been hand-crafted and expected
+results have been manually calculated. The test suite executes parts of the
+algorithm against a predefined set of geometries, and asserts that the output
+matches the resulting hand-calculated geometry.
+
+The full set of test geometries is visualized in figure~\ref{fig:test-figures}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{test-figures}
+    \caption{Geometries for automated test cases.}
+    \label{fig:test-figures}
+\end{figure}
+
+The full test suite can be executed with a single command, and completes in
+about a second Having an easily accessible test suite boosts confidence that no
+unexpected bugs have snug in while modifying the algorithm.
+
+We will explain two instances on when automated tests were very useful during
+the implementation:
+\begin{itemize}
+
+    \item Created a function \textsc{wm\_exaggeration}, which exaggerates bends
+      following the rules. It worked well over simple geometries, but, due to a
+      subtle bug, created a self-crossing bend in Visinčia. We copied the
+      offending bend to the automated test suite and fixed the bug. The test
+      suite has the bend itself (a hook-looking bend on the right-hand side of
+      figure~\ref{fig:test-figures}) and code to verify that it was correctly
+      exaggerated.
+
+        Later, while adding a feature to exaggeration code, I introduced a
+        different bug, which was automatically captured by the same bend.
+
+    \item During algorithm development, I run automated tests about once a
+        minute. They quickly find logical and syntax errors. In contrast,
+        running the algorithm with real rivers takes a few minutes, which is
+        increases the feedback loop, and takes longer to fix the "simple"
+        errors.
+
+\end{itemize}
+
+Whenever I find and fix a bug, I aim to create an automated test case for it,
+so the same bug is not re-introduced by whoever works next on the same piece of
+code.
+
+Besides testing for specific cases, an automated test suite ensures future
+stability and longevity of the implementation itself: when new contributors
+start changing code, they have higher assurance they have not broken
+already-working code.
+
+\subsection{Reproducibility}
+\label{sec:reproducing-the-paper}
+
+% TODO: andriub: Turi būti aiškiai nurodytos instrukcijos, kaip atkartoti veiksmus. Tam gali įdėti trumpą tekstą, kad rezultatais pasidalinta github, projekto pasileidimui reikalavimai nurodyti programinio kodo readme apraše.
+
+It is widely believed that the ability to reproduce the results of a published
+study is important to the scientific community. In practice, however, it is
+often hard to impossible: research methodologies, as well as algorithms
+themselves, are explained in prose, which, due to the nature of the non-machine
+language, lends itself to inexact interpretations.
+
+This article, besides explaining the algorithm in prose, includes the program
+of the algorithm in a way that can be executed on reader's workstation. On top
+of it, all the illustrations in this paper are generated using that algorithm,
+from a predefined list of test geometries (test geometries were explained in
+section~\ref{sec:automated-tests}).
+
+Instructions how to re-generate all the visualizations are found in
+appendix~\ref{sec:code-regenerate}. The visualization code serves as a good
+example reference for anyone willing to start using the algorithm.
+
 \section{Algorithm implementation}
 
 Like alluded in section~\ref{sec:introduction}, {\WM} paper skims over
@@ -795,6 +843,7 @@ are almost never overlapping, and discriminating different backgrounds is
 easier than discriminating different line shapes or colors.
 
 \subsection{Debugging}
+\label{sec:debugging}
 
 NOTE: this will explain how intermediate debugging tables (\textsc{wm\_debug})
 work. This is not related to the algorithm, but the only the implementation
@@ -1157,6 +1206,7 @@ beyond repeating the elimination steps in an illustrated example.
 Combination operator was not implemented in this version.
 
 \subsection{Exaggeration Operator}
+\label{sec:exaggeration-operator}
 
 Exaggeration operator finds bends of which \textsc{adjusted size} is smaller
 than the \textsc{diameter of the half-circle}. Once a target bend is found, it
@@ -1277,7 +1327,7 @@ Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
 %\inputcode{postgresql}{wm.sql}
 
 \subsection{Function \textsc{aggregate\_rivers}}
-\inputcode{postgresql}{aggregate-rivers.sql}
+%\inputcode{postgresql}{aggregate-rivers.sql}
 
 \end{appendices}
 \end{document}
