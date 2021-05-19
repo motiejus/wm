@@ -24,8 +24,12 @@
 \usepackage{tikz}
 \usepackage{fancyvrb}
 %\usepackage{charter}
+%\usepackage{setspace}
+%\doublespacing
 
-\iftrue
+\IfFileExists{./editorial-version}{\def \mjEditorial {}}{}
+
+\ifx \mjEditorial \undefined
 % requires minted
 \usepackage{minted}
 \newcommand{\inputcode}[2]{\inputminted[fontsize=\small]{#1}{#2}}
@@ -33,8 +37,6 @@
 % does not require minted
 \usepackage{verbatim}
 \newcommand{\inputcode}[2]{\verbatiminput{#2}}
-\usepackage{setspace}
-\doublespacing
 \fi
 
 \input{version.inc}
@@ -533,6 +535,13 @@ as follows:
 This type of illustration works quite well, since polygons created from bends
 are almost never overlapping, and discriminating different backgrounds is
 easier than discriminating different line shapes or colors.
+
+\subsection{Debugging}
+
+NOTE: this will explain how intermediate debugging tables (\texttt{wm\_debug})
+work. This is not related to the algorithm, but the only the implementation
+itself (probably should come together with paper's regeneration and unit
+tests).
 
 \subsection{Merging pieces of the river into one}
 

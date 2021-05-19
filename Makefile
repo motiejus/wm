@@ -193,12 +193,16 @@ slides-2021-03-29.pdf: slides-2021-03-29.txt
 dump-debug_wm.sql.xz:
 	docker exec -ti wm-mj pg_dump -Uosm osm -t wm_devug | xz -v > $@
 
-release.zip: mj-msc.tex version.inc.tex vars.inc.tex \
+release.zip: mj-msc.tex mj-msc.bbl version.inc.tex vars.inc.tex \
 	$(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS)) \
 	$(shell git ls-files .)
 	-rm $@
+	mkdir -p .tmp; touch .tmp/editorial-version
 	zip $@ $^
+	zip $@ -j .tmp/editorial-version
 
+mj-msc.bbl: mj-msc.tex bib.bib
+	biber mj-msc
 
 mj-msc-gray.pdf: mj-msc.pdf
 	gs \
