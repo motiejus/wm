@@ -166,61 +166,30 @@ Given the discussed complexities, a fine line between under-simplification
 to be found. Therein lies the complexity of simplification algorithms: all have
 different trade-offs.
 
+% TODO:
+% [Magistrinio darbo tikslas - Wang-Müller algoritmo pagrindu realizuoti upių kartografinio generalizavimo sprendimą taikant atviro kodo programinę įrangą.]
+% 
+% [Magistro darbo uždaviniai:
+% * Atlikti egzistuojančių linijų supaprastinimo algoritmų vertinimą
+% * Identifikuoti, su kokiomis pagrindinėmis kartografinėmis problemomis susiduriama generalizuojant upes taikant klasikinius geometrijos supaprastinimo agloritmus
+% * Apibrėžti Wang-Müller algoritmo techninės realizacijos metodiką
+% * Realizuoti Wang-Müller algoritmą teoriškai ir techniškai detalizuojant jį sudarančias geometrijos keitimo operacijas
+% * Sukurtą algoritmo prototipą pritaikyti skirtingiems duomenų rinkiniams ir gautus rezultatus palyginti su valstybiniais duomenų rinkiniais]
+% 
+% [Mokslinis šio darbo aktualumas - detaliai išnagrinėti, praktiškai įgyvendinti ir aprašyti Wang-Müller algoritmu aprašomi linijų supaprastinimo procesai (žingsniai), kas leidžia išplėsti kartografinės teorijos žinias apie gamtinių objektų ribų generalizavimą atsižvelgiant į jų raiškumą. Wang-Müller straipsnyje, pristatančiame algoritmą, žingsniai sprendiniai nedetalizuojami taip, kad juos būtų galima praktiškai įgyvendinti konkretiems duomenis. Šiame darbe būtent ši dalis ir konkretizuojama. Praktinis šio darbo aktualumas - išplėstos galimybės pasinaudoti atviro kodo programine įranga atlikti kartografinės generalizacijos uždavinius. Sukurtas specializuotas kartografijai linijų supaprastinimo algoritmas gali būti pritaikytas kartografų realizuojant automatinius duomenų generalizavimo sprendimus.  
+% 
 \section{Literature Review and Problematic}
 \label{sec:literature-review-problematic}
 
-\subsection{From Simplification to Generalization}
-\label{sec:from-simplification-to-generalization}
-
-It is important to note the distinction between simplification, line
-generalization and cartographic generalization.
-
-Simplification reduces object's detail in isolation, not taking object's
-natural properties or surrounding objects into account. For example, if a
-river is simplified, it may have an approximate shape of the original river,
-but lose some shapes that define it. For example:
-
-\begin{itemize}
-
-  \item Low-water rivers in slender slopes have many small bends next to each
-      other. A non-cartographic line simplification may remove all of them,
-        thus losing an important river's characteristic feature: after such
-        simplification, it will be hard to tell that the original river was
-        low-water in a slender slope.
-
-  \item Low-angle river bend river over a long distance differs significantly
-      from a completely straight canal. Non-cartographic line simplification
-        may replace a that bend with a straight line, making the river more
-        similar to a canal than a river.
-
-\end{itemize}
-
-In other words, simplification processes the line ignoring its geographic
-features. It is works well when the features are man-made (e.g., roads,
-administrative boundaries, buildings). There is a number of freely available
-non-cartographic line simplification algorithms, which this paper will review.
-
-Contrary to line simplification, Cartographic Generalization does not focus
-into a single feature class (e.g., rivers), but the whole map. For example,
-line simplification may change river bends in a way that bridges (and roads to
-the bridges) become misplaced. While line simplification is limited to a single
-feature class, cartographic generalization is not. Fully automatic cartographic
-generalization is not yet a solved problem <TODO: Reference needed>.
-
-Cartographic line generalization falls in between the two: it does more than
-line simplification, and less than cartographic generalization. Cartographic
-line generalization deals with a single feature class, but takes into account
-its geographic properties. This paper examines {\WM}'s
-\titlecite{wang1998line}, a cartographic line generalization algorithm.
-
 \subsection{Available algorithms}
+TODO: numeracija 2.1(?) gal senas
 
 This section reviews the classical line simplification algorithms, which,
 besides being around for a long time, offer easily accessible implementations,
 as well as more modern ones, which only theorize, but do not provide an
 implementation.
 
-\subsection{Simplification requirements}
+
 
 \subsubsection{{\DP}, {\VW} and Chaikin's}
 \label{sec:dp-vw-chaikin}
@@ -304,7 +273,9 @@ traditionally, Chaikin's\cite{chaikin1974algorithm} is applied after
 generalization, illustrated in
 figure~\onpage{fig:salvis-generalized-chaikin-50k}.
 
-\begin{figure}[ht]
+% andriub: Šios iliustracijos turėtų būti Available algorithms skyriuje. O čia turėtų WM pavyzdžių iliustracijos (galima įdėti ir referuoti iš originalaus straipsnio)
+
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-douglas-64-chaikin-50k}
@@ -319,7 +290,7 @@ figure~\onpage{fig:salvis-generalized-chaikin-50k}.
     \label{fig:salvis-generalized-chaikin-50k}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}[b]{.49\textwidth}
         \includegraphics[width=\textwidth]{salvis-overlaid-douglas-64-chaikin-50k}
@@ -398,6 +369,8 @@ have emerged. These modern replacements fall into roughly two categories:
 
 \end{itemize}
 
+% TODO:  [Šioje vietoje turi būti WM algoritmo pristatymas su iliustracijomis. Turi būti bent minimalus, ne sakinio, paaiškinimas, kodėl algoritmas tinkamas kartografijai. Kodėl jis pasirinktas realizuoti - o čia ir Tomas ir aš buvome parašę email: išlaikant raiškius naturalių objektų kontūrus, generalizacijos rezultatas žemėlapyje geriau atspindi gamtinės aplinkos savybes, pvz. upių vingiuotumą, kuris gali atspindėti reljefo bei kitas paviršiaus savybes ir pan.]
+
 Authors of most of the aforementioned articles have implemented the
 generalization algorithm, at least to generate the illustrations in the
 articles. However, code is not available for evaluation with a desired data
@@ -405,6 +378,9 @@ set, much less for use as a basis for creating new maps. To author's knowledge,
 {\WM}\cite{wang1998line} is available in a commercial product, but requires a
 purchase of the commercial product suite, without a way to license the
 standalone algorithm.
+
+% TODO BEGIN
+% Ši dalis turi keliauti į problematiką, nes su pačiais algoritmais mažai kuo susiję
 
 Lack of robust openly available generalization algorithm implementations poses
 a problem for map creation with free software: there is not a similar
@@ -424,7 +400,53 @@ free on itself, and runs on free platforms. Therefore, algorithm
 implementations that run on PostGIS or other free platforms are useful to a
 wider cartographic society than proprietary ones.
 
+% TODO END
+
 \subsection{Problematic with generalization of rivers}
+% TODO subscection: andriub: Į šį skyrių turi būti perkeltas tekstas iš From Simplification to Generalization ir mano pakomentuota dalis iš Modern approaches skyriaus.
+
+% TODO: [Skyriaus pradžioje pateikiama bendra informacija: Upių generalizavimo problemą galima skaidyti į dvi dalis: egzistuojantys algoritmai skirti geometrijos supaprastinimui, tačiau neturi kartografinės logikos; egzistuojantys sprendimai nėra laisvai prieinami. Atitinkamai tuomet seka tekstas iš From Simplification to Generalization skyriaus, o toliau - dalis iš Modern approaches skyriaus. 
+
+It is important to note the distinction between simplification, line
+generalization and cartographic generalization.
+
+Simplification reduces object's detail in isolation, not taking object's
+natural properties or surrounding objects into account. For example, if a
+river is simplified, it may have an approximate shape of the original river,
+but lose some shapes that define it. For example:
+
+\begin{itemize}
+
+  \item Low-water rivers in slender slopes have many small bends next to each
+      other. A non-cartographic line simplification may remove all of them,
+        thus losing an important river's characteristic feature: after such
+        simplification, it will be hard to tell that the original river was
+        low-water in a slender slope.
+
+  \item Low-angle river bend river over a long distance differs significantly
+      from a completely straight canal. Non-cartographic line simplification
+        may replace a that bend with a straight line, making the river more
+        similar to a canal than a river.
+
+\end{itemize}
+
+In other words, simplification processes the line ignoring its geographic
+features. It is works well when the features are man-made (e.g., roads,
+administrative boundaries, buildings). There is a number of freely available
+non-cartographic line simplification algorithms, which this paper will review.
+
+Contrary to line simplification, Cartographic Generalization does not focus
+into a single feature class (e.g., rivers), but the whole map. For example,
+line simplification may change river bends in a way that bridges (and roads to
+the bridges) become misplaced. While line simplification is limited to a single
+feature class, cartographic generalization is not. Fully automatic cartographic
+generalization is not yet a solved problem <TODO: Reference needed>.
+
+Cartographic line generalization falls in between the two: it does more than
+line simplification, and less than cartographic generalization. Cartographic
+line generalization deals with a single feature class, but takes into account
+its geographic properties. This paper examines {\WM}'s
+\titlecite{wang1998line}, a cartographic line generalization algorithm.
 
 Section~\ref{sec:dp-vw-chaikin} illustrates the current gaps with Line
 Simplification algorithms for real rivers. To sum up, we highlight the
@@ -441,7 +463,7 @@ following cartographic problems from our examples:
 
 \end{description}
 
-Like discussed in section~\ref{sec:from-simplification-to-generalization}, we
+We are
 limiting the problem to cartographic line generalization. That is, full
 cartographic generalization, which takes topology and other feature classes
 into account, is out of scope.
@@ -461,6 +483,14 @@ exaggerated.
 
 \section{Methodology}
 \label{sec:methodology}
+% andriub: Šio skyriaus poskyriai turėtų būti išdėstyti tokia tvarka:
+% 3.1 Main geometry elements used by algorithm
+% 3.2 Algorithm implementation process
+% 3.3 Technical implementation (naujas poskyris)
+% 3.4 Automated tests
+% 3.5 Reproducibility (dabartinis Reproducing generalizations <...>)
+% 
+% Susižiūrėk tekste ir pakoreguok.
 
 The original {\WM}'s algorithm \cite{wang1998line} leaves something to be
 desired for a practical implementation: it is not straightforward to implement
@@ -478,7 +508,7 @@ many cases, corner cases are discussed and clarified.
 
 Assume Euclidean geometry throughout this document, unless noted otherwise.
 
-\subsection{Main geometry elements}
+\subsection{Main geometry elements used by algorithm}
 \label{sec:vocab}
 
 This section defines and explains the geometry elements that are used
@@ -532,6 +562,7 @@ throughout this paper and the implementation.
         computing science by Donald Knuth\cite{knuth1976big} in the 1970s.
 
 \end{description}
+% TODO: [3.3 Technical implementation. Šiame skyriuje turėtum trumpai pristatyti, kokiai programinei įrangai realizavai sprendimą, kokią programavimo kalbą ir kodėl naudojai, kokia sprendimo architektūra (sukurtas funkcijų rinkinys iškviečiamas postgis aplinkoje, pernaudojama dalis postgis aplinkoje esančios geometrijos apdorojimo funkcijos), pažymėti, kad realizuotas techninis sprendimas gali būti pernaudotas ir kituos sprendimui, nes yra universalus (SQL Procedural Language)]
 
 \subsection{Automated tests}
 \label{sec:automated-tests}
@@ -587,8 +618,10 @@ stability and longevity of the implementation itself: when new contributors
 start changing code, they have higher assurance they have not broken
 already-working code.
 
-\subsection{Reproducing generalizations in this paper}
+\subsection{Reproducibility}
 \label{sec:reproducing-the-paper}
+
+% TODO: andriub: Turi būti aiškiai nurodytos instrukcijos, kaip atkartoti veiksmus. Tam gali įdėti trumpą tekstą, kad rezultatais pasidalinta github, projekto pasileidimui reikalavimai nurodyti programinio kodo readme apraše.
 
 It is widely believed that the ability to reproduce the results of a published
 study is important to the scientific community. In practice, however, it is
@@ -1141,6 +1174,14 @@ exaggerated bend with the algorithm.
 
 \section{Program Implementation}
 
+% TODO: andriub: 5, 6 skyriai turėtų būti išvadų skyriai.
+% Matyčiau tokią struktūrą:
+% 5. Results
+% 5.1 Program implementation
+% 5.2 Generalization Results of Analyzed Rivers  
+% 5.3 Comparission of generalization results with national spatial datasets
+% 5.4 Testing Results Online
+
 NOTE: this should provide a higher-level overview of the written code:
 
 \begin{itemize}
@@ -1153,6 +1194,10 @@ NOTE: this should provide a higher-level overview of the written code:
 \section{Results of Experiments}
 
 NOTE: this can only be filled after the algorithm implementation is complete.
+
+% TODO: [Šioje dalyje turi būti pateikt rezultatai ir jų palyginimai su GDR50LT ir GDR250LT]
+
+% TODO: [Siūlau įdėti nuorodą į web app, kur būtų galima interaktyviai pastestuoti rezultatus. Jeigu planuotum dėti, tuomet galima nedidelį poskyrį pridėti Testing Results]
 
 \section{Conclusions}
 \label{sec:conclusions}
