@@ -40,9 +40,10 @@ RIVERS = \
 		 salvis-visvalingam-64-chaikin-50k \
 		 salvis-overlaid-douglas-64-chaikin-50k \
 		 salvis-overlaid-visvalingam-64-chaikin-50k \
-		 salvis-wm-50k \
 		 salvis-wm-250k \
-		 salvis-wm-overlaid-50k-zoom \
+		 salvis-wm-50k \
+		 salvis-wm-50k-nw \
+		 salvis-wm-50k-ne \
 		 salvis-wm-overlaid-250k-zoom \
 		 salvis-gdr50-overlaid
 
@@ -199,15 +200,22 @@ salvis-overlaid-visvalingam-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 
-salvis-wm-50k_1SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-50k_WIDTHDIV = 2
-
 salvis-wm-250k_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-250k_WIDTHDIV = 10
 
-salvis-wm-overlaid-50k-zoom_1SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-overlaid-50k-zoom_2SELECT = wm_visuals where name='salvis'
-salvis-wm-overlaid-50k-zoom_1COLOR = orange
+salvis-wm-50k_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-50k_2SELECT = wm_visuals where name='salvis'
+salvis-wm-50k_1COLOR = orange
+
+salvis-wm-50k-nw_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-50k-nw_2SELECT = wm_visuals where name='salvis'
+salvis-wm-50k-nw_1COLOR = orange
+salvis-wm-50k-nw_QUADRANT = 2
+
+salvis-wm-50k-ne_1SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-50k-ne_2SELECT = wm_visuals where name='salvis'
+salvis-wm-50k-ne_1COLOR = orange
+salvis-wm-50k-ne_QUADRANT = 1
 
 salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis'
