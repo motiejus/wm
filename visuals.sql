@@ -129,10 +129,10 @@ begin
     geom1 = st_simplify((select way from wm_visuals where name='salvis'), i);
     geom2 = st_simplifyvw((select way from wm_visuals where name='salvis'), i*i);
     insert into wm_visuals(name, way) values
-      ('salvis-dp-' || i, geom1),
-      ('salvis-dp-' || i || '-chaikin', st_chaikinsmoothing(geom1, 5)),
-      ('salvis-vw-' || i, geom2),
-      ('salvis-vw-' || i || '-chaikin', st_chaikinsmoothing(geom2, 5));
+      ('salvis-dp-'         || i, geom1),
+      ('salvis-dp-chaikin-' || i, st_chaikinsmoothing(geom1, 5)),
+      ('salvis-vw-'         || i, geom2),
+      ('salvis-vw-chaikin-' || i, st_chaikinsmoothing(geom2, 5));
   end loop;
 
   -- more than 220 doesn't work, because there is an exaggerated bend near

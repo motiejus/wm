@@ -51,50 +51,6 @@ RIVERS = \
 		 salvis-wm-gdr50-ne \
 		 salvis-wm-220
 
-#################################
-# The thesis, publishable version
-#################################
-
-mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES) ## Thesis for publishing
-	cp $< .tmp-$@
-	for f in $^; do \
-		if [ "$$f" = "$<" ]; then continue; fi; \
-		pdfattach .tmp-$@ $$f .tmp2-$@; \
-		mv .tmp2-$@ .tmp-$@; \
-	done
-	mv .tmp-$@ $@
-
-###############################
-# Auxiliary targets for humans
-###############################
-
-.PHONY: test
-test: .faux_test ## Unit tests (fast)
-
-.PHONY: visuals
-visuals: .faux_visuals  # Generate visuals for paper (fast)
-
-.PHONY: test-rivers
-test-rivers: .faux_test-rivers ## Rivers tests (slow)
-
-.PHONY: slides
-slides: $(SLIDES)
-
-.PHONY: refresh-rivers
-refresh-rivers: refresh-rivers-10.sql refresh-rivers-50.sql refresh-rivers-250.sql ## Refresh river data from national datasets
-
-###########################
-# The report, quick version
-###########################
-
-mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
-	$(LISTINGS) $(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
-	latexmk -shell-escape -pdf $<
-
-############################
-# Report's test dependencies
-############################
-
 test-figures_1SELECT = wm_figures
 
 fig8-definition-of-a-bend_1SELECT = wm_debug where name='fig8' AND stage='afigures' AND gen=1
@@ -175,19 +131,19 @@ salvis-dp-64-50k_WIDTHDIV = 2
 salvis-vw-64-50k_1SELECT = wm_visuals where name='salvis-vw-64'
 salvis-vw-64-50k_WIDTHDIV = 2
 
-salvis-dp-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-dp-64-chaikin'
+salvis-dp-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-dp-chaikin-64'
 salvis-dp-64-chaikin-50k_WIDTHDIV = 2
 
-salvis-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-vw-64-chaikin'
+salvis-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis-vw-chaikin-64'
 salvis-vw-64-chaikin-50k_WIDTHDIV = 2
 
-salvis-overlaid-dp-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-dp-64-chaikin'
+salvis-overlaid-dp-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-dp-chaikin-64'
 salvis-overlaid-dp-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
 salvis-overlaid-dp-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-dp-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-dp-64-chaikin-50k_QUADRANT = 1
 
-salvis-overlaid-vw-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-vw-64-chaikin'
+salvis-overlaid-vw-64-chaikin-50k_1SELECT = wm_visuals where name='salvis-vw-chaikin-64'
 salvis-overlaid-vw-64-chaikin-50k_2SELECT = wm_visuals where name='salvis'
 salvis-overlaid-vw-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-vw-64-chaikin-50k_WIDTHDIV = 2
@@ -243,6 +199,7 @@ label_dp-chaikin = $(label_dp) and Chaikin
 
 define wm_vwdp50k
 RIVERS += salvis-wm-$(1)-50k
+$(info $(RIVERS))
 salvis-wm-$(1)-50k_1SELECT    = wm_visuals where name='salvis-$(1)-64'
 salvis-wm-$(1)-50k_2SELECT    = wm_visuals where name='salvis-wm-75'
 salvis-wm-$(1)-50k_3SELECT    = wm_visuals where name='salvis'
@@ -270,8 +227,57 @@ $(1).pdf: layer2img.py Makefile $(2)
 			$$(if $$($(1)_$$(i)LINESTYLE),--g$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
 endef
+
 $(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
 $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
+
+#################################
+# The thesis, publishable version
+#################################
+
+mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES) ## Thesis for publishing
+	cp $< .tmp-$@
+	for f in $^; do \
+		if [ "$$f" = "$<" ]; then continue; fi; \
+		pdfattach .tmp-$@ $$f .tmp2-$@; \
+		mv .tmp2-$@ .tmp-$@; \
+	done
+	mv .tmp-$@ $@
+
+###############################
+# Auxiliary targets for humans
+###############################
+
+.PHONY: test
+test: .faux_test ## Unit tests (fast)
+
+.PHONY: visuals
+visuals: .faux_visuals  # Generate visuals for paper (fast)
+
+.PHONY: test-rivers
+test-rivers: .faux_test-rivers ## Rivers tests (slow)
+
+.PHONY: slides
+slides: $(SLIDES)
+
+.PHONY: refresh-rivers
+refresh-rivers: refresh-rivers-10.sql refresh-rivers-50.sql refresh-rivers-250.sql ## Refresh river data from national datasets
+
+###########################
+# The report, quick version
+###########################
+
+mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
+	$(LISTINGS) $(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
+	latexmk -shell-escape -pdf $<
+
+############################
+# Report's test dependencies
+############################
+
+.PHONY: allfigs
+allfigs: $(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
+
 
 
 .faux_db_pre: db init.sql
