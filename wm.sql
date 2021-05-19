@@ -251,7 +251,6 @@ begin
 
       -- vertices, segments and stars are aligned, we are changing the bend
       mutated = true;
-      raise notice 'splitting bend %', j;
 
       -- To understand the block below, I suggest you take a pencil and paper,
       -- draw a self-crossing bend (fig6 from the article works well), and
@@ -274,10 +273,12 @@ begin
         -- remove last vertex of the previous bend, because the last
         -- segment is duplicated with the i'th bend.
         bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
-        raise notice 'multi: %', st_astext(multi);
-        raise notice '2: removing first point from %', st_astext(st_geometryn(multi, st_numgeometries(multi)));
-        mutated = false;
-        --return; % continue debugging here
+        -- continue debugging the selfcrossing-1 here.
+        --raise notice 'previous bend: %', st_astext(bends[i-1]);
+        --raise notice 'multi: %', st_astext(multi);
+        --raise notice '2: removing first point from %', st_astext(st_geometryn(multi, st_numgeometries(multi)));
+        --mutated = false;
+        --return;
         bends[i] = st_makeline(
           st_pointn(bends[i], 1),
           st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
