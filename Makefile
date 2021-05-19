@@ -49,11 +49,7 @@ RIVERS = \
 		 salvis-wm-overlaid-250k-zoom \
 		 salvis-wm-gdr50 \
 		 salvis-wm-gdr50-ne \
-		 salvis-wm-220 \
-		 salvis-wm-dp-50k \
-		 salvis-wm-dp-chaikin-50k \
-		 salvis-wm-vw-50k \
-		 salvis-wm-vw-chaikin-50k
+		 salvis-wm-220
 
 #################################
 # The thesis, publishable version
@@ -98,22 +94,6 @@ mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
 ############################
 # Report's test dependencies
 ############################
-
-define FIG_template
-$(1).pdf: layer2img.py Makefile $(2)
-	python3 ./layer2img.py --outfile=$(1).pdf \
-		$$(if $$($(1)_LEGEND),--legend="$$($(1)_LEGEND)") \
-		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
-		$$(if $$($(1)_QUADRANT),--quadrant=$$($(1)_QUADRANT)) \
-		$$(foreach i,1 2 3, \
-			$$(if $$($(1)_$$(i)LABEL),--g$$(i)-label="$$($(1)_$$(i)LABEL)") \
-			$$(if $$($(1)_$$(i)COLOR),--g$$(i)-color="$$($(1)_$$(i)COLOR)") \
-			$$(if $$($(1)_$$(i)SELECT),--g$$(i)-select="$$($(1)_$$(i)SELECT)") \
-			$$(if $$($(1)_$$(i)LINESTYLE),--g$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
-	)
-endef
-$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
-$(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
 
 test-figures_1SELECT = wm_figures
 
@@ -255,27 +235,6 @@ salvis-wm-gdr50-ne_QUADRANT = 1
 salvis-wm-220_1SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-220_WIDTHDIV = 2
 
-salvis-wm-dp-50k_1SELECT = wm_visuals where name='salvis-dp-64'
-salvis-wm-dp-50k_2SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-dp-50k_3SELECT = wm_visuals where name='salvis'
-salvis-wm-dp-50k_1COLOR  = green
-salvis-wm-dp-50k_2COLOR  = orange
-salvis-wm-dp-50k_3LINESTYLE  = dotted
-
-salvis-wm-dp-chaikin-50k_1SELECT = wm_visuals where name='salvis-dp-64-chaikin'
-salvis-wm-dp-chaikin-50k_2SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-dp-chaikin-50k_3SELECT = wm_visuals where name='salvis'
-salvis-wm-dp-chaikin-50k_1COLOR  = green
-salvis-wm-dp-chaikin-50k_2COLOR  = orange
-salvis-wm-dp-chaikin-50k_3LINESTYLE  = dotted
-
-salvis-wm-vw-chaikin-50k_1SELECT = wm_visuals where name='salvis-vw-64-chaikin'
-salvis-wm-vw-chaikin-50k_2SELECT = wm_visuals where name='salvis-wm-75'
-salvis-wm-vw-chaikin-50k_3SELECT = wm_visuals where name='salvis'
-salvis-wm-vw-chaikin-50k_1COLOR  = green
-salvis-wm-vw-chaikin-50k_2COLOR  = orange
-salvis-wm-vw-chaikin-50k_3LINESTYLE  = dotted
-
 label_wm 		 = Wang--Müller
 label_vw 		 = Visvalingam--Whyatt
 label_dp 		 = Douglas \& Peucker
@@ -285,16 +244,34 @@ label_dp-chaikin = $(label_dp) and Chaikin
 define wm_vwdp50k
 RIVERS += salvis-wm-$(1)-50k
 salvis-wm-$(1)-50k_1SELECT    = wm_visuals where name='salvis-$(1)-64'
+salvis-wm-$(1)-50k_2SELECT    = wm_visuals where name='salvis-wm-75'
 salvis-wm-$(1)-50k_3SELECT    = wm_visuals where name='salvis'
 salvis-wm-$(1)-50k_1COLOR     = green
 salvis-wm-$(1)-50k_1LABEL     = $(label_$(1))
 salvis-wm-$(1)-50k_2COLOR     = orange
 salvis-wm-$(1)-50k_2LABEL     = $(label_wm)
 salvis-wm-$(1)-50k_3LINESTYLE = dotted
-salvis-wm-$(1)-50k_3LABEL     = GRPK 1:\\numprint{10000}
+#salvis-wm-$(1)-50k_3LABEL     = GRPK 1:\numprint{10000}
+salvis-wm-$(1)-50k_3LABEL     = GRPK 1:10000
 salvis-wm-$(1)-50k_LEGEND     = lower left
 endef
 $(foreach x,vw dp vw-chaikin dp-chaikin,$(eval $(call wm_vwdp50k,$(x))))
+
+define FIG_template
+$(1).pdf: layer2img.py Makefile $(2)
+	python3 ./layer2img.py --outfile=$(1).pdf \
+		$$(if $$($(1)_LEGEND),--legend="$$($(1)_LEGEND)") \
+		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
+		$$(if $$($(1)_QUADRANT),--quadrant=$$($(1)_QUADRANT)) \
+		$$(foreach i,1 2 3, \
+			$$(if $$($(1)_$$(i)LABEL),--g$$(i)-label="$$($(1)_$$(i)LABEL)") \
+			$$(if $$($(1)_$$(i)COLOR),--g$$(i)-color="$$($(1)_$$(i)COLOR)") \
+			$$(if $$($(1)_$$(i)SELECT),--g$$(i)-select="$$($(1)_$$(i)SELECT)") \
+			$$(if $$($(1)_$$(i)LINESTYLE),--g$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
+	)
+endef
+$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
+$(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
 
 
 .faux_db_pre: db init.sql
