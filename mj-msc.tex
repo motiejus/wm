@@ -304,12 +304,12 @@ purposes) using the following algorithm:
 
 The original article describes a bend as:
 
-\begin{displayquote}[\cite{wang1998line}][]
+\begin{displaycquote}{wang1998line}
     A bend can be defined as that part of a line which contains a number of
     subsequent vertices, with the inflection angles on all vertices included in
     the bend being either positive or negative and the inflection of the bend's
     two end vertices being in opposite signs.
-\end{displayquote}
+\end{displaycquote}
 
 While it gives a good intuitive understanding of what the bend is, this section
 provides more technical details. Here are some non-obvious characteristics that
@@ -341,10 +341,10 @@ but with bends colored as polygons: each color is a distinctive bend.
 
 The gist of the section is in the original article:
 
-\begin{displayquote}[\cite{wang1998line}][]
+\begin{displaycquote}{wang1998line}
     But if the inflection that marks the end of a bend is quite small, people
     would not recognize this as the bend point of a bend
-\end{displayquote}
+\end{displaycquote}
 
 Figure~\ref{fig:fig5-gentle-inflection} visualizes original paper's Figure 5,
 when a single vertex is moved outwards the end of the bend.
@@ -501,6 +501,12 @@ This section introduces \textsc{adjusted size}, which trivially derives from
 Adjusted size becomes necessary later to compare bends with each other, and
 find out similar ones.
 
+\subsection{Isolated Bend}
+
+Bend itself and its extensions can be described by \textsc{average curvature},
+which is \textcquote{wang1998line}{geometrically defined as the ratio of
+inflection over the length of a curve.}
+
 \subsection{The Context of a Bend: Isolated and Similar Bends}
 
 To find out whether two bends are similar, they are compared by 3 components:
@@ -516,8 +522,12 @@ distance $d$ between those is calculated to differentiate between bends $p$ and
 $q$:
 
 \[
-    d(p,q) = \sqrt{(adjsize_p - adjsize_q)^2 + (cmp_p - cmp_q)^2 + (baseline_p - baseline_q)^2}
+    d(p,q) = \sqrt{(adjsize_p-adjsize_q)^2 +
+                   (cmp_p-cmp_q)^2 +
+                   (baseline_p-baseline_q)^2}
 \]
+
+The smaller the distance $d$, the more similar the bends are.
 
 \subsection{Elimination Operator}
 
