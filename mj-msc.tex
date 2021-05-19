@@ -560,30 +560,31 @@ when adjusted to scale, will not be generalized.
   \begin{tikzpicture}[x=1mm,y=1mm]
       \draw[] (-10, 0) -- (-.75,0) arc (225:-45:.75) -- (10, 0);
   \end{tikzpicture}
-  \caption{Smallest feature that will be not generalized.}
+  \caption{Smallest feature that will be not generalized (to scale).}
   \label{fig:half-circle}
 \end{figure}
 
 {\WM} algorithm does not have a notion of scale, but it does have a notion of
-distance. Assuming measurement units in projected coordinate system are meters
-(for example, \titlecite{epsg3857}), conversion is depicted in
+distance: it accepts a single parameter $D$, the half-circle's diameter.
+Assuming measurement units in projected coordinate system are meters (for
+example, \titlecite{epsg3857}), conversion is depicted in
 table~\ref{table:scale-halfcirlce-diameter}.
 
 \newcolumntype{d}[1]{D{.}{.}{#1} }
 \begin{table}[h]
     \centering
-    \begin{tabular}{|c @{:}l | D{.}{.}{1} |}
+    \begin{tabular}{|c @{:}r | D{.}{.}{1} |}
         \hline
-        \multicolumn{2}{|c|}{Scale} & \multicolumn{1}{c|}{Diameter (m)} \\ \hline
-        1 & 10000                   & 15 \\ \hline
-        1 & 25000                   & 37.5 \\ \hline
-        1 & 50000                   & 50 \\ \hline
-        1 & 250000                  & 250 \\ \hline
+        \multicolumn{2}{|c|}{Scale} & \multicolumn{1}{c|}{$D(m)$} \\ \hline
+        1 & 10000                   & 15                          \\ \hline
+        1 & 15000                   & 22.5                        \\ \hline
+        1 & 25000                   & 37.5                        \\ \hline
+        1 & 50000                   & 50                          \\ \hline
+        1 & 250000                  & 250                         \\ \hline
     \end{tabular}
-    \caption{{\WM} parameter table for popular scales.}
+    \caption{{\WM} parameter $D$ (half-circle diameter) for popular scales.}
     \label{table:scale-halfcirlce-diameter}
 \end{table}
-
 
 \subsection{Definition of a Bend}
 \label{sec:definition-of-a-bend}
