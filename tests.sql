@@ -11,7 +11,7 @@ begin
 end $$ LANGUAGE plpgsql;
 
 drop table if exists debug_wm;
-create table debug_wm(section text, name text, way geometry);
+create table debug_wm(name text, way geometry, props json);
 
 drop table if exists figures;
 create table figures (name text, way geometry);
@@ -53,14 +53,14 @@ create table demo_selfcrossing3 (name text, i bigint, way geometry);
 insert into demo_selfcrossing3 select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;
 
 -- BEND ATTRS
-drop table if exists bendattrs;
-create table bendattrs (way geometry, area real, cmp real);
-insert into bendattrs (way, area, cmp) select (bend_attrs(ways, true)).* from inflections;
+do $$
+begin perform bend_attrs(ways, true) from inflections; end
+$$ language plpgsql;
 
 -- COMBINED
 drop table if exists demo_wm;
 create table demo_wm (name text, i bigint, way geometry);
-insert into demo_wm (name, way) select name, ST_SimplifyWM(way, true) from figures where name='multi-island';
+insert into demo_wm (name, way) select name, ST_SimplifyWM(way, true) from figures;
 
 do $$
 declare

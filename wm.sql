@@ -267,14 +267,35 @@ end
 $$ language plpgsql;
 
 drop function if exists bend_attrs;
-create function bend_attrs(bends geometry[], dbg boolean default false) returns table(polygon geometry, area real, cmp real) as $$
+create function bend_attrs(bends geometry[], dbg boolean default false) returns table(bend geometry, area real, cmp real, adjsize real) as $$
 declare
   i int4;
+  fourpi real;
+  polygon geometry;
 begin
+  fourpi = 4*radians(180);
   for i in 1..array_length(bends, 1) loop
-    select st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i]))) into polygon;
-    if dbg then
-      insert into debug_wm (section, name, way) values('bend_attrs', i, polygon);
+    bend = bends[i];
+    select st_makepolygon(st_addpoint(bend, st_startpoint(bend))) into polygon;
+    -- Compactness Index (cmp) is defined as "the ratio of the area of the
+    -- polygon over the circle whose circumference length is the same as the
+    -- length of the circumference of the polygon". I assume they meant the
+    -- area of the circle. So here goes:
+    -- 1. get polygon area P.
+    -- 2. get polygon perimeter = u. Pretend it's our circle's circumference.
+    -- 3. get A (area) of the circle from circumference u := (u^2)/(4*pi)
+    -- 4. divide area by A: cmp = P/((u^2)*4*pi) = 4*pi*P/u^2
+    select st_area(polygon) into area;
+    select fourpi*area/(st_perimeter(polygon)^2) into cmp;
+    if cmp > 0 then
+      select (area*(0.75/cmp)) into adjsize;
+      if dbg then
+        insert into debug_wm (name, way, props) values(
+          'bend_attrs_' || i,
+          polygon,
+          json_build_object('area', area, 'cmp', cmp, 'adjsize', adjsize)
+        );
+      end if;
     end if;
     return next;
   end loop;
@@ -304,15 +325,12 @@ begin
     raise 'Unknown geometry type %', l_type;
   end if;
 
-
   for i in 1..array_length(lines, 1) loop
-
     mutated = true;
     dbg_stage = 1;
     while mutated loop
       if dbg then
-        insert into debug_wm (section, name, way) values(
-          'simplifywm',
+        insert into debug_wm (name, way) values(
           dbg_stage || 'afigures_' || i,
           lines[i]
         );
@@ -321,8 +339,7 @@ begin
       bends = detect_bends(lines[i]);
 
       if dbg then
-        insert into debug_wm(section, name, way) values(
-          'simplifywm',
+        insert into debug_wm(name, way) values(
           dbg_stage || 'bbends_' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -331,8 +348,7 @@ begin
       bends = fix_gentle_inflections(bends);
 
       if dbg then
-        insert into debug_wm(section, name, way) values(
-          'simplifywm',
+        insert into debug_wm(name, way) values(
           dbg_stage || 'cinflections' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );
@@ -341,17 +357,22 @@ begin
       select * from self_crossing(bends) into bends, mutated;
 
       if dbg then
-        insert into debug_wm(section, name, way) values(
-          'simplifywm',
+        insert into debug_wm(name, way) values(
           dbg_stage || 'dcrossings' || i || '_' || generate_subscripts(bends, 1),
           unnest(bends)
         );
       end if;
 
-      lines[i] = st_linemerge(st_union(bends));
+      if mutated then
+        lines[i] = st_linemerge(st_union(bends));
+        dbg_stage = dbg_stage + 1;
+        continue;
+      end if;
 
-      dbg_stage = dbg_stage + 1;
+      -- self-crossing mutations are done, calculate bend properties
+      perform bend_attrs(bends, true);
     end loop;
+
   end loop;
 
   if l_type = 'ST_LineString' then
