@@ -442,7 +442,7 @@ begin
 
     -- Uses linear interpolation; can be updated to gaussian or similar;
     -- then interpolate manually instead of relying on st_addmeasure.
-    bendm = st_union(
+    bendm = st_collect(
       st_addmeasure(st_geometryn(splitbend, 1), 1, scale),
       st_addmeasure(st_geometryn(splitbend, 2), scale, 1)
     );
@@ -456,6 +456,7 @@ begin
         from st_dumppoints(bendm)
         order by path[1], path[2]
       ));
+
     bend = st_makeline(points);
 
     size = wm_adjsize(bend);

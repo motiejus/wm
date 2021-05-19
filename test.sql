@@ -21,7 +21,7 @@ create function dbg_geomsummary(geoms geometry[]) returns void as $$
 begin
   raise notice 'len: %', array_length(geoms, 1);
   for i in 1..array_length(geoms, 1) loop
-    raise notice '%: %', lpad(i::text, 2, '0'), st_astext(geoms[i]);
+    raise notice '% %: %', st_geometrytype(geoms[i]), lpad(i::text, 2, '0'), st_astext(geoms[i]);
   end loop;
 end
 $$ language plpgsql;
@@ -198,6 +198,6 @@ declare
 begin
   select way from wm_debug where name='fig3' and stage='bbends' and gen=1 and nbend=2 into fig3b2;
   size = wm_adjsize(fig3b2);
-  --bend = wm_exaggerate(fig3b2, size, 50.);
-  --insert into wm_debug(stage, name, gen, nbend, way) values('manual', 'fig3', 1, 1, bend);
+  bend = wm_exaggerate(fig3b2, size, 50.);
+  insert into wm_debug(stage, name, gen, nbend, way) values('manual', 'fig3', 1, 1, bend);
 end $$ language plpgsql;
