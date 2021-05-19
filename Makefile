@@ -1,5 +1,5 @@
-SOURCE ?= lithuania-latest.osm.pbf
-WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Žeimena' OR name='Lakaja'
+OSM ?= lithuania-latest.osm.pbf
+WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas'
 #WHERE ?= name like '%'
 SLIDES = slides-2021-03-29.pdf
 
@@ -112,7 +112,8 @@ selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='d
 selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-after_2LINESTYLE = invisible
 
-.faux_test-integration: tests-integration.sql wm.sql .faux_aggregate-rivers
+
+.faux_test-integration: tests-integration.sql wm.sql .faux_db
 	./db -f $<
 	touch $@
 
@@ -122,18 +123,7 @@ selfcrossing-1-after_2LINESTYLE = invisible
 
 .faux_db: db init.sql
 	./db start
-	./db -f init.sql
-	touch $@
-
-$(SOURCE):
-	wget http://download.geofabrik.de/europe/$@
-
-.faux_aggregate-rivers: aggregate-rivers.sql .faux_import-osm Makefile
-	./db -v where="$(WHERE)" -f $<
-	touch $@
-
-.faux_import-osm: $(SOURCE) .faux_db
-	PGPASSWORD=osm osm2pgsql -c --multi-geometry -H 127.0.0.1 -d osm -U osm $<
+	./db -f init.sql -f rivers.sql
 	touch $@
 
 ################################
@@ -155,7 +145,7 @@ slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
 dump-debug_wm.sql.xz:
-	docker exec -ti wm-mj pg_dump -Uosm osm -t debug_wm | xz -v > $@
+	docker exec -ti wm-mj pg_dump -Uosm osm -t wm_devug | xz -v > $@
 
 mj-msc-gray.pdf: mj-msc.pdf
 	gs \
@@ -171,7 +161,7 @@ mj-msc-gray.pdf: mj-msc.pdf
 .PHONY: clean
 clean: ## Clean the current working directory
 	-./db stop
-	-rm -r .faux_test .faux_aggregate-rivers .faux_import-osm .faux_db \
+	-rm -r .faux_test .faux_aggregate-rivers .faux_db \
 		version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
 		_minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
@@ -186,3 +176,17 @@ clean-tables: ## Remove tables created during unit or integration tests
 .PHONY: help
 help: ## Print this help message
 	@awk -F':.*?## ' '/^[a-z0-9.-]*: *.*## */{printf "%-18s %s\n",$$1,$$2}' $(MAKEFILE_LIST)
+
+$(OSM):
+	wget http://download.geofabrik.de/europe/$@
+
+.PHONY: refresh-rivers
+refresh-rivers: aggregate-rivers.sql $(OSM) .faux_db ## Refresh rivers.sql from Open Street Maps
+	PGPASSWORD=osm osm2pgsql -c --multi-geometry -H 127.0.0.1 -d osm -U osm $(OSM)
+	./db -v where="$(WHERE)" -f $<
+	(\
+		echo '-- Generated at $(shell TZ=UTC date +"%FT%TZ") on $(shell whoami)@$(shell hostname -f)'; \
+		echo '-- Select: $(WHERE)'; \
+		docker exec -ti wm-mj pg_dump --clean -Uosm osm -t wm_rivers | tr -d '\r' \
+	) > rivers.sql.tmp
+	mv rivers.sql.tmp rivers.sql

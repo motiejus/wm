@@ -6,12 +6,23 @@ import matplotlib.pyplot as plt
 
 from matplotlib import rc
 
-# CMAP = 'Set3'  # this is nice too
+# CMAP = 'Set3'  # is nice too
 CMAP = 'tab20c'
 
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
+INCH = 25.4  # mm
 BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
+
+
+def plt_size(string):
+    if not string:
+        return None
+    try:
+        w, h = string.split("x")
+        return float(w) / INCH, float(h) / INCH
+    except Exception as e:
+        raise argparse.ArgumentTypeError from e
 
 
 def parse_args():
@@ -34,6 +45,11 @@ def parse_args():
 
     parser.add_argument('-o', '--outfile', metavar='<file>')
     parser.add_argument('--clip', type=float, nargs=4, metavar=BOUNDS)
+    parser.add_argument(
+            '--size',
+            type=plt_size,
+            help='Figure size in mm (WWxHH)',
+    )
     return parser.parse_args()
 
 
@@ -44,18 +60,18 @@ def read_layer(select):
     sql = "SELECT way FROM %s" % select
     return geopandas.read_postgis(sql, con=conn, geom_col='way')
 
+
 def plot_args(color, maybe_cmap, maybe_linestyle):
     if maybe_cmap:
         r = {'cmap': CMAP}
     else:
         r = {'color': color}
-
     if maybe_linestyle == 'invisible':
         r['color'] = (0, 0, 0, 0)
     elif maybe_linestyle:
         r['linestyle'] = maybe_linestyle
-
     return r
+
 
 def main():
     args = parse_args()
@@ -69,6 +85,8 @@ def main():
     rc('text', usetex=True)
     fig, ax = plt.subplots()
     fig.set_figwidth(8.27 / args.widthdiv)
+    if args.size:
+        fig.set_size_inches(args.size)
     if c := args.clip:
         ax.set_xlim(left=c[0], right=c[2])
         ax.set_ylim(bottom=c[1], top=c[3])

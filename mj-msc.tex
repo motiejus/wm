@@ -32,6 +32,14 @@
 \newcommand{\MYTITLE}{Cartographic Generalization of Lines using free software (example of rivers)}
 \newcommand{\MYAUTHOR}{Motiejus Jakštys}
 
+\iffalse
+a4: 210x297mm
+a5: 148x210mm
+a6: 105x148xmm
+a7: 74x105mm
+a8: 52x74mm
+\fi
+
 \title{\MYTITLE}
 \author{\MYAUTHOR}
 \date{\VCDescribe}
@@ -140,9 +148,10 @@ Both algorithms are part of PostGIS, a free-software GIS suite:
         \href{https://postgis.net/docs/ST_SimplifyVW.html}{PostGIS SimplifyVW}.
 \end{itemize}
 
-Since both algorithms produce jagged output lines, it is worthwhile to process
-those through a widely available Chaikin's line smoothing
-algorithm \cite{chaikin1974algorithm} via
+Examples of <TBD Chaikin and others>
+
+It may be worthwhile to post-process those through a widely available Chaikin's
+line smoothing algorithm \cite{chaikin1974algorithm} via
 \href{https://postgis.net/docs/ST_ChaikinSmoothing.html}{PostGIS
 ChaikinSmoothing}.
 
