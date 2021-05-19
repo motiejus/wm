@@ -36,5 +36,12 @@ begin
     end if;
     prev_sign = cur_sign;
   end loop;
+
+  -- the last bend may be lost if there is no "final" inflection angle.
+  -- to avoid that, return the last bend if the last accumulation has >3
+  -- vertices.
+  if (select count(1) from ((select st_dumppoints(bend) as a)) b) >= 3 then
+    return next;
+  end if;
 end
 $$ language plpgsql;
