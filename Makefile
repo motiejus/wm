@@ -66,7 +66,7 @@ slides: $(SLIDES)
 # The report, quick version
 ###########################
 
-mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex extract-and-generate bib.bib vu.pdf \
+mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex extract-and-generate bib.bib \
 	$(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
 	latexmk -shell-escape -g -pdf $<
 
@@ -184,9 +184,6 @@ vars.inc.tex: vars.awk wm.sql Makefile
 ###############
 # Misc commands
 ###############
-
-vu.pdf: vu.svg
-	inkscape -D -z --file=$< --export-pdf=$@ --export-latex
 
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
