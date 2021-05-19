@@ -30,11 +30,9 @@
 
 \IfFileExists{./editorial-version}{\def \mjEditorial {}}{}
 \ifx \mjEditorial \undefined
-% requires minted
 \usepackage{minted}
 \newcommand{\inputcode}[2]{\inputminted[fontsize=\small]{#1}{#2}}
 \else
-% does not require minted
 \usepackage{verbatim}
 \newcommand{\inputcode}[2]{\verbatiminput{#2}}
 \fi
