@@ -209,6 +209,34 @@ begin
 end
 $$ language plpgsql;
 
+drop function if exists if_selfcross;
+create function if_selfcross(
+  bendi geometry,
+  bendj geometry
+) returns geometry as $$
+declare
+  a geometry;
+  b geometry;
+  partitions geometry;
+begin
+  a = st_pointn(bendi, 1);
+  b = st_pointn(bendi, -1);
+  partitions = st_split(bendj, st_makeline(a, b));
+
+  if st_numgeometries(partitions) = 1 then
+    return null;
+  end if;
+
+  if st_numgeometries(partitions) = 2 and
+    (st_contains(bendj, a) or st_contains(bendj, b)) then
+    return null;
+  end if;
+
+  return partitions;
+end
+$$ language plpgsql;
+
+
 -- self_crossing eliminates self-crossing from the bends, following the
 -- article's section "Self-line Crossing When Cutting a Bend".
 drop function if exists self_crossing;
@@ -220,7 +248,6 @@ declare
   pi constant real default radians(180);
   i int4;
   j int4;
-  prev_length int4;
   a geometry;
   b geometry;
   multi geometry;
@@ -234,24 +261,17 @@ begin
     -- self-crossing. now try to find another bend in this line that
     -- crosses an imaginary line of end-vertices
 
+    -- To understand the block below, I suggest you take a pencil and paper,
+    -- draw a self-crossing bend (fig6 from the article works well), and
+    -- figure out what happens here, by hand. I know it's hard to follow.
+    -- Apologies.
+
     -- go through each bend in the given line, and see if has a potential to
     -- cross bends[i].
     for j in 1..i-1 loop
-      a = st_pointn(bends[i], 1);
-      b = st_pointn(bends[i], -1);
-      multi = st_split(bends[j], st_makeline(a, b));
-      continue when st_numgeometries(multi) = 1;
-      continue when st_numgeometries(multi) = 2 and
-        (st_contains(bends[j], a) or st_contains(bends[j], b));
-
-      -- vertices, segments and stars are aligned, we are changing the bend
+      select if_selfcross(bends[i], bends[j]) into multi;
+      continue when multi is null;
       mutated = true;
-
-      -- To understand the block below, I suggest you take a pencil and paper,
-      -- draw a self-crossing bend (fig6 from the article works well), and
-      -- figure out what happens here, by hand. I know it's hard to follow.
-      -- Apologies.
-      prev_length = array_length(bends, 1);
 
       -- remove first vertex of the following bend, because the last
       -- segment is always duplicated with the i'th bend.
@@ -262,26 +282,19 @@ begin
         st_npoints(bends[j])-1,
         st_pointn(bends[i], st_npoints(bends[i]))
       );
-      bends = bends[1:j] || bends[i+1:prev_length];
+      bends = bends[1:j] || bends[i+1:];
       exit;
     end loop;
 
     for j in reverse array_length(bends, 1)..i+1 loop
-      a = st_pointn(bends[i], 1);
-      b = st_pointn(bends[i], -1);
-      multi = st_split(bends[j], st_makeline(a, b));
-      continue when st_numgeometries(multi) = 1;
-      continue when st_numgeometries(multi) = 2 and
-        (st_contains(bends[j], a) or st_contains(bends[j], b));
-
-      -- vertices, segments and stars are aligned, we are changing the bend
+      select if_selfcross(bends[i], bends[j]) into multi;
+      continue when multi is null;
       mutated = true;
 
       -- To understand the block below, I suggest you take a pencil and paper,
       -- draw a self-crossing bend (fig6 from the article works well), and
       -- figure out what happens here, by hand. I know it's hard to follow.
       -- Apologies.
-      prev_length = array_length(bends, 1);
       -- remove last vertex of the previous bend, because the last
       -- segment is duplicated with the i'th bend.
       bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
@@ -290,7 +303,7 @@ begin
         st_pointn(bends[i], 1),
         st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
       );
-      bends = bends[1:i] || bends[j+1:prev_length];
+      bends = bends[1:i] || bends[j+1:];
       exit;
     end loop;
   end loop;
