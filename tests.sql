@@ -59,7 +59,7 @@ begin
   perform assert_equals('LINESTRING(65 75,53 45,63 15,91 0)', st_astext(vinflections[3]));
 
   -- inflections-1, the example in fix_gentle_inflections docstring
-  select detect_bends((select way from figures where name='inflection-1')) into vbends;
+  select ways from bends where name='inflection-1' into vbends;
   select fix_gentle_inflections(vbends) into vinflections;
   perform assert_equals(vbends[1], vinflections[1]); -- unchanged
   perform assert_equals('LINESTRING(114 20,133 20,145 15,145 0,136 5,123 7,114 7)', st_astext(vinflections[2]));
