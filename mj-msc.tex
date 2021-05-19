@@ -697,8 +697,10 @@ functions\cite{postgisref} for working with geometric and geographic objects.
 
 Due to its wide applicability and rich library of spatial functions, PostGIS is
 the implementation language of the {\WM} algorithm. The implementation exposes
-the entrypoint function \textsc{st\_simplifywm}:
+the entrypoint function \textsc{st\_simplifywm}, in
+listing~\ref{lst:st-simplifywm}.
 
+\begin{listing}
 \begin{minted}[fontsize=\small]{sql}
 create function ST_SimplifyWM(
   geom geometry,
@@ -706,7 +708,10 @@ create function ST_SimplifyWM(
   intersect_patience integer default 10,
   dbgname text default null
 ) returns geometry
-\end{minted}
+    \end{minted}
+    \caption{Function \textsc{st\_simplifywm}.}
+    \label{lst:st-simplifywm}
+\end{listing}
 
 This function accepts the following parameters:
 \begin{description}
@@ -1392,21 +1397,14 @@ Our generalized results are viewed from the following angles:
 \subsubsection{Medium-scale (1:\numprint{50000})}
 \label{sec:analyzed-medium-scale}
 
-\begin{figure}[h]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50k}
     \caption{2x zoomed-in {\WM} for 1:\numprint{50000}.}
     \label{fig:salvis-wm75--grpk10-1x50k}
 \end{figure}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50ktl}
-    \caption{Left part of Figure~\ref{fig:salvis-wm75--grpk10-1x50k}.}
-    \label{fig:salvis-wm75--grpk10-1x50ktl}
-\end{figure}
-
-\begin{figure}[h]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50ktr}
     \caption{Top--right part of Figure~\ref{fig:salvis-wm75--grpk10-1x50k}.}
@@ -1467,8 +1465,6 @@ A conglomeration of bends is visible, especially in top--right side of the
 illustration. We assume this was caused by two bends significantly exaggerated,
 leaving no space to exaggerate for those between the two.
 
-\clearpage
-
 \subsubsection{Discussion}
 
 For mid-size scales of 1:\numprint{50000}, the implemented algorithm works well
@@ -1508,11 +1504,9 @@ downloaded for free from \cite{nzt}. Here are the meanings of the codenames:
 \end{description}
 
 During the analysis, we ran {\WM} on GRPK10 for 2 destination scales:
-1:\numprint{50000} and 1:\numprint{250000}.\footnote{How parameters are
-calculated is detailed in section~\ref{sec:bend-scaling-and-dimensions}.} This
-section compares the resulting {\WM}--generalized rivers to GRPK50 and GRPK250.
-
-\clearpage
+1:\numprint{50000} and 1:\numprint{250000}.\footnote{parameter calculation is
+detailed in section~\ref{sec:bend-scaling-and-dimensions}.} This section
+compares the resulting {\WM}--generalized rivers to GRPK50 and GRPK250.
 
 \subsubsection{Medium-scale (1:\numprint{50000})}
 
@@ -1528,6 +1522,13 @@ original GRPK10.
     \caption{GRPK10, GRPK50 and {\WM} for 1:\numprint{50000}.}
 
     \label{fig:salvis-wm75-grpk50-grpk10-1x50k}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10-1x50ktl}
+    \caption{Left side of Figure~\ref{fig:salvis-wm75-grpk50-grpk10-1x50k}.}
+    \label{fig:salvis-wm75-grpk50-grpk10-1x50ktl}
 \end{figure}
 
 \begin{figure}[h!]
@@ -1631,8 +1632,6 @@ produces poorly simplified results for some geometries.
     \caption{Another example from the on-line test tool.}
     \label{fig:openmap-wm-bad}
 \end{figure}
-
-\clearpage
 
 \section{Conclusions}
 \label{sec:conclusions}
