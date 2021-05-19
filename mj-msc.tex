@@ -796,7 +796,9 @@ already-working code.
 \subsection{Reproducibility}
 \label{sec:reproducing-the-paper}
 
-% TODO: andriub: Turi būti aiškiai nurodytos instrukcijos, kaip atkartoti veiksmus. Tam gali įdėti trumpą tekstą, kad rezultatais pasidalinta github, projekto pasileidimui reikalavimai nurodyti programinio kodo readme apraše.
+% TODO done: andriub: Turi būti aiškiai nurodytos instrukcijos, kaip atkartoti
+% veiksmus. Tam gali įdėti trumpą tekstą, kad rezultatais pasidalinta github,
+% projekto pasileidimui reikalavimai nurodyti programinio kodo readme apraše.
 
 It is widely believed that the ability to reproduce the results of a published
 study is important to the scientific community. In practice, however, it is
@@ -809,6 +811,9 @@ of the algorithm in a way that can be executed on reader's workstation. On top
 of it, all the illustrations in this paper are generated using that algorithm,
 from a predefined list of test geometries (test geometries were explained in
 section~\ref{sec:automated-tests}).
+
+Besides embedded in this document, this article itself, and code for this
+article are accessible on github as of 2021-05-21\cite{wmsql}.
 
 Instructions how to re-generate all the visualizations are found in
 appendix~\ref{sec:code-regenerate}. The visualization code serves as a good
@@ -1319,7 +1324,12 @@ This section contains code listings of a subset of files tightly related to the
 Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
     this paper are generated from a small list of sample geometries. To observe
     the source geometries or regenerate this paper, run this script (assuming
-    name of this document is {\tt mj-msc-full.pdf}):
+    name of this document is \textsc{mj-msc-full.pdf}).
+
+This script will extract the source files from the \textsc{mj-msc-full.pdf} to
+    a temporary directory, run the top-level \textsc{make} command, and display
+    the generated document. Source code for the algorithm, as well as other
+    supporting files, can be found in the temporary directory.
 
 \inputcode{bash}{extract-and-generate}
 
