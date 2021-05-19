@@ -255,7 +255,6 @@ declare
   multi geometry;
 begin
   mutated = false;
-
   <<bendloop>>
   for i in 1..array_length(bends, 1) loop
     continue when abs(inflection_angle(bends[i])) <= pi;
@@ -491,7 +490,6 @@ begin
           unnest(bends)
         );
       end if;
-
 
       if mutated then
         lines[i] = st_linemerge(st_union(bends));
