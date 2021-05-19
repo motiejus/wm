@@ -1,15 +1,12 @@
 ---
-title: |
-    Wang & Müller linijų generalizacijos algoritmo įgyvendinimas upių pavyzdžiu
-author:
-- Motiejus Jakštys
+title: Wang & Müller linijų generalizacijos algoritmo įgyvendinimas upių pavyzdžiu
+author: Motiejus Jakštys
 description: |
     Prezentacija apie magistrinio darbo progresą vertinimo grupei
 date: |
     2021-03-29 \
     ![](../misc/Logo_vilniaus_universitetas.png){width=2in}
 lang: lt-LT
---logo: ../misc/Logo_vilnius_university.png
 header-includes: |
     \definecolor{vulightgrey}{RGB}{220,220,220}
     \definecolor{vudarkgrey}{RGB}{65,65,65}
@@ -29,7 +26,7 @@ header-includes: |
   - Douglas-Peucker
 
 - Problematika
-  - nepritaikyti gamitiniams objektams: upėms, krantų linijoms
+  - nepritaikyti gamtiniams objektams: upėms, krantų linijoms
   - prarandami raiškūs gamtinių objektų elementai: vingiai, kilpos
 
 - Alternatyvos
@@ -44,21 +41,7 @@ header-includes: |
   GDR50LT, GDR250LT).
 - Nėra atvirai prieinamo sprendimo gamtinių linijinių objektų generalizacijai
 
-# Naujumas
-
-Šis darbas pasiūlys iki šiol neegzistuojantį atvirą sprendimą gamtinių
-linijinių objektų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
-
-# Tolimesnis pritaikymas
-
-Sukurta algoritmo techninė realizacija atviro kodo GIS bus pradžia tolesniam jo
-pritaikymui kitiems gamtiniams objektams: ežerų kranto linija, jūrų,
-kontinentų, miškų ribos.
-
-Kadangi rezultatas bus techninė realizacija, o ne rašinėlis, tai suteikia
-toliau galimybę vystyti sprendimą.
-
-# Etapai: techninio įgyvendinimo
+# Etapai: Wang & Müller techninio įgyvendinimo
 
 ::: nonincremental
 - Įlinkių atpažinimas
@@ -88,6 +71,19 @@ toliau galimybę vystyti sprendimą.
 - Tolimesnių tyrimų kryptys
 :::
 
+# Naujumas
+
+Šis darbas pasiūlys iki šiol neegzistuojantį atvirą sprendimą gamtinių
+linijinių objektų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
+
+# Tolimesnis pritaikymas
+
+Sukurta algoritmo techninė realizacija atviro kodo GIS bus pradžia tolesniam jo
+pritaikymui kitiems gamtiniams objektams: ežerų kranto linija, jūrų,
+kontinentų, miškų ribos.
+
+Kadangi rezultatas bus techninė realizacija, o ne rašinėlis, tai suteikia
+toliau galimybę vystyti sprendimą.
 
 # Demonstracija
 
