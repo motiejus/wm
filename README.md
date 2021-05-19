@@ -1,5 +1,5 @@
-Wang–Müller algorithm in PostGIS
---------------------------------
+Wang–Müller line generalization algorithm in PostGIS
+----------------------------------------------------
 
 This is Wang–Müller line generalization algorithm implementation in PostGIS.
 Following "Line generalization based on analysis of shape characteristics" by
