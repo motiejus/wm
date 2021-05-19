@@ -142,7 +142,7 @@ def add_lines(ax, group):
         for geom in getattr(g, 'geoms', [g]):
             x, y = zip(*geom.coords)
             narrs = geom.length / 16
-            arrowplot(ax, np.array(x), np.array(y), narrs=narrs)
+            #arrowplot(ax, np.array(x), np.array(y), narrs=narrs)
 
 def main():
     args = parse_args()
@@ -159,10 +159,10 @@ def main():
         ax.set_ylim(bottom=c[1], top=c[3])
 
     if group1 is not None:
-        group1.plot(ax=ax, color=PURPLE)
+        group1.plot(ax=ax, color=ORANGE)
         add_lines(ax, group1)
     if group2 is not None:
-        group2.plot(ax=ax, color=ORANGE)
+        group2.plot(ax=ax, color=PURPLE)
         add_lines(ax, group2)
     if group3 is not None:
         group3.plot(ax=ax, color=GREEN)

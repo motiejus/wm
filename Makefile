@@ -5,15 +5,13 @@ SLIDES = slides-2021-03-29.pdf
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
 ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
 
+GIT_DEP=
 ifeq ($(shell git rev-parse --is-inside-git-dir),true)
 GIT_DEP=$(shell git rev-parse --show-toplevel)/.git
-else
-GIT_DEP=
 endif
 
 .PHONY: test
-test: tests.sql .faux.db
-	./db -f tests.sql
+test: .faux_test
 
 .PHONY: test-integration
 test-integration: .faux_filter-rivers
@@ -22,7 +20,8 @@ test-integration: .faux_filter-rivers
 .PHONY: clean
 clean:
 	-./db stop
-	-rm .faux_filter-rivers .faux_import-osm .faux.db $(SLIDES)
+	-rm .faux_test .faux_filter-rivers .faux_import-osm .faux.db \
+		$(SLIDES)
 
 .PHONY: clean-tables
 clean-tables:
@@ -33,7 +32,7 @@ clean-tables:
 .PHONY: slides
 slides: $(SLIDES)
 
-mj-msc.pdf: mj-msc.tex version.tex bib.bib 
+mj-msc.pdf: mj-msc.tex test-figures.pdf version.tex bib.bib
 	latexmk -shell-escape -g -pdf $<
 
 mj-msc-all.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
@@ -45,11 +44,12 @@ mj-msc-all.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
 	done
 	mv .tmp-$@ $@
 
-slides-2021-03-29.pdf: slides-2021-03-29.txt
-	pandoc -t beamer -i $< -o $@
+test-figures.pdf: layer2img.py tests.sql
+	python ./layer2img.py --group1-table=figures --outfile=$@
 
-slides-2021-03-29.html: slides-2021-03-29.txt
-	pandoc --verbose -t slidy --self-contained $< -o $@ $(SLIDY_ARGS)
+.faux_test: tests.sql wm.sql .faux.db
+	./db -f tests.sql
+	touch $@
 
 .faux_filter-rivers: .faux_import-osm
 	./db -v where="$(WHERE)" -f aggregate-rivers.sql
@@ -74,3 +74,10 @@ version.tex: Makefile $(GIT_DEP)
 	( \
 		TZ=UTC date '+\gdef\VCDescribe{%F ($(REF))}%'; \
 	) > $@
+
+# slides
+slides-2021-03-29.pdf: slides-2021-03-29.txt
+	pandoc -t beamer -i $< -o $@
+
+slides-2021-03-29.html: slides-2021-03-29.txt
+	pandoc --verbose -t slidy --self-contained $< -o $@ $(SLIDY_ARGS)
