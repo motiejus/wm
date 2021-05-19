@@ -281,7 +281,7 @@ begin
   for i in 1..array_length(bends, 1) loop
     continue when abs(wm_inflection_angle(bends[i])) <= pi;
     -- sum of inflection angles for this bend is >180, so it may be
-    -- self-crossing. now try to find another bend in this line that
+    -- self-crossing. Now try to find another bend in this line that
     -- crosses an imaginary line of end-vertices
 
     -- Go through each bend in the given line, and see if has a potential to

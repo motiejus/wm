@@ -14,22 +14,24 @@ There will be 2 deliverables from this folder:
 
 It contains a few supporting files, notably:
 
-- `tests.sql` for synthetic unit tests.
-- `test-rivers.sql` for tests with real rivers.
-- `Makefile` to glue everything together.
+- `tests.sql` synthetic unit tests.
+- `test-rivers.sql` tests with real rivers.
+- `Makefile` glues everything together.
 - `layer2img.py` converts a PostGIS layer to an embeddable image.
+- `aggregate-rivers.sql` combines multiple river objects (linestrings or
+  multilinestrings) to a single one.
 - `init.sql` initializes PostGIS database for running the tests.
 - `rivers.sql` is an OpenStreetMap snapshot of select rivers (`Makefile`
   contains code to update them).
-- ... and a few more files to build the paper.
+- ... and a few more files necessary to build the paper.
 
-Running it
-----------
+Running
+-------
 
-`make help` lists the most interesting commands for humans. As of writing:
+`make help` lists the select commands for humans. As of writing:
 
 ```
-$ make help
+# make help
 mj-msc-full.pdf    Thesis for publishing
 test               Unit tests (fast)
 test-rivers        Rivers tests (slow)
@@ -58,6 +60,17 @@ $ make -j$(nproc) mj-msc-full.pdf
 published. It needs quite a few dependencies, including a functioning Docker
 environment, postgresql client, geopandas, and a pretty complete LaTeX
 installation.
+
+Contributing
+------------
+
+Please reach out to me before contributing. As of writing, this is not ready to
+accept broader contributions, TODO:
+
+[ ] CI.
+[ ] It has a bug in `wm_self_crossing`: the program crashes with a river in
+    Lithuania.
+[ ] Implementation is not yet complete (stay tuned).
 
 License
 -------
