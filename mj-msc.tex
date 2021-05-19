@@ -1178,8 +1178,6 @@ Combination operator was not implemented in this version.
 \subsection{Exaggeration Operator}
 \label{sec:exaggeration-operator}
 
-% TODO: change for azimuth-based algorithm.
-
 Exaggeration operator finds bends of which \textsc{adjusted size} is smaller
 than the \textsc{diameter of the half-circle}. Once a target bend is found, it
 will be exaggerated it in increments until either becomes true:
@@ -1208,9 +1206,23 @@ implementation. A single exaggeration increment is done as follows:
         \textsc{midbend} to the other baseline vertex.
 
     \item Mark each bend's vertex with a number between $[1,s]$. The number is
-        derived with elements linearly interpolated between the start vertex
-        and \textsc{midbend}. The other half of the bend, from \textsc{midbend}
-        to the final vertex, is linearly interpolated between $[s,1]$.
+        derived with elements linearly between the start vertex and
+        \textsc{midbend}, with values somewhat proportional to the azimuth
+        between these lines:
+
+        \begin{itemize}
+            \item \textsc{midbend} and the point.
+            \item \textsc{midpoint} and the point.
+        \end{itemize}
+
+        The other half of the bend, from \textsc{midbend} to the final vertex,
+        is linearly interpolated between $[s,1]$, using the same rules as for
+        the first half.
+
+        First version of the algorithm used simple linear interpolation based
+        on the point's position in the line. The current version applies a few
+        coefficients, which were derived empirically, by observing the
+        resulting bend.
 
     \item Each point (except the beginning and end vertices of the bend) will
         be placed farther away from the baseline. The length of misplacement is
