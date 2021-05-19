@@ -2,25 +2,31 @@ Wang–Müller algorithm in PostGIS
 --------------------------------
 
 This is a work-in-progress implementation following "Line generalization based
-on analysis of shape characteristics" by Wang and Müller, 1998 paper.
+on analysis of shape characteristics" by Wang and Müller, 1998.
 
 Structure
 ---------
 
-Detailed implementation description: `mj-msc.tex`. It is describing in detail
-what is implemented and what isn't, and why.
+There will be 2 deliverables from this folder:
 
-Algorithm itself: `wm.sql`. This is the main file you probably want to look at.
+- `wm.sql`, the implementation.
+- paper `mj-msc-full.pdf`, a MSc thesis, explaining the whole thing.
 
-Synthetic tests are in `tests.sql`. They are exercising various pieces of the
-algorithm and asserting the results are what expect them to be.
+It contains a few supporting files, notably:
 
-Tests with real rivers are in `test-rivers.sql`.
+- `tests.sql` for synthetic unit tests.
+- `test-rivers.sql` for tests with real rivers.
+- `Makefile` to glue everything together.
+- `layer2img.py` converts a PostGIS layer to an embeddable image.
+- `init.sql` initializes PostGIS database for running the tests.
+- `rivers.sql` is an OpenStreetMap snapshot of select rivers (`Makefile`
+  contains code to update them).
+- ... and a few more files to build the paper.
 
-`Makefile` glues everything together.
+Running it
+----------
 
-Executing the algorithm
------------------------
+`make help` lists the most interesting commands for humans. As of writing:
 
 ```
 $ make help
@@ -39,7 +45,7 @@ To execute the algorithm, run:
 - `make test` for tests with synthetic data.
 - `make test-rivers` for tests with real rivers. You may adjust the rivers and
   data source (e.g. use a different country instead of Lithuania) by changing
-  the `Makefile` and the test files.
+  the `Makefile` and the test files. Left as an exercise for the reader.
 
 Building the paper (pdf)
 ------------------------
@@ -50,9 +56,10 @@ $ make -j$(nproc) mj-msc-full.pdf
 
 `mj-msc.tex` results in `mj-msc-full.pdf`, which will be at some point
 published. It needs quite a few dependencies, including a functioning Docker
-environment.
+environment, postgresql client, geopandas, and a pretty complete LaTeX
+installation.
 
 License
 -------
 
-GPL 2.0 or later. Same as QGIS and PostGIS.
+Same as QGIS and PostGIS: GPL 2.0 or later.
