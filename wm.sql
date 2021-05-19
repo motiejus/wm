@@ -338,10 +338,10 @@ declare
 begin
   i = 2;
   while i < array_length(bendattrs, 1)-1 loop
-    raise notice 'number of bends in %: %', dbgname, array_length(bendattrs, 1);
     this = bendattrs[i].curvature * isolation_threshold;
     prev_i = i;
     if bendattrs[i-1].curvature < this and bendattrs[i+1].curvature < this then
+      raise notice '% %`th bend is isolated', dbgname, i;
       res = bendattrs[i];
       res.isolated = true;
       bendattrs[i] = res;
