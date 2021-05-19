@@ -7,3 +7,7 @@ RUN apt-get update && \
     python3-pygments python3-geopandas \
     latexmk make \
     docker.io
+
+COPY layer2img.py /tmp/layer2img.py
+RUN python3 /tmp/layer2img.py -o /tmp/foo.pdf
+RUN rm /tmp/layer2img.py

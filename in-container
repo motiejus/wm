@@ -12,7 +12,7 @@ set -euo pipefail
 
 NAME=wm-mj-build
 if [[ -z "$(docker images -q --filter "reference=$NAME")" ]]; then
-    docker build -t "$NAME" - < Dockerfile
+    docker build -t "$NAME" .
 fi
 
 exec docker run -ti --rm \
