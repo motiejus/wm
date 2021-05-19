@@ -1,7 +1,8 @@
 OSM ?= lithuania-latest.osm.pbf
-WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Merkys'
-#WHERE ?= name like '%'
+RIVERFILTER = Visinčia|Šalčia|Nemunas
 SLIDES = slides-2021-03-29.pdf
+
+GDB10LT ?= $(wildcard GDB10LT-static-*.zip)
 
 # Max figure size (in meters) is when it's width is TEXTWIDTH_CM on scale 1:25k
 SCALEDWIDTH = $(shell awk '/^TEXTWIDTH_CM/{print 25000/100*$$3}' layer2img.py)
@@ -281,12 +282,20 @@ $(OSM):
 	wget http://download.geofabrik.de/europe/$@
 
 .PHONY: refresh-rivers
-refresh-rivers: aggregate-rivers.sql $(OSM) .faux_db ## Refresh rivers.sql from Open Street Maps
-	PGPASSWORD=osm osm2pgsql -c --multi-geometry -H 127.0.0.1 -d osm -U osm $(OSM)
-	bash db -v where="$(WHERE)" -f $<
+refresh-rivers: aggregate-rivers.sql .faux_db ## Refresh rivers.sql from GDB10LT
+	@if [ ! -f "$(GDB10LT)" ]; then \
+		echo "ERROR: GDB10LT-static-*.zip not found. Do GDB10LT=<...>"; \
+		exit 1; \
+	fi
+	mkdir -p .tmp/shp; unzip -d .tmp/shp "$(GDB10LT)" 'HIDRO_L.*'
+	shp2pgsql -s 3857 -d ".tmp/shp/HIDRO_L.shp" | \
+		awk '!/^INSERT/{print}; /^INSERT/&&/$(RIVERFILTER)/{print;next}' | \
+		bash ./db
+	bash db -f $<
 	(\
 		echo '-- Generated at $(shell TZ=UTC date +"%FT%TZ") on $(shell whoami)@$(shell hostname -f)'; \
-		echo '-- Select: $(WHERE)'; \
+		echo '-- Rivers: $(RIVERFILTER)'; \
 		docker exec wm-mj pg_dump --clean -Uosm osm -t wm_rivers | tr -d '\r' \
 	) > rivers.sql.tmp
 	mv rivers.sql.tmp rivers.sql
+	rm -fr .tmp/shp

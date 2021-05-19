@@ -1,7 +1,7 @@
 /* Aggregates rivers by name and proximity. */
 drop function if exists aggregate_rivers;
 create function aggregate_rivers() returns table(
-  osm_id bigint,
+  id bigint,
   name text,
   way geometry
 ) as $$
@@ -12,7 +12,7 @@ declare
 begin
   while (select count(1) from wm_rivers_tmp) > 0 loop
     select * from wm_rivers_tmp limit 1 into c;
-    delete from wm_rivers_tmp a where a.osm_id = c.osm_id;
+    delete from wm_rivers_tmp a where a.id = c.id;
     changed = true;
     while changed loop
       changed = false;
@@ -22,11 +22,11 @@ begin
           st_dwithin(a.way, c.way, 500)
         ) loop
         c.way = st_linemerge(st_union(c.way, cc.way));
-        delete from wm_rivers_tmp a where a.osm_id = cc.osm_id;
+        delete from wm_rivers_tmp a where a.id = cc.id;
         changed = true;
       end loop;
     end loop; -- while changed
-    return query select c.osm_id, c.name, c.way;
+    return query select c.id, c.name, c.way;
   end loop; -- count(1) from wm_rivers_tmp > 0
   return;
 end
@@ -35,13 +35,12 @@ $$ language plpgsql;
 drop index if exists wm_rivers_tmp_id;
 drop index if exists wm_rivers_tmp_gix;
 drop table if exists wm_rivers_tmp;
-create temporary table wm_rivers_tmp (osm_id bigint, name text, way geometry);
-create index wm_rivers_tmp_id on wm_rivers_tmp(osm_id);
+create temporary table wm_rivers_tmp (id bigint, name text, way geometry);
+create index wm_rivers_tmp_id on wm_rivers_tmp(id);
 create index wm_rivers_tmp_gix on wm_rivers_tmp using gist(way) include(name);
 
 insert into wm_rivers_tmp
-  select p.osm_id, p.name, p.way from planet_osm_line p
-    where waterway in ('river', 'stream', 'canal') and :where;
+  select p.gid as id, p.vardas as name, p.geom as way from hidro_l p;
 
 drop table if exists wm_rivers;
 create table wm_rivers as (

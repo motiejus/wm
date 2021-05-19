@@ -68,16 +68,23 @@ end $$ language plpgsql;
 
 delete from wm_visuals where name like 'salvis%';
 insert into wm_visuals(name, way) values('salvis', (
-    select st_intersection(
-      (select st_union(way) from wm_rivers where name in ('Šalčia', 'Visinčia')),
-      wm_bbox(
-        st_closestpoint(
-          (select way from wm_rivers where name='Šalčia'),
-          (select way from wm_rivers where name='Visinčia')
-        ),
-        :scaledwidth
-      )
+    with multismall as (
+      select st_intersection(
+        (select st_union(way) from wm_rivers where name in ('Šalčia', 'Visinčia')),
+        wm_bbox(
+          st_closestpoint(
+            (select way from wm_rivers where name='Šalčia'),
+            (select way from wm_rivers where name='Visinčia')
+          ),
+          :scaledwidth
+        )
+      ) ways
     )
+    -- protecting against very small bends that were cut
+    -- in the corner of the picture
+    select st_union(a.geom)
+    from st_dump((select ways from multismall)) a
+    where st_length(a.geom) >= 100
 ));
 
 do $$
@@ -110,7 +117,7 @@ begin
   foreach i in array array[16, 64, 256] loop
     geom1 = st_simplify((select way from wm_visuals where name='salvis'), i);
     geom2 = st_simplifyvw((select way from wm_visuals where name='salvis'), i*i);
-    geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i);
+    geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i, 50, 'salvis-' || i);
     insert into wm_visuals(name, way) values
       ('salvis-douglas-'     || i, geom1),
       ('salvis-douglas-'     || i || '-chaikin', st_chaikinsmoothing(geom1, 5)),
