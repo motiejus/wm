@@ -58,6 +58,9 @@ mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES) ## Thesis for publish
 .PHONY: test
 test: .faux_test ## Unit tests (fast)
 
+.PHONY: visuals
+visuals: .faux_visuals  # Generate visuals for paper (fast)
+
 .PHONY: test-rivers
 test-rivers: .faux_test-rivers ## Rivers tests (slow)
 
