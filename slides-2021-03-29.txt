@@ -85,8 +85,6 @@ kontinentų, miškų ribos.
 - Kadangi rezultatas bus techninė realizacija, o ne rašinėlis, tai suteikia
 toliau galimybę vystyti sprendimą.
 
-# Demonstracija
-
 # Klausimai
 
 Ačiū už dėmesį.
