@@ -22,7 +22,7 @@ declare
 begin
   l_type = st_geometrytype(line);
   if l_type != 'ST_LineString' then
-    raise notice 'Got non-LineString: %', st_astext(line);
+    raise notice 'Got non-LineString: %', st_summary(line);
     raise 'This function works with ST_LineString, got %', l_type;
   end if;
 
@@ -152,7 +152,7 @@ create function wm_fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
   -- the threshold when the angle is still "small", so gentle inflections can
   -- be joined
-  small_angle constant real default pi()/4;
+  small_angle constant real default radians(45);
   ptail geometry; -- tail point of tail bend
   phead geometry[]; -- 3 tail points of head bend
   i int4; -- bends[i] is the current head
@@ -380,6 +380,26 @@ begin
 end;
 $$ language plpgsql;
 
+-- splits a line by a point in a more robust way than st_split
+-- (see https://trac.osgeo.org/postgis/ticket/2192)
+drop function if exists wm_st_split;
+create function wm_st_split(
+  input geometry,
+  blade geometry
+) returns geometry as $$
+declare
+  type1 text;
+  type2 text;
+begin
+  type1 = st_geometrytype(input);
+  type2 = st_geometrytype(blade);
+  if not (type1 = 'ST_LineString' and
+          type2 = 'ST_Point') then
+    raise 'Arguments must be LineString and Point, got: % and %', type1, type2;
+  end if;
+  return st_split(st_snap(input, blade, 0.00000001), blade);
+end $$ language plpgsql;
+
 -- wm_exaggerate_bend exaggerates a given bend. Must be a simple linestring.
 drop function if exists wm_exaggerate_bend;
 create function wm_exaggerate_bend(
@@ -390,7 +410,7 @@ create function wm_exaggerate_bend(
 declare
   scale constant float default 2; -- per-step scaling factor
   midpoint geometry; -- midpoint of the baseline
-  splitbend geometry; -- bend split across farthest point
+  splitbend geometry; -- bend split across its half
   bendm geometry; -- bend with coefficients to prolong the lines
   points geometry[];
 begin
@@ -402,11 +422,10 @@ begin
       st_pointn(bend, -1)
     ), .5);
 
+  insert into wm_manual (name, way) values ('midpoint', midpoint);
+
   while size < desired_size loop
-    splitbend = st_split(
-      bend,
-      st_pointn(st_longestline(midpoint, bend), -1)
-    );
+    splitbend = wm_st_split(bend, st_lineinterpolatepoint(bend, .5));
 
     -- Convert bend to LINESTRINGM, where M is the fraction by how
     -- much the point will be prolonged:
@@ -472,7 +491,7 @@ create function wm_exaggeration(
   OUT mutated boolean
 ) as $$
 declare
-  desired_size constant float default pi() * ((dhalfcircle/2)^2)/2;
+  desired_size constant float default pi()*(dhalfcircle^2)/8;
   tmpbendattr wm_t_bend_attrs;
   i integer;
   last_id integer;
@@ -523,7 +542,7 @@ create function wm_elimination(
   OUT mutated boolean
 ) as $$
 declare
-  desired_size constant float default pi() * ((dhalfcircle/2)^2)/2;
+  desired_size constant float default pi()*(dhalfcircle^2)/8;
   leftsize float;
   rightsize float;
   i int4;
@@ -692,7 +711,6 @@ declare
   bendattrs wm_t_bend_attrs[];
   mutated boolean;
   l_type text;
-  dbggeoms geometry[];
 begin
   l_type = st_geometrytype(geom);
   if l_type = 'ST_LineString' then
@@ -726,8 +744,8 @@ begin
       bendattrs = array((select wm_bend_attrs(bends, dbgname, gen)));
       bendattrs = wm_isolated_bends(bendattrs, dbgname, gen);
 
-      --select * from wm_exaggeration(
-      --  bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
+      select * from wm_exaggeration(
+        bendattrs, dhalfcircle, dbgname, gen) into bendattrs, mutated;
 
       -- TODO: wm_combination
 
@@ -741,20 +759,8 @@ begin
           bends[j] = bendattrs[j].bend;
         end loop;
         lines[i] = st_linemerge(st_union(bends));
-
         gen = gen + 1;
-        if st_geometrytype(lines[i]) != 'ST_lineString' then
-          dbggeoms = array((select a.geom from st_dump(lines[i]) a order by path[1] asc));
-          insert into wm_debug (stage, name, gen, nbend, way) values(
-            'manual', dbgname, gen,
-            generate_subscripts(dbggeoms, 1),
-            unnest(dbggeoms)
-          );
-          raise notice '% non-linestring: %', dbgname, st_summary(lines[i]);
-          exit;
-        else
-          continue;
-        end if;
+        continue;
       end if;
 
     end loop;

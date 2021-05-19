@@ -15,6 +15,14 @@ create table wm_debug(
   props jsonb
 );
 
+drop table if exists wm_manual;
+create table wm_manual (
+  id serial,
+  name text,
+  way geometry,
+  props jsonb
+);
+
 -- Run ST_SimplifyWM in debug mode, so `wm_debug` is populated. That table
 -- is used for geometric assertions later in the file.
 drop table if exists wm_demo;

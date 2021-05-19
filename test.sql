@@ -52,15 +52,23 @@ insert into wm_figures (name, way) values ('selfcrossing-1','LINESTRING(-27 180,
 insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(ST_Translate((select way from wm_figures where name='selfcrossing-1'), 0, 60)));
 
 insert into wm_figures (name, way) values ('isolated-1','LINESTRING(-56 103,-54 102,-30 103,-31 105,-31 108,-27 108,-26 103,0 103,2 104)'::geometry);
-
-insert into wm_figures(name, way) values ('isolated-2', 'LINESTRING(2801325.2746406365 7226746.592740034,2801316.313421628 7226773.775365548,2801310.6472595464 7226787.509780527,2801304.0682776407 7226795.559684921,2801288.850903249 7226806.013127576,2801251.525477986 7226819.15625314,2801231.821928116 7226826.614843614,2801216.2928591496 7226837.373539025,2801207.331640141 7226849.009733273,2801203.7471525376 7226861.847718405,2801201.954908736 7226876.478850377,2801196.2887466545 7226884.853135042,2801186.1364090946 7226892.903139205)');
-
+insert into wm_figures (name, way) values ('isolated-2', 'LINESTRING(250 100,246 104,234 105,230 106,225 101,224 93,217 78,206 69)'::geometry);
 
 delete from wm_debug where name in (select distinct name from wm_figures);
 delete from wm_demo where name in (select distinct name from wm_figures);
 insert into wm_demo (name, way) select name, ST_SimplifyWM(way, .1, name) from wm_figures where name not in ('fig8', 'isolated-1');
-insert into wm_demo (name, way) select name, ST_SimplifyWM(way, 11, name) from wm_figures where name in ('fig8', 'isolated-1');
+insert into wm_demo (name, way) select name, ST_SimplifyWM(way, 14, name) from wm_figures where name in ('fig8', 'isolated-1', 'isolated-2');
 
+drop function if exists wm_debug_get;
+create function wm_debug_get(
+  _stage text,
+  _name text,
+  OUT ways geometry[]
+) as $$
+declare
+begin
+  ways = array((select way from wm_debug where stage=_stage and name=_name order by id));
+end $$ language plpgsql;
 
 do $$
   declare fig6b1 geometry;
@@ -82,17 +90,6 @@ begin
   insert into wm_visuals (name, way) values('selfcrossing-1-newline', st_makeline(st_startpoint(sclong), st_endpoint(scshort)));
 end $$ language plpgsql;
 
-
-drop function if exists wm_debug_get;
-create function wm_debug_get(
-  _stage text,
-  _name text,
-  OUT ways geometry[]
-) as $$
-declare
-begin
-  ways = array((select way from wm_debug where stage=_stage and name=_name order by id));
-end $$ language plpgsql;
 
 do $$
 declare
