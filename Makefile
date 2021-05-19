@@ -117,13 +117,13 @@ selfcrossing-1-after_1SELECT = wm_debug where name='selfcrossing-1' AND stage='d
 selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='bbends' AND gen=1
 selfcrossing-1-after_2LINESTYLE = invisible
 
-salvis-25k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-25k_1SELECT = wm_visuals where name='salvis'
 salvis-25k_WIDTHDIV = 1
 
-salvis-50k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-50k_1SELECT = wm_visuals where name='salvis'
 salvis-50k_WIDTHDIV = 2
 
-salvis-250k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
+salvis-250k_1SELECT = wm_visuals where name='salvis'
 salvis-250k_WIDTHDIV = 10
 
 .faux_test-rivers: tests-rivers.sql wm.sql Makefile .faux_db

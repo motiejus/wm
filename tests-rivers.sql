@@ -22,6 +22,7 @@ begin
 end
 $$ language plpgsql;
 
+delete from wm_visuals where name in ('salvis');
 insert into wm_visuals(name, way) values('salvis', (
     select st_intersection(
       (select st_union(way) from wm_rivers where name in ('Šalčia', 'Visinčia')),
@@ -47,4 +48,4 @@ end $$ language plpgsql;
 
 delete from wm_debug where name in (select distinct name from wm_rivers);
 delete from wm_demo where name in (select distinct name from wm_rivers);
-insert into wm_demo (name, way) select name, ST_SimplifyWM(way, name) from wm_rivers;
+--insert into wm_demo (name, way) select name, ST_SimplifyWM(way, name) from wm_rivers;
