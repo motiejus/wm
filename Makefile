@@ -35,7 +35,7 @@ slides: $(SLIDES)
 mj-msc.pdf: mj-msc.tex test-figures.pdf version.tex bib.bib
 	latexmk -shell-escape -g -pdf $<
 
-mj-msc-all.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
+mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
 	cp $< .tmp-$@
 	for f in $^; do \
 		if [ "$$f" = "$<" ]; then continue; fi; \

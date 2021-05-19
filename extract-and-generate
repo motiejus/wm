@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 dir=$(mktemp -d)
-src=${1:-mj-msc-all.pdf}
-dst=${2:-mj-msc.pdf}
+src=${1:-mj-msc.pdf}
+dst=${2:-mj-msc-full.pdf}
 echo "Extracting $src to $dir/" && pdfdetach -saveall -o "$dir" "$src"
 echo "Generating $dir/$dst ..."
 make -j $(nproc) -C "$dir" "$dst" &> "$dir/make.log" || {
