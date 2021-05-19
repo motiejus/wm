@@ -64,74 +64,59 @@ mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES)
 	mv .tmp-$@ $@
 
 test-figures.pdf: layer2img.py .faux_test
-	python ./layer2img.py --group1-table=wm_figures --outfile=$@
+	python ./layer2img.py --group1-select=wm_figures --outfile=$@
 
 fig8-definition-of-a-bend.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--group1-table=wm_debug \
-		--group1-where="name='fig8' AND stage='bbends' AND gen=1" \
+		--group1-select="wm_debug where name='fig8' AND stage='bbends' AND gen=1" \
 		--group2-cmap=1 \
-		--group2-table=wm_debug \
-		--group2-where="name='fig8' AND stage='bbends-polygon' AND gen=1" \
+		--group2-select="wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1" \
 		--outfile=$@
 
 fig5-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
 		--widthdiv=2 \
-		--group1-table=wm_debug \
-		--group1-where="name='fig5' AND stage='bbends' AND gen=1" \
+		--group1-select="wm_debug where name='fig5' AND stage='bbends' AND gen=1" \
 		--group2-cmap=1 \
-		--group2-table=wm_debug \
-		--group2-where="name='fig5' AND stage='bbends-polygon' AND gen=1" \
+		--group2-select="wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1" \
 		--outfile=$@
 
 fig5-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
 		--widthdiv=2 \
-		--group1-table=wm_debug \
-		--group1-where="name='fig5' AND stage='cinflections' AND gen=1" \
+		--group1-select="wm_debug where name='fig5' AND stage='cinflections' AND gen=1" \
+		--group2-select="wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1" \
 		--group2-cmap=1 \
-		--group2-table=wm_debug \
-		--group2-where="name='fig5' AND stage='cinflections-polygon' AND gen=1" \
 		--outfile=$@
 
 inflection-1-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
 		--widthdiv=2 \
-		--group1-table=wm_debug \
-		--group1-where="name='inflection-1' AND stage='bbends' AND gen=1" \
+		--group1-select="wm_debug where name='inflection-1' AND stage='bbends' AND gen=1" \
+		--group2-select="wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1" \
 		--group2-cmap=1 \
-		--group2-table=wm_debug \
-		--group2-where="name='inflection-1' AND stage='bbends-polygon' AND gen=1" \
 		--outfile=$@
 
 inflection-1-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
 		--widthdiv=2 \
-		--group1-table=wm_debug \
-		--group1-where="name='inflection-1' AND stage='cinflections' AND gen=1" \
+		--group1-select="wm_debug where name='inflection-1' AND stage='cinflections' AND gen=1" \
+		--group2-select="wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1" \
 		--group2-cmap=1 \
-		--group2-table=wm_debug \
-		--group2-where="name='inflection-1' AND stage='cinflections-polygon' AND gen=1" \
 		--outfile=$@
 
 fig6-self-crossing-before.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
 		--widthdiv=4 \
-		--group1-table=wm_debug \
-		--group1-where="name='fig6' AND stage='bbends' AND gen=1" \
-		--group2-table=wm_visuals \
-		--group2-where="name='fig6-baseline'" \
-		--group3-table=wm_visuals \
-		--group3-where="name='fig6-newline'" \
-		--group3-linestyle=dashed \
+		--group1-select="wm_debug where name='fig6' AND stage='bbends' AND gen=1" \
+		--group2-select="wm_visuals where name='fig6-baseline'" --group2-linestyle=dashed \
+		--group3-select="wm_visuals where name='fig6-newline'" --group3-linestyle=dashed \
 		--outfile=$@
 
 fig6-self-crossing-after.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--widthdiv=4 \
-		--group1-table=wm_debug \
-		--group1-where="name='fig6' AND stage='dcrossings' AND gen=1" \
+		--widthdiv=3 \
+		--group1-select="wm_debug where name='fig6' AND stage='dcrossings' AND gen=1" \
 		--outfile=$@
 
 .faux_test: tests.sql wm.sql .faux_db

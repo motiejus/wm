@@ -17,18 +17,15 @@ PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
 def parse_args():
     parser = argparse.ArgumentParser(
             description='Convert geopackage to an image')
-    parser.add_argument('--group1-table')
-    parser.add_argument('--group1-where')
+    parser.add_argument('--group1-select', required=True)
     parser.add_argument('--group1-cmap', type=bool)
     parser.add_argument('--group1-linestyle')
 
-    parser.add_argument('--group2-table')
-    parser.add_argument('--group2-where')
+    parser.add_argument('--group2-select')
     parser.add_argument('--group2-cmap', type=bool)
     parser.add_argument('--group2-linestyle')
 
-    parser.add_argument('--group3-table')
-    parser.add_argument('--group3-where')
+    parser.add_argument('--group3-select')
     parser.add_argument('--group3-cmap', type=bool)
     parser.add_argument('--group3-linestyle')
 
@@ -40,13 +37,11 @@ def parse_args():
     return parser.parse_args()
 
 
-def read_layer(table, maybe_where=None):
-    if not table:
+def read_layer(select):
+    if not select:
         return
     conn = psycopg2.connect(PSQL_CREDS)
-    sql = "SELECT way FROM %s" % table
-    if maybe_where:
-        sql += " WHERE %s" % maybe_where
+    sql = "SELECT way FROM %s" % select
     return geopandas.read_postgis(sql, con=conn, geom_col='way')
 
 def plot_args(color, maybe_cmap, maybe_linestyle):
@@ -61,9 +56,9 @@ def plot_args(color, maybe_cmap, maybe_linestyle):
 
 def main():
     args = parse_args()
-    group1 = read_layer(args.group1_table, args.group1_where)
-    group2 = read_layer(args.group2_table, args.group2_where)
-    group3 = read_layer(args.group3_table, args.group3_where)
+    group1 = read_layer(args.group1_select)
+    group2 = read_layer(args.group2_select)
+    group3 = read_layer(args.group3_select)
     c1 = plot_args(BLACK, args.group1_cmap, args.group1_linestyle)
     c2 = plot_args(ORANGE, args.group2_cmap, args.group2_linestyle)
     c3 = plot_args(GREEN, args.group3_cmap, args.group3_linestyle)
