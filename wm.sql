@@ -73,19 +73,21 @@ $$ language plpgsql;
 --
 -- The text does not specify how many vertices can be "adjusted"; it can
 -- equally be one or many. This function is adjusting many, as long as the
--- commulative inflection angle is less than pi/6 (30 deg).
+-- commulative inflection angle small (see variable below).
 create or replace function fix_gentle_inflections(INOUT bends geometry[]) as $$
 declare
-  prev_bend geometry;
-  bend geometry;
-  p geometry;
-  p1 geometry;
-  p2 geometry;
-  p3 geometry;
+  small_angle real;
+  phead geometry; -- head point of head bend
+  ptail geometry[]; -- 3 head points of tail bend
+  i int4; -- bends[i] is the current head
 begin
-  foreach bend in array bends loop
-    if prev_bend is null  then
-      prev_bend = bend;
+  -- the threshold when the angle is still "small", so gentle inflections can
+  -- be joined
+  small_angle := radians(30);
+
+  <<bend_loop>>
+  for i in select generate_subscripts(bends, 1) loop
+    if i = 1 then
       continue;
     end if;
 
@@ -101,31 +103,36 @@ begin
     --
     -- Assume this curve (figure `inflection-1`):
     --
-    --        A______B
-    --     ---'      `-------. C
-    --                       |
-    --        G___ F         |
-    --        /   `-----.____+ D
-    --                  E
+    --    \______B
+    --    A      `-------. C
+    --                   |
+    --    G___ F         |
+    --    /   `-----.____+ D
+    --              E
     --
     -- After processing the curve following the definition of a bend, the bend
     -- [A-E] would be detected. Assuming inflection point E and F are "small",
     -- the bend needs to be extended by two edges to [A,G].
-    --
-    -- Assuming the direction in this example is clock-wise, the first set of
-    -- `p` variables will be: p1=C, p2=B, p3=A.
-    for p in (select geom from st_dumppoints(prev_bend) order by path[1] desc) loop
-      p3 = p2;
-      p2 = p1;
-      p1 = p;
-      if p3 is null then
-        continue;
+    select geom from st_dumppoints(bends[i]) order by path[1] desc limit 1 into phead;
+    while true loop
+      -- copy last 3 points of bends[i-1] (tail) to ptail
+      select array_agg(geom) from st_dumppoints(bends[i-1]) order by path[1] desc limit 3 into ptail;
+
+      -- if inflection angle between ptail[1:3] "large", stop processing this bend
+      if abs(st_angle(ptail[1], ptail[2], ptail[2], ptail[3]) - pi) > small_angle then
+        exit bend_loop;
       end if;
 
-      -- (p2, p1) is shared with the current bend.
+      -- distance from last vertex should be larger than second-last vertex
+      if st_distance(phead, ptail[2]) < st_distance(phead, ptail[3]) then
+        exit bend_loop;
+      end if;
+
+      -- detected a gentle inflection. Move head of the tail to the tail of head
+      bends[i] = st_addpoint(bends[i], ptail[3]);
+      bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
     end loop;
 
-    prev_bend = bend;
   end loop;
 end
 $$ language plpgsql;
