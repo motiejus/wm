@@ -1,11 +1,25 @@
 ---
-title: Wang & Müller linijų generalizacijos algoritmo implementacija ir analizė Lietuvos upėms
+title: |
+    Wang & Müller linijų generalizacijos algoritmo implementacija ir analizė Lietuvos upėms
 author:
 - Motiejus Jakštys
 description: |
     Prezentacija apie magistrinio darbo progresą vertinimo grupei
-date: 2021-03-29
+date: |
+    2021-03-29 \
+    ![](../misc/Logo_vilniaus_universitetas.png){width=2in}
 lang: lt-LT
+--logo: ../misc/Logo_vilnius_university.png
+header-includes: |
+    \definecolor{vulightgrey}{RGB}{220,220,220}
+    \definecolor{vudarkgrey}{RGB}{65,65,65}
+    \definecolor{vupurple}{RGB}{123,0,63}
+    \definecolor{darkgreen}{RGB}{32,96,32}
+
+    \setbeamercolor{title}{fg=vupurple}
+    \setbeamercolor{frametitle}{fg=vupurple}
+    \setbeamercolor{item}{fg=vupurple}
+    \setbeamercolor{normal text}{fg=vudarkgrey}
 ...
 
 # Problema
@@ -14,14 +28,14 @@ lang: lt-LT
   - Visvalingam-Whyatt
   - Douglas-Peucker
 
-- Problemos
+- Problematika
   - nepritaikyti kartografiniams objektams
   - prarandama geografinė teisybė
 
 - Alternatyvos
-  - egzistuoja teorinės
+  - egzistuoja tik teorinės
   - nėra implementacijos
-  - neaiškūs parametrai
+  - net teorinėms -- neapibrėžti parametrai
 
 # Aktualumas
 
@@ -41,12 +55,13 @@ linijų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
 - Silpnas pasislinkimas įlinkio gale
 - Įlinkio kirtimas kitu įlinkiu
 - Patikrinimas su Nemunu, Šalčia ir Visinčia
-- Linkių matavimai:
+- Įlinkių matavimai:
   - dydis ir forma
-  - izoliuoti, panaūs
-- Pašalinimo operatorius
-- Kombinavimo operatorius
-- Padidinimo operatorius
+  - izoliuoti, panašūs
+- Operatoriai:
+  - Specifinio įlinkio pašalinimo
+  - Dviejų įlinkių kombinavimo į vieną
+  - Izoliuotų įlinkių padidinimo
 - Pritaikymas visoms Lietuvos upėms
 :::
 
@@ -66,3 +81,5 @@ linijų generalizacijai (Lietuvoje -- GDR50 ir GDR250 analogus)
 # Demonstracija
 
 # Klausimai
+
+Ačiū už dėmesį.
