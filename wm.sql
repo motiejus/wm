@@ -371,7 +371,10 @@ begin
 
     -- first and last bends can never be isolated by definition
     if skip_next or i = 1 or i = array_length(attrs, 1) then
-      skip_next = false;
+      -- invariant: two bends that touch cannot be isolated.
+      if st_npoints(bends[i]) > 3 then
+        skip_next = false;
+      end if;
       continue;
     end if;
 
@@ -627,8 +630,17 @@ begin
     -- remove last vertex of the previous bend and
     -- first vertex of the next bend, because bends always
     -- share a line segment together
-    bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
-    bends[i+1] = st_removepoint(bends[i+1], 0);
+    bends[i-1] = st_addpoint(
+      st_removepoint(bends[i-1], st_npoints(bends[i-1])-1),
+      st_pointn(bends[i], 1),
+      -1
+    );
+
+    bends[i+1] = st_addpoint(
+      st_removepoint(bends[i+1], 0),
+      st_pointn(bends[i], st_npoints(bends[i])-1),
+      0
+    );
     -- the next bend's adjsize is now messed up; it should not be taken
     -- into consideration for other local minimas. Skip over 2.
     i = i + 2;
@@ -750,10 +762,10 @@ begin
           select 'non-linestring-' || a.path[1], a.geom
           from st_dump(lines[i]) a
           order by a.path[1];
-          raise notice 'Got % (in %) instead of ST_LineString. '
+          raise notice '[%] Got % (in %) instead of ST_LineString. '
           'Does the exaggerated bend intersect with the line? '
           'If so, try increasing intersect_patience.',
-          st_geometrytype(lines[i]), dbgname;
+          gen, st_geometrytype(lines[i]), dbgname;
           raise notice 'exiting lineloop, gen:%', gen;
           exit lineloop;
         end if;
