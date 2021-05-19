@@ -75,7 +75,7 @@ test-rivers: .faux_test-rivers ## Rivers tests (slow)
 slides: $(SLIDES)
 
 .PHONY: refresh-rivers
-refresh-rivers: rivers-10.sql rivers-50.sql rivers-250.sql ## Refresh river data from national datasets
+refresh-rivers: refresh-rivers-10.sql refresh-rivers-50.sql refresh-rivers-250.sql ## Refresh river data from national datasets
 
 ###########################
 # The report, quick version
@@ -217,9 +217,10 @@ salvis-wm-overlaid-250k-zoom_1COLOR = orange
 	bash db -f init.sql
 	touch $@
 
-.faux_db: .faux_db_pre rivers-10.sql
-	bash db -f rivers-10.sql
+.faux_db: rivers-10.sql rivers-50.sql rivers-250.sql
+	bash db $(addprefix -f ,$^)
 	touch $@
+.faux_db: .EXTRA_PREREQS = .faux_db_pre
 
 .faux_test: test.sql wm.sql .faux_db
 	bash db -f $<
@@ -304,8 +305,9 @@ wc: mj-msc.pdf ## Character and page count
 		tr -d '[:space:]' | wc -c | \
 		awk '{printf("Chars: %d, pages: %.1f\n", $$1, $$1/1500)}'
 
-define rivers_template
-$(1): aggregate-rivers.sql gdr2pgsql .faux_db_pre
+define refresh_rivers_template
+.PHONY: refresh-$(1)
+refresh-$(1): aggregate-rivers.sql gdr2pgsql .faux_db_pre
 	@if [ ! -f "$$($(2))" ]; then \
 		echo "ERROR: $(2)-static-*.zip not found. Run env $(2)=<...>"; \
 		exit 1; \
