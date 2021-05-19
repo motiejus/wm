@@ -531,11 +531,19 @@ begin
         continue when st_intersects(bend,
           st_removepoint(st_removepoint(bends[i-1], n-1), n-2));
       end if;
+      if n > 2 then
+        tmpint = st_intersection(bend, st_removepoint(bends[i-1], n-1));
+        continue when st_npoints(tmpint) > 1;
+      end if;
 
       n = st_npoints(bends[i+1]);
       if n > 3 then
         continue when st_intersects(bend,
           st_removepoint(st_removepoint(bends[i+1], 0), 0));
+      end if;
+      if n > 2 then
+        tmpint = st_intersection(bend, st_removepoint(bends[i+1], 0));
+        continue when st_npoints(tmpint) > 1;
       end if;
 
       for n in -intersect_patience+1..intersect_patience-1 loop
@@ -727,7 +735,6 @@ begin
     mutated = true;
     gen = 1;
 
-    raise notice 'dbgname: %, gen: %', dbgname, gen;
     while mutated loop
       if dbgname is not null then
         insert into wm_debug (stage, name, gen, nbend, way) values(
