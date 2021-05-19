@@ -30,7 +30,7 @@ case ${1:-} in
     start)
         _psql -qc '\q' 2>/dev/null && exit 0
         docker run -d --rm \
-            -p 5432:5432 \
+            -p 127.0.0.1:5432:5432 \
             -e POSTGRES_DBNAME=osm \
             -e POSTGRES_USER=osm \
             -e POSTGRES_PASSWORD=osm \
