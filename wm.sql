@@ -261,11 +261,6 @@ begin
     -- self-crossing. now try to find another bend in this line that
     -- crosses an imaginary line of end-vertices
 
-    -- To understand the block below, I suggest you take a pencil and paper,
-    -- draw a self-crossing bend (fig6 from the article works well), and
-    -- figure out what happens here, by hand. I know it's hard to follow.
-    -- Apologies.
-
     -- go through each bend in the given line, and see if has a potential to
     -- cross bends[i].
     for j in 1..i-1 loop
@@ -291,14 +286,9 @@ begin
       continue when multi is null;
       mutated = true;
 
-      -- To understand the block below, I suggest you take a pencil and paper,
-      -- draw a self-crossing bend (fig6 from the article works well), and
-      -- figure out what happens here, by hand. I know it's hard to follow.
-      -- Apologies.
       -- remove last vertex of the previous bend, because the last
       -- segment is duplicated with the i'th bend.
       bends[i-1] = st_removepoint(bends[i-1], st_npoints(bends[i-1])-1);
-      -- continue debugging the selfcrossing-1 here.
       bends[i] = st_makeline(
         st_pointn(bends[i], 1),
         st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
