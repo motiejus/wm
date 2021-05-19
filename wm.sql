@@ -427,6 +427,7 @@ declare
 begin
   area_threshold = radians(180) * ((dhalfcircle/2)^2)/2;
   mutated = false;
+
   i = 1;
   while i < array_length(bendattrs, 1)-1 loop
     i = i + 1;

@@ -6,6 +6,7 @@
 -- stage || '_' || name || ' gen:' || coalesce(gen, 'Ø') || ' nbend:' || lpad(nbend, 4, '0')
 drop table if exists wm_debug;
 create table wm_debug(
+  id serial,
   stage text not null,
   name text not null,
   gen bigint not null,
