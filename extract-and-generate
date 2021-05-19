@@ -1,9 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 dir=$(mktemp -d)
-src=${1:-mj-msc.pdf}
-dst=${2:-mj-msc-full.pdf}
+src=${1:-mj-msc-full.pdf}
+dst=${2:-mj-msc.pdf}
 echo "Extracting $src to $dir/" && pdfdetach -saveall -o "$dir" "$src"
+chmod a+x "$dir/db"
 echo "Generating $dir/$dst ..."
 make -j $(nproc) -C "$dir" "$dst" &> "$dir/make.log" || {
     echo "Generation failed. Log extract:" && tail -20 "$dir/make.log"

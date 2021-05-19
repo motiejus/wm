@@ -46,7 +46,7 @@ mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
 	done
 	mv .tmp-$@ $@
 
-test-figures.pdf: layer2img.py tests.sql
+test-figures.pdf: layer2img.py .faux_test
 	python ./layer2img.py --group1-table=figures --group1-arrows=yes --outfile=$@
 
 .faux_test: tests.sql wm.sql .faux.db
