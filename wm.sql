@@ -81,8 +81,7 @@ begin
       dbgpolygon = null;
       if st_npoints(bends[i]) >= 3 then
           dbgpolygon = st_makepolygon(
-            st_addpoint(bends[i],
-              st_startpoint(bends[i]))
+            st_addpoint(bends[i], st_startpoint(bends[i]))
           );
       end if;
       insert into wm_debug(stage, name, gen, nbend, way) values(
@@ -321,13 +320,11 @@ begin
 end $$ language plpgsql;
 
 drop function if exists wm_bend_attrs;
-drop function if exists wm_isolated_bends;
 drop function if exists wm_elimination;
 drop function if exists wm_exaggeration;
 drop function if exists wm_st_intersects_neighbors;
 drop type if exists wm_t_attrs;
 create type wm_t_attrs as (
-  area real,
   adjsize real,
   baselinelength real,
   curvature real,
@@ -337,37 +334,65 @@ create function wm_bend_attrs(
   bends geometry[],
   dbgname text default null,
   dbggen integer default null
-) returns setof wm_t_attrs as $$
+) returns wm_t_attrs[] as $$
 declare
-  cmp float;
-  i int4;
-  polygon geometry;
+  isolation_threshold constant real default 0.5;
+  attrs wm_t_attrs[];
+  attr wm_t_attrs;
   bend geometry;
-  res wm_t_attrs;
+  i int4;
+  needs_curvature real;
+  skip_next boolean;
+  dbglastid integer;
 begin
   for i in 1..array_length(bends, 1) loop
     bend = bends[i];
-    res = null;
-    res.adjsize = 0;
-    res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
-    res.curvature = wm_inflection_angle(bend) / st_length(bend);
-    res.isolated = false;
+    attr.adjsize = 0;
+    attr.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
+    attr.curvature = wm_inflection_angle(bend) / st_length(bend);
+    attr.isolated = false;
     if st_numpoints(bend) >= 3 then
-      res.adjsize = wm_adjsize(bend);
+      attr.adjsize = wm_adjsize(bend);
     end if;
+    attrs[i] = attr;
+  end loop;
 
+  for i in 1..array_length(attrs, 1) loop
     if dbgname is not null then
       insert into wm_debug (stage, name, gen, nbend, way, props) values(
         'ebendattrs', dbgname, dbggen, i, bend,
         jsonb_build_object(
-          'adjsize', res.adjsize,
-          'baselinelength', res.baselinelength,
-          'curvature', res.curvature
+          'adjsize', attrs[i].adjsize,
+          'baselinelength', attrs[i].baselinelength,
+          'curvature', attrs[i].curvature,
+          'isolated', false
         )
-      );
+      ) returning id into dbglastid;
     end if;
-    return next res;
+
+    -- first and last bends can never be isolated by definition
+    if skip_next or i = 1 or i = array_length(attrs, 1) then
+      skip_next = false;
+      continue;
+    end if;
+
+    needs_curvature = attrs[i].curvature * isolation_threshold;
+    if attrs[i-1].curvature < needs_curvature and
+       attrs[i+1].curvature < needs_curvature then
+      attr = attrs[i];
+      attr.isolated = true;
+      attrs[i] = attr;
+      skip_next = true;
+
+      if dbgname is not null then
+        update wm_debug
+        set props=props || jsonb_build_object('isolated', true)
+        where id=dbglastid;
+      end if;
+    end if;
   end loop;
+
+  return attrs;
 end $$ language plpgsql;
 
 -- sm_st_split a line by a point in a more robust way than st_split.
@@ -574,7 +599,6 @@ declare
   leftsize float;
   rightsize float;
   i int4;
-  bend geometry;
 begin
   mutated = false;
 
@@ -622,55 +646,6 @@ begin
       unnest(bends)
     );
   end if;
-end $$ language plpgsql;
-
-create function wm_isolated_bends(
-  INOUT attrs wm_t_attrs[],
-  bends geometry[],
-  dbgname text default null,
-  dbggen integer default null
-) as $$
-declare
-  -- if neighbor's curvatures are within this fraction of the current bend
-  isolation_threshold constant real default 0.5;
-  this real;
-  skip_next bool;
-  res wm_t_attrs;
-  i int4;
-  last_id integer;
-begin
-  for i in 1..array_length(attrs, 1) loop
-    if dbgname is not null then
-      insert into wm_debug (stage, name, gen, nbend, way, props) values(
-        'fisolated_bends', dbgname, dbggen, i, bends[i],
-        jsonb_build_object('isolated', false)
-      ) returning id into last_id;
-    end if;
-    -- first and last bends cannot be isolated
-    if i = 1 or i = array_length(attrs, 1) then
-      continue;
-    end if;
-
-    res = attrs[i];
-    if skip_next then
-      skip_next = false;
-    else
-      this = attrs[i].curvature * isolation_threshold;
-      if attrs[i-1].curvature < this and
-         attrs[i+1].curvature < this then
-        res.isolated = true;
-        attrs[i] = res;
-        skip_next = true;
-
-        if dbgname is not null then
-          update wm_debug
-          set props=props || jsonb_build_object('isolated', true)
-          where id=last_id;
-        end if;
-      end if;
-    end if;
-
-  end loop;
 end $$ language plpgsql;
 
 drop function if exists ST_SimplifyWM_Estimate;
@@ -753,8 +728,7 @@ begin
       select * from wm_self_crossing(bends, dbgname, gen) into bends, mutated;
 
       if not mutated then
-        attrs = array((select wm_bend_attrs(bends, dbgname, gen)));
-        attrs = wm_isolated_bends(attrs, bends, dbgname, gen);
+        attrs = wm_bend_attrs(bends, dbgname, gen);
 
         select * from wm_exaggeration(
           bends, attrs, dhalfcircle, intersect_patience, dbgname, gen
@@ -772,16 +746,17 @@ begin
         lines[i] = st_linemerge(st_union(bends));
 
         if st_geometrytype(lines[i]) != 'ST_LineString' then
-          -- For manual debugging, usually when wm_exaggeration returns
-          -- ST_MultiLineString. Uncomment the code below and `raise notice`.
-          --insert into wm_manual(name, way)
-          --select 'non-linestring-' || a.path[1], a.geom
-          --from st_dump(lines[i]) a
-          --order by a.path[1];
           raise 'Got % (in %) instead of ST_LineString. '
           'Does the exaggerated bend intersect with the line? '
           'If so, try increasing intersect_patience.',
           st_geometrytype(lines[i]), dbgname;
+          -- For manual debugging, usually when wm_exaggeration returns
+          -- ST_MultiLineString. Uncomment the code below and change `raise`
+          -- to `raise notice` above.
+          --insert into wm_manual(name, way)
+          --select 'non-linestring-' || a.path[1], a.geom
+          --from st_dump(lines[i]) a
+          --order by a.path[1];
           --exit lineloop;
         end if;
         gen = gen + 1;
