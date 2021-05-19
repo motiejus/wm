@@ -659,7 +659,7 @@ Figure~\ref{fig:flow-chart} visualizes the algorithm steps for each line.
 \textsc{multilinestring} features are split to \textsc{linestring} features and
 executed in order.
 
-Judging from {\WM} prototype flow chart (depicted in Figure 11 of the original
+Judging from {\WM} prototype flow chart (depicted in figure 11 of the original
 paper), their approach is iterative for the line: it will process the line in
 sequence, doing all steps, before moving on to the next step. We will call this
 approach "streaming", because it does not require to have the full line to
@@ -1068,8 +1068,9 @@ The smaller the distance $d$, the more similar the bends are.
 
 \subsection{Elimination Operator}
 
-Elimination was explained reasonably well in the original paper. Figure X
-illustrates steps of Figure 8 from the original paper.
+Elimination was explained reasonably well in the original paper.
+Figure~\ref{fig:elimination-through-iterations} illustrates steps of figure 8
+from the original paper.
 
 \begin{figure}[ht]
     \centering
@@ -1085,7 +1086,7 @@ illustrates steps of Figure 8 from the original paper.
         \includegraphics[width=\textwidth]{fig8-elimination-gen3}
         \caption{Iteration 2 (result)}
     \end{subfigure}
-    \caption{Bend elimination through iterations.}
+    \caption{Originally figure 8: bend elimination through iterations.}
     \label{fig:elimination-through-iterations}
 \end{figure}
 
