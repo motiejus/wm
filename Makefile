@@ -73,7 +73,6 @@ $(1).pdf: layer2img.py Makefile $(2)
 	python ./layer2img.py --outfile=$(1).pdf \
 		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
 		$$(foreach i,1 2 3, \
-			$$(if $$($(1)_$$(i)CMAP),--group$$(i)-cmap="$$($(1)_$$(i)CMAP)") \
 			$$(if $$($(1)_$$(i)SELECT),--group$$(i)-select="$$($(1)_$$(i)SELECT)") \
 			$$(if $$($(1)_$$(i)LINESTYLE),--group$$(i)-linestyle="$$($(1)_$$(i)LINESTYLE)") \
 	)
@@ -84,26 +83,21 @@ $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_test-rivers)))
 test-figures_1SELECT = wm_figures
 
 fig8-definition-of-a-bend_1SELECT = wm_debug where name='fig8' AND stage='bbends' AND gen=1
-fig8-definition-of-a-bend_2CMAP = 1
 fig8-definition-of-a-bend_2SELECT = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
 
 fig5-gentle-inflection-before_WITHDIV = 2
 fig5-gentle-inflection-before_1SELECT = wm_debug where name='fig5' AND stage='bbends' AND gen=1
-fig5-gentle-inflection-before_2CMAP = 1
 fig5-gentle-inflection-before_2SELECT = wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1
 fig5-gentle-inflection-after_WITHDIV = 2
 fig5-gentle-inflection-after_1SELECT = wm_debug where name='fig5' AND stage='cinflections' AND gen=1
 fig5-gentle-inflection-after_2SELECT = wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1
-fig5-gentle-inflection-after_2CMAP = 1
 
 inflection-1-gentle-inflection-before_WIDTHDIV = 2
 inflection-1-gentle-inflection-before_1SELECT = wm_debug where name='inflection-1' AND stage='bbends' AND gen=1
 inflection-1-gentle-inflection-before_2SELECT = wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1
-inflection-1-gentle-inflection-before_2CMAP = 1
 inflection-1-gentle-inflection-after_WIDTHDIV = 2
 inflection-1-gentle-inflection-after_1SELECT = wm_debug where name='inflection-1' AND stage='cinflections' AND gen=1
 inflection-1-gentle-inflection-after_2SELECT = wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1
-inflection-1-gentle-inflection-after_2CMAP = 1
 
 fig6-selfcrossing-before_WIDTHDIV = 2
 fig6-selfcrossing-before_1SELECT = wm_debug where name='fig6' AND stage='bbends' AND gen=1

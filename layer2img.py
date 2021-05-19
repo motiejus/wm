@@ -25,7 +25,6 @@ def parse_args():
     parser = argparse.ArgumentParser(
             description='Convert a geometry to an image')
     parser.add_argument('--group1-select', required=True)
-    parser.add_argument('--group1-cmap', type=bool)
     parser.add_argument('--group1-linestyle')
 
     simplify = parser.add_mutually_exclusive_group()
@@ -34,7 +33,6 @@ def parse_args():
     parser.add_argument('--group1-chaikin', type=bool)
 
     parser.add_argument('--group2-select')
-    parser.add_argument('--group2-cmap', type=bool)
     parser.add_argument('--group2-linestyle')
     simplify = parser.add_mutually_exclusive_group()
     simplify.add_argument('--group2-simplifydp', type=int)
@@ -42,7 +40,6 @@ def parse_args():
     parser.add_argument('--group2-chaikin', type=bool)
 
     parser.add_argument('--group3-select')
-    parser.add_argument('--group3-cmap', type=bool)
     parser.add_argument('--group3-linestyle')
     simplify = parser.add_mutually_exclusive_group()
     simplify.add_argument('--group3-simplifydp', type=int)
@@ -65,11 +62,14 @@ def read_layer(select, width):
     return geopandas.read_postgis(sql, con=conn, geom_col='way1')
 
 
-def plot_args(color, maybe_cmap, maybe_linestyle):
-    if maybe_cmap:
-        r = {'cmap': CMAP}
-    else:
-        r = {'color': color}
+def plot_args(geom, color, maybe_linestyle):
+    if geom is None:
+        return
+
+    if geom.geom_type[0] == 'Polygon':
+        return {'cmap': CMAP}
+
+    r = {'color': color}
     if maybe_linestyle == 'invisible':
         r['color'] = (0, 0, 0, 0)
     elif maybe_linestyle:
@@ -83,9 +83,9 @@ def main():
     group1 = read_layer(args.group1_select, width)
     group2 = read_layer(args.group2_select, width)
     group3 = read_layer(args.group3_select, width)
-    c1 = plot_args(BLACK, args.group1_cmap, args.group1_linestyle)
-    c2 = plot_args(ORANGE, args.group2_cmap, args.group2_linestyle)
-    c3 = plot_args(GREEN, args.group3_cmap, args.group3_linestyle)
+    c1 = plot_args(group1, BLACK, args.group1_linestyle)
+    c2 = plot_args(group2, ORANGE, args.group2_linestyle)
+    c3 = plot_args(group3, GREEN, args.group3_linestyle)
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
