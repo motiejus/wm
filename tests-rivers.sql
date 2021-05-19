@@ -14,6 +14,38 @@ insert into wm_visuals(name, way) values('nemunas-merkys',
   )
 );
 
+
+-- wm_envelope clips a geometry by a bounding box around a given object,
+-- matching dimensions of A-class paper (1 by sqrt(2).
+drop function if exists wm_clip;
+create function wm_clip(
+  geom geometry,
+  center text,
+  projection_scale integer,
+  projection_width float
+) returns geometry as $$
+declare
+  gcenter geometry;
+  bbox geometry;
+  halfX float;
+  halfY float;
+begin
+  halfX = projection_scale * projection_width / 2;
+  halfY = halfX * sqrt(2);
+  select way from wm_visuals where name=center into gcenter;
+  if gcenter is null then
+    raise 'center % not found', center;
+  end if;
+
+  bbox = st_envelope(
+    st_project(gcenter, halfX, radians(90)),
+    st_project(gcenter, halfY, 0)
+  );
+
+  return st_intersection(bbox, geom);
+end
+$$ language plpgsql;
+
 do $$
 declare
   npoints bigint;

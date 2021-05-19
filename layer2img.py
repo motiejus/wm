@@ -18,14 +18,21 @@ PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
 TEXTWIDTH_CM = 12.12364
 TEXTWIDTH_INCH = TEXTWIDTH_CM * 10 / INCH_MM
 
-def plt_size(string):
+SCALES = {
+    "GDR10": 10000,
+    "GDR50": 50000,
+    "GDR250": 250000,
+}
+
+
+def wm_clip(string):
     if not string:
         return None
-    try:
-        w, h = string.split("x")
-        return float(w) / INCH_MM, float(h) / INCH_MM
-    except Exception as e:
-        raise argparse.ArgumentTypeError from e
+    gdr, name = string.split(":")
+    if scale := SCALES.get(gdr):
+        return gdr, scale
+    scales = ",".join(SCALES.keys())
+    raise argparse.ArgumentTypeError("invalid scale. Expected %s" % scales)
 
 
 def parse_args():
@@ -43,25 +50,29 @@ def parse_args():
     parser.add_argument('--group3-cmap', type=bool)
     parser.add_argument('--group3-linestyle')
 
+    parser.add_argument('--wmclip',
+                        type=wm_clip, help="Clip. E.g. GDR10:nemunas-merkys")
     parser.add_argument('--widthdiv',
                         default=1, type=float, help='Width divisor')
 
     parser.add_argument('-o', '--outfile', metavar='<file>')
-    parser.add_argument('--clip', type=float, nargs=4, metavar=BOUNDS)
-    parser.add_argument(
-            '--size',
-            type=plt_size,
-            help='Figure size in mm (WWxHH)',
-    )
     return parser.parse_args()
 
 
-def read_layer(select):
+def read_layer(select, width, maybe_wmclip):
     if not select:
         return
+    way = "way"
+    if maybe_wmclip:
+        name, scale = maybe_wmclip
+        way = "wm_clip(way, {name}, {scale}, {width})".format(
+                name=name,
+                scale=scale,
+                width=width,
+        )
     conn = psycopg2.connect(PSQL_CREDS)
-    sql = "SELECT way FROM %s" % select
-    return geopandas.read_postgis(sql, con=conn, geom_col='way')
+    sql = "SELECT {way} as way1 FROM {select}".format(way=way, select=select)
+    return geopandas.read_postgis(sql, con=conn, geom_col='way1')
 
 
 def plot_args(color, maybe_cmap, maybe_linestyle):
@@ -78,23 +89,17 @@ def plot_args(color, maybe_cmap, maybe_linestyle):
 
 def main():
     args = parse_args()
-    group1 = read_layer(args.group1_select)
-    group2 = read_layer(args.group2_select)
-    group3 = read_layer(args.group3_select)
+    width = TEXTWIDTH_INCH / args.widthdiv
+    group1 = read_layer(args.group1_select, width, args.wmclip)
+    group2 = read_layer(args.group2_select, width, args.wmclip)
+    group3 = read_layer(args.group3_select, width, args.wmclip)
     c1 = plot_args(BLACK, args.group1_cmap, args.group1_linestyle)
     c2 = plot_args(ORANGE, args.group2_cmap, args.group2_linestyle)
     c3 = plot_args(GREEN, args.group3_cmap, args.group3_linestyle)
 
     rc('text', usetex=True)
     fig, ax = plt.subplots()
-    if args.size:
-        fig.set_size_inches(args.size)
-    else:
-        w = TEXTWIDTH_INCH / args.widthdiv
-        fig.set_figwidth(TEXTWIDTH_INCH / args.widthdiv)
-    if c := args.clip:
-        ax.set_xlim(left=c[0], right=c[2])
-        ax.set_ylim(bottom=c[1], top=c[3])
+    fig.set_figwidth(width)
 
     group1 is not None and group1.plot(ax=ax, **c1)
     group2 is not None and group2.plot(ax=ax, **c2)
