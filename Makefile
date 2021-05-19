@@ -25,6 +25,9 @@ clean-tables:
 		./db -c "drop table $$t"; \
 	done
 
+.PHONY: slides
+slides: slides-2021-03-29.pdf slides-2021-03-29.html
+
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
