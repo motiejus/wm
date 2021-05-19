@@ -162,9 +162,9 @@ selfcrossing-1_3SELECT = wm_visuals where name='selfcrossing-1-baseline'
 selfcrossing-1_3COLOR = orange
 
 isolated-1-exaggerated_WIDTHDIV = 2
-isolated-1-exaggerated_1SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=1
-isolated-1-exaggerated_1LINESTYLE = dotted
-isolated-1-exaggerated_2SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=2
+isolated-1-exaggerated_1SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=2
+isolated-1-exaggerated_2SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=1
+isolated-1-exaggerated_1COLOR = orange
 
 salvis-25k_1SELECT = wm_visuals where name='salvis'
 salvis-25k_WIDTHDIV = 1
