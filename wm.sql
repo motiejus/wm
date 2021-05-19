@@ -392,8 +392,8 @@ begin
       insert into wm_debug (stage, name, gen, nbend, way, props) values(
         'ebendattrs',
         dbgname,
-        i,
         dbggen,
+        i,
         bend,
         jsonb_build_object(
           'area', res.area,
@@ -449,16 +449,23 @@ begin
     continue when bendattrs[i].adjsize >= leftsize;
     continue when bendattrs[i].adjsize >= rightsize;
 
-    -- Local minimum. Elminate!
+    -- Local minimum. Elminate bend!
     mutated = true;
     tmpbendattrs.bend = st_makeline(
       st_pointn(bendattrs[i].bend, 1),
       st_pointn(bendattrs[i].bend, -1)
     );
     bendattrs[i] = tmpbendattrs;
-    -- jump over the next bend, because the current bend disappeared,
-    -- and there is no way the other one can be a "local minima".
-    i = i + 1;
+    -- remove last vertex of the previous bend and
+    -- first vertex of the next bend, because bends always
+    -- share a line segment together
+    tmpbendattrs.bend = st_removepoint(bendattrs[i-1].bend, st_npoints(bendattrs[i-1].bend)-1);
+    bendattrs[i-1] = tmpbendattrs;
+    tmpbendattrs.bend = st_removepoint(bendattrs[i+1].bend, 0);
+    bendattrs[i+1] = tmpbendattrs;
+    -- the next bend's adjsize is now messed up; it should not be taken
+    -- into consideration for other local minimas. Skip over 2.
+    i = i + 2;
   end loop;
 
   if dbgname is not null then
@@ -467,7 +474,7 @@ begin
     end loop;
 
     insert into wm_debug(stage, name, gen, nbend, way) values(
-      'eelimination',
+      'felimination',
       dbgname,
       dbggen,
       generate_subscripts(dbgbends, 1),
