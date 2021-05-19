@@ -417,7 +417,9 @@ begin
   return st_split(st_snap(input, blade, 0.00000001), blade);
 end $$ language plpgsql;
 
-
+-- wm_exaggerate_bend2 is the second version of bend exaggeration. Uses
+-- non-linear interpolation by point azimuth. Slower, but produces nicer
+-- exaggerated geometries.
 drop function if exists wm_exaggerate_bend2;
 create function wm_exaggerate_bend2(
   INOUT bend geometry,
@@ -425,7 +427,7 @@ create function wm_exaggerate_bend2(
   desired_size float
 ) as $$
 declare
-  scale constant float default 1.2; -- exaggeration enthusiasm
+  scale2 constant float default 1.2; -- exaggeration enthusiasm
   midpoint geometry; -- midpoint of the baseline
   points geometry[];
   startazimuth float;
@@ -459,7 +461,7 @@ begin
       if diffazimuth > 90 then
         diffazimuth = 180 - diffazimuth;
       end if;
-      sss = ((scale-1) * (diffazimuth / 90)^0.5);
+      sss = ((scale2-1) * (diffazimuth / 90)^0.5);
       point = st_transform(
         st_project(
           st_transform(point, 4326)::geography,
@@ -471,6 +473,60 @@ begin
     size = wm_adjsize(bend);
   end loop;
 end $$ language plpgsql;
+
+-- wm_exaggerate_bend exaggerates a given bend. Uses naive linear
+-- interpolation. Faster than wm_exaggerate_bend2, but result visually looks
+-- worse.
+drop function if exists wm_exaggerate_bend;
+create function wm_exaggerate_bend(
+  INOUT bend geometry,
+  size float,
+  desired_size float
+) as $$
+declare
+  scale constant float default 1.2; -- exaggeration enthusiasm
+  midpoint geometry; -- midpoint of the baseline
+  splitbend geometry; -- bend split across its half
+  bendm geometry; -- bend with coefficients to prolong the lines
+  points geometry[];
+begin
+  if size = 0 then
+    raise 'invalid input: zero-area bend';
+  end if;
+  midpoint = st_lineinterpolatepoint(st_makeline(
+      st_pointn(bend, 1),
+      st_pointn(bend, -1)
+    ), .5);
+
+  while size < desired_size loop
+    splitbend = wm_st_split(bend, st_lineinterpolatepoint(bend, .5));
+    -- Convert bend to LINESTRINGM, where M is the fraction by how
+    -- much the point will be prolonged:
+    -- 1. draw a line between midpoint and the point on the bend.
+    -- 2. multiply the line length by M. Midpoint stays intact.
+    -- 3. the new set of lines form a new bend.
+    -- Uses linear interpolation; can be updated to gaussian or similar;
+    -- then interpolate manually instead of relying on st_addmeasure.
+    bendm = st_collect(
+      st_addmeasure(st_geometryn(splitbend, 1), 1, scale),
+      st_addmeasure(st_geometryn(splitbend, 2), scale, 1)
+    );
+
+    points = array((
+        select st_scale(
+          st_makepoint(st_x(geom), st_y(geom)),
+          st_makepoint(st_m(geom), st_m(geom)),
+          midpoint
+        )
+        from st_dumppoints(bendm)
+        order by path[1], path[2]
+      ));
+
+    bend = st_setsrid(st_makeline(points), st_srid(bend));
+    size = wm_adjsize(bend);
+  end loop;
+end $$ language plpgsql;
+
 
 -- wm_adjsize calculates adjusted size for a polygon. Can return 0.
 drop function if exists wm_adjsize;

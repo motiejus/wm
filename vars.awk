@@ -10,7 +10,7 @@ BEGIN { FS="[(); ]" }
   x2 += 1;
   d2 = sprintf("\\newcommand{\\isolationThreshold}{%.1f}",$7);
 }
-/scale constant float default / {
+/scale2 constant float default / {
   x3 += 1;
   d3 = sprintf("\\newcommand{\\exaggerationEnthusiasm}{%.1f}",$7);
 }

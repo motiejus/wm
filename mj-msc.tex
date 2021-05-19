@@ -909,11 +909,20 @@ When debug mode is turned off (that is, \textsc{dbgname} is left unspecified),
 
 \subsection{Merging pieces of the river into one}
 
-% TODO
+Example river geometries were sourced from OpenStreetMap\cite{openstreetmap}
+and NŽT\cite{nzt}. Rivers in both data sources are stored in shorter line
+segments, and multiple segments (usually hundreds or thousands for significant
+rivers) define one full river. While it is convenient to store and edit, these
+segments are not explicitly related to each other. This poses a problem for
+simplification algorithms, which manipulate on full linear features at a time:
+full river geometries, but not their parts.
 
-NOTE: explain how different river segments are merged into a single line. This
-is not explained in the {\WM} paper, but is a necessary prerequisite. This is
-implemented in \textsc{aggregate-rivers.sql}.
+Since these rivers do not have an explicit relationship to connect them
+together, they were connected using heuristics: if two line segments share a
+name and are within 500 meters from each other, then they form a single river.
+For all line simplification algorithms, all rivers need to be combined, and
+this way proved to be reasonably effective. Source code for this operation can
+be found in listings~\onpage{lst:aggregate-rivers.sql}.
 
 \subsection{Bend scaling and dimensions}
 \label{sec:bend-scaling-and-dimensions}
@@ -1002,7 +1011,7 @@ but with bends colored as polygons: each color is a distinctive bend.
     \centering
     \includegraphics[width=\textwidth]{fig8-definition-of-a-bend}
 
-    \caption{similar to figure 8 in \cite{wang1998line}: detected bends are
+    \caption{Similar to figure 8 in \cite{wang1998line}: detected bends are
     highlighted.}
 
     \label{fig:fig8-definition-of-a-bend}
@@ -1031,7 +1040,7 @@ when a single vertex is moved outwards the end of the bend.
         \includegraphics[width=\textwidth]{fig5-gentle-inflection-after}
         \caption{After applying the inflection rule.}
     \end{subfigure}
-    \caption{figure 5 in \cite{wang1998line}: gentle inflections at the ends of
+    \caption{Figure 5 in \cite{wang1998line}: gentle inflections at the ends of
     the bend.}
     \label{fig:fig5-gentle-inflection}
 \end{figure}
@@ -1347,7 +1356,8 @@ isolated bends are exaggerated, and some small bends are removed.
     \label{fig:salvis-wm-220-250k}
 \end{figure}
 
-% TODO: expand
+% TODO: expand section and remove clear-page.
+\clearpage
 
 \subsection{Generalization result comparison with national spatial data sets}
 
@@ -1355,9 +1365,28 @@ isolated bends are exaggerated, and some small bends are removed.
 
 \subsection{Testing results online}
 
-% TODO: [Siūlau įdėti nuorodą į web app, kur būtų galima interaktyviai
-% pastestuoti rezultatus. Jeigu planuotum dėti, tuomet galima nedidelį poskyrį
-% pridėti Testing Results]
+An on-line tool\cite{openmapwm} has been developed to test incoming parameters
+to {\WM} algorithm. A user should select a river of interest, enter the
+\textsc{dhalfcircle} parameter and click "Submit". The simplified line feature
+will be overlaid on top of the map.
+
+Figure~\ref{fig:openmap-wm-good} illustrates the end result that looks
+reasonably well. Figure~\ref{fig:openmap-wm-bad} illustrates that the algorithm
+produces poorly simplified results for some geometries.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{openmap-wm-good.png}
+    \caption{Example on-line test tool for {\WM} algorithm.}
+    \label{fig:openmap-wm-good}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.5\textwidth]{openmap-wm-bad.png}
+    \caption{Another example from the on-line test tool.}
+    \label{fig:openmap-wm-bad}
+\end{figure}
 
 \section{Conclusions}
 \label{sec:conclusions}
