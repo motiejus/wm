@@ -503,9 +503,21 @@ find out similar ones.
 
 \subsection{Isolated Bend}
 
-Bend itself and its extensions can be described by \textsc{average curvature},
+Bend itself and its "isolation" can be described by \textsc{average curvature},
 which is \textcquote{wang1998line}{geometrically defined as the ratio of
 inflection over the length of a curve.}
+
+Two conditions must be true to claim that a bend is isolated:
+
+\begin{enumerate}
+    \item \textsc{average curvature} of neighboring bends, should be larger
+        than the "candidate" bend's curvature; this implementation arbitrarily
+        chose $\isolationThreshold$.
+
+    \item Bends on both sides of the "candidate" should be longer than a
+        certain value. This implementation does not (yet) define such a
+        constraint and will only follow the average curvature constraint above.
+\end{enumerate}
 
 \subsection{The Context of a Bend: Isolated and Similar Bends}
 
@@ -527,7 +539,7 @@ $q$:
                    (baseline_p-baseline_q)^2}
 \]
 
-The smaller the distance $d$, the more similar the bends are.
+The more similar the bends are, the smaller the distance $d$.
 
 \subsection{Elimination Operator}
 
