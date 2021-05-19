@@ -20,9 +20,11 @@ test-integration: .faux_filter-rivers
 clean:
 	-./db stop
 	-rm -r .faux_test .faux_filter-rivers .faux_import-osm .faux_db \
-		version.tex test-figures.pdf _minted-mj-msc \
+		version.tex version.aux version.fdb_latexmk \
+		test-figures.pdf _minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
-		$(SLIDES)
+		$(SLIDES) \
+		$(FIGURES)
 
 .PHONY: clean-tables
 clean-tables:
@@ -37,15 +39,6 @@ slides: $(SLIDES)
 mj-msc.pdf: mj-msc.tex test-figures.pdf version.tex bib.bib $(FIGURES)
 	latexmk -shell-escape -g -pdf $<
 
-mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
-	cp $< .tmp-$@
-	for f in $^; do \
-		if [ "$$f" = "$<" ]; then continue; fi; \
-		pdfattach .tmp-$@ $$f .tmp2-$@; \
-		mv .tmp2-$@ .tmp-$@; \
-	done
-	mv .tmp-$@ $@
-
 mj-msc-gray.pdf: mj-msc.pdf
 	gs \
 		-sOutputFile=$@ \
@@ -57,16 +50,25 @@ mj-msc-gray.pdf: mj-msc.pdf
 		-dBATCH \
 		$<
 
+mj-msc-full.pdf: mj-msc.pdf version.tex $(ARCHIVABLES)
+	cp $< .tmp-$@
+	for f in $^; do \
+		if [ "$$f" = "$<" ]; then continue; fi; \
+		pdfattach .tmp-$@ $$f .tmp2-$@; \
+		mv .tmp2-$@ .tmp-$@; \
+	done
+	mv .tmp-$@ $@
+
 test-figures.pdf: layer2img.py .faux_test
 	python ./layer2img.py --group1-table=wm_figures --outfile=$@
 
 fig8-definition-of-a-bend.pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--group1-cmap=1 \
 		--group1-table=wm_debug \
-		--group1-where="name='fig8' AND stage='bbends-polygon' AND gen=1" \
+		--group1-where="name='fig8' AND stage='bbends' AND gen=1" \
+		--group2-cmap=1 \
 		--group2-table=wm_debug \
-		--group2-where="name='fig8' AND stage='bbends' AND gen=1" \
+		--group2-where="name='fig8' AND stage='bbends-polygon' AND gen=1" \
 		--outfile=$@
 
 fig5-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
