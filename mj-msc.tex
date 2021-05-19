@@ -3,7 +3,6 @@
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
-%\usepackage{a4wide}
 \usepackage [autostyle, english=american]{csquotes}
 \MakeOuterQuote{"}
 \usepackage[maxbibnames=99,style=numeric,sorting=none]{biblatex}
@@ -19,8 +18,18 @@
 \usepackage{tabularx}
 \usepackage{float}
 \usepackage{tikz}
-\usepackage{minted}
 \usepackage{fancyvrb}
+
+\iffalse
+% requires minted
+\usepackage{minted}
+\newcommand{\inputcode}[2]{\inputminted[fontsize=\small}{#1}{#2}
+\else
+% does not require minted
+\usepackage{verbatim}
+\newcommand{\inputcode}[2]{\verbatiminput{#2}}
+\fi
+
 \input{version.inc}
 \input{vars.inc}
 
@@ -187,6 +196,7 @@ As can be seen in the article example, generalization is worthy.
     \caption{Down-scaled original river (1:50000 and 1:250000)}
     \label{fig:salvis-50-250}
 \end{figure}
+
 
 
 \subsubsection{Modern approaches}
@@ -617,12 +627,12 @@ We strongly believe in the ability to reproduce the results is critical for any
     document and its accompanying graphics, run this script (assuming name of
     this document is {\tt mj-msc-full.pdf}):
 
-\inputminted[fontsize=\small]{bash}{extract-and-generate}
+\inputcode{bash}{extract-and-generate}
 
 This was tested on Linux Debian 11 with upstream packages only.
 
 \subsection{Algorithm code listings}
-\inputminted[fontsize=\small]{postgresql}{wm.sql}
+\inputcode{postgresql}{wm.sql}
 
 \end{appendices}
 \end{document}

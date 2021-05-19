@@ -1,48 +1,39 @@
 \i wm.sql
 
-insert into wm_visuals(name, way) values('salcia-visincia',
-  st_closestpoint(
-    (select way from wm_rivers where name='Šalčia'),
-    (select way from wm_rivers where name='Visinčia')
-  )
-);
-
-insert into wm_visuals(name, way) values('nemunas-merkys',
-  st_closestpoint(
-    (select way from wm_rivers where name='Nemunas'),
-    (select way from wm_rivers where name='Merkys')
-  )
-);
-
-
 -- wm_envelope clips a geometry by a bounding box around a given object,
 -- matching dimensions of A-class paper (1 by sqrt(2).
 drop function if exists wm_bbox;
 create function wm_bbox(
-  center text,
-  projection_scale integer,
-  projection_width_cm float
+  center geometry,
+  scaledwidth float
 ) returns geometry as $$
 declare
-  gcenter geometry;
   halfX float;
   halfY float;
 begin
-  halfX = projection_scale * projection_width_cm / 2 / 100;
+  halfX = scaledwidth / 2;
   halfY = halfX * sqrt(2);
-  select way from wm_visuals where name=center into gcenter;
-  if gcenter is null then
-    raise 'center % not found', center;
-  end if;
-
   return st_envelope(
     st_union(
-      st_translate(gcenter, halfX, halfY),
-      st_translate(gcenter, -halfX, -halfY)
+      st_translate(center, halfX, halfY),
+      st_translate(center, -halfX, -halfY)
     )
   );
 end
 $$ language plpgsql;
+
+insert into wm_visuals(name, way) values('salvis', (
+    select st_intersection(
+      (select st_union(way) from wm_rivers where name in ('Šalčia', 'Visinčia')),
+      wm_bbox(
+        st_closestpoint(
+          (select way from wm_rivers where name='Šalčia'),
+          (select way from wm_rivers where name='Visinčia')
+        ),
+        :scaledwidth
+      )
+    )
+));
 
 do $$
 declare

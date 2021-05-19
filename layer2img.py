@@ -16,45 +16,39 @@ PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
 # see `NOTICE` in the LaTeX document; this is the width of the main text block.
 TEXTWIDTH_CM = 12.12364
 
-SCALES = {
-    "10k": 10000,
-    "25k": 25000,
-    "50k": 50000,
-    "250k": 250000,
-}
 
 def inch(cm):
     return cm / 2.54
 
-def wm_clip(string):
-    if not string:
-        return None
-    name, gdr = string.split(":")
-    if scale := SCALES.get(gdr):
-        return name, scale
-    scales = ",".join(SCALES.keys())
-    raise argparse.ArgumentTypeError("invalid scale. Expected %s" % scales)
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
-            description='Convert geopackage to an image')
+            description='Convert a geometry to an image')
     parser.add_argument('--group1-select', required=True)
     parser.add_argument('--group1-cmap', type=bool)
     parser.add_argument('--group1-linestyle')
 
+    simplify = parser.add_mutually_exclusive_group()
+    simplify.add_argument('--group1-simplifydp', type=int)
+    simplify.add_argument('--group1-simplifyvw', type=int)
+    parser.add_argument('--group1-chaikin', type=bool)
+
     parser.add_argument('--group2-select')
     parser.add_argument('--group2-cmap', type=bool)
     parser.add_argument('--group2-linestyle')
+    simplify = parser.add_mutually_exclusive_group()
+    simplify.add_argument('--group2-simplifydp', type=int)
+    simplify.add_argument('--group2-simplifyvw', type=int)
+    parser.add_argument('--group2-chaikin', type=bool)
 
     parser.add_argument('--group3-select')
     parser.add_argument('--group3-cmap', type=bool)
     parser.add_argument('--group3-linestyle')
+    simplify = parser.add_mutually_exclusive_group()
+    simplify.add_argument('--group3-simplifydp', type=int)
+    simplify.add_argument('--group3-simplifyvw', type=int)
+    parser.add_argument('--group3-chaikin', type=bool)
 
-    parser.add_argument('--wmclip',
-                        type=wm_clip,
-                        help="Clip for scale. E.g. salcia-visincia:10k",
-                        )
     parser.add_argument('--widthdiv',
                         default=1, type=float, help='Width divisor')
 
@@ -62,17 +56,10 @@ def parse_args():
     return parser.parse_args()
 
 
-def read_layer(select, width, maybe_wmclip):
+def read_layer(select, width):
     if not select:
         return
     way = "way"
-    if maybe_wmclip:
-        name, scale = maybe_wmclip
-        way = "st_intersection(way, wm_bbox('{name}', {scale}, {width}))".format(
-                name=name,
-                scale=scale,
-                width=width,
-        )
     conn = psycopg2.connect(PSQL_CREDS)
     sql = "SELECT {way} as way1 FROM {select}".format(way=way, select=select)
     return geopandas.read_postgis(sql, con=conn, geom_col='way1')
@@ -93,9 +80,9 @@ def plot_args(color, maybe_cmap, maybe_linestyle):
 def main():
     args = parse_args()
     width = TEXTWIDTH_CM / args.widthdiv
-    group1 = read_layer(args.group1_select, width, args.wmclip)
-    group2 = read_layer(args.group2_select, width, args.wmclip)
-    group3 = read_layer(args.group3_select, width, args.wmclip)
+    group1 = read_layer(args.group1_select, width)
+    group2 = read_layer(args.group2_select, width)
+    group3 = read_layer(args.group3_select, width)
     c1 = plot_args(BLACK, args.group1_cmap, args.group1_linestyle)
     c2 = plot_args(ORANGE, args.group2_cmap, args.group2_linestyle)
     c3 = plot_args(GREEN, args.group3_cmap, args.group3_linestyle)

@@ -3,6 +3,9 @@ WHERE ?= name='Visinčia' OR name='Šalčia' OR name='Nemunas' OR name='Merkys'
 #WHERE ?= name like '%'
 SLIDES = slides-2021-03-29.pdf
 
+# Max figure size (in meters) is when it's width is TEXTWIDTH_CM on scale 1:25k
+SCALEDWIDTH = $(shell awk '/^TEXTWIDTH_CM/{print 25000/100*$$3}' layer2img.py)
+
 ##############################################################################
 # These variables have to come before first use due to how macros are expanded
 ##############################################################################
@@ -68,7 +71,6 @@ mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
 define FIG_template
 $(1).pdf: layer2img.py Makefile $(2)
 	python ./layer2img.py --outfile=$(1).pdf \
-		$$(if $$($(1)_WMCLIP),--wmclip=$$($(1)_WMCLIP)) \
 		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
 		$$(foreach i,1 2 3, \
 			$$(if $$($(1)_$$(i)CMAP),--group$$(i)-cmap="$$($(1)_$$(i)CMAP)") \
@@ -122,19 +124,16 @@ selfcrossing-1-after_2SELECT = wm_debug where name='selfcrossing-1' AND stage='b
 selfcrossing-1-after_2LINESTYLE = invisible
 
 salvis-25k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
-salvis-25k_WMCLIP = salcia-visincia:25k
 salvis-25k_WIDTHDIV = 1
 
-salvis-50k_WIDTHDIV = 2
 salvis-50k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
-salvis-50k_WMCLIP = salcia-visincia:50k
+salvis-50k_WIDTHDIV = 2
 
-salvis-250k_WIDTHDIV = 10
 salvis-250k_1SELECT = wm_rivers where name='Šalčia' OR name='Visinčia'
-salvis-250k_WMCLIP = salcia-visincia:250k
+salvis-250k_WIDTHDIV = 10
 
 .faux_test-rivers: tests-rivers.sql wm.sql .faux_db
-	./db -f $<
+	./db -v scaledwidth=$(SCALEDWIDTH) -f $<
 	touch $@
 
 .faux_test: tests.sql wm.sql .faux_db
