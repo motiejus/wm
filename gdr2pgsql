@@ -1,0 +1,34 @@
+#!/bin/bash
+set -euo pipefail
+
+dbzip=$(realpath -s "$1")
+tbl=$2
+filter=$3
+outfile=$4
+
+if [[ "$dbzip" =~ " " ]]; then
+    echo "ERROR: $dbzip contains spaces"
+    exit 1
+fi
+
+set -x
+
+gdbname=$(unzip -Z1 "$dbzip" | awk -Fgdb '/.gdb/{print $1"gdb";exit}')
+
+now=$(TZ=UTC date +"%FT%TZ")
+here=$(whoami)@$(hostname -f)
+
+mkdir -p ".tmp"
+ogr2ogr -skipfailures -f PGDump /dev/stdout -t_srs epsg:3857 \
+    "/vsizip/$dbzip/$gdbname" -nln "src_$tbl" hidro_l | \
+        awk "!/^INSERT/{print}; /^INSERT/&&/${filter}/{print;next}" | \
+        bash ./db | \
+        grep -v '^INSERT 0 1'
+
+bash db -f aggregate-rivers.sql -v "srctable=src_$tbl" -v "dsttable=$tbl"
+(
+    echo "-- Generated at $now on $here";
+    echo "-- Rivers: $filter";
+    docker exec wm-mj pg_dump --clean -Uosm osm -t "$tbl" | tr -d '\r'
+) > ".tmp/$outfile"
+mv ".tmp/$outfile" "$outfile"

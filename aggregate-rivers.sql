@@ -1,7 +1,7 @@
 /* Aggregates rivers by name and proximity. */
 drop function if exists aggregate_rivers;
 create function aggregate_rivers() returns table(
-  id bigint,
+  id integer,
   name text,
   way geometry
 ) as $$
@@ -35,15 +35,15 @@ $$ language plpgsql;
 drop index if exists wm_rivers_tmp_id;
 drop index if exists wm_rivers_tmp_gix;
 drop table if exists wm_rivers_tmp;
-create temporary table wm_rivers_tmp (id bigint, name text, way geometry);
+create temporary table wm_rivers_tmp (id serial, name text, way geometry);
 create index wm_rivers_tmp_id on wm_rivers_tmp(id);
 create index wm_rivers_tmp_gix on wm_rivers_tmp using gist(way) include(name);
 
-insert into wm_rivers_tmp
-  select p.gid as id, p.vardas as name, p.geom as way from hidro_l p;
+insert into wm_rivers_tmp (name, way)
+  select p.vardas as name, p.shape as way from :srctable p;
 
-drop table if exists wm_rivers;
-create table wm_rivers as (
+drop table if exists :dsttable;
+create table :dsttable as (
   select * from aggregate_rivers() where st_length(way) >= 50000
 );
 drop table wm_rivers_tmp;

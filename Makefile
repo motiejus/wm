@@ -74,6 +74,9 @@ test-rivers: .faux_test-rivers ## Rivers tests (slow)
 .PHONY: slides
 slides: $(SLIDES)
 
+.PHONY: refresh-rivers
+refresh-rivers: rivers.sql rivers-50.sql rivers-250.sql ## Refresh river data from national datasets
+
 ###########################
 # The report, quick version
 ###########################
@@ -209,9 +212,13 @@ salvis-wm-overlaid-250k-zoom_1SELECT = wm_visuals where name='salvis'
 salvis-wm-overlaid-250k-zoom_2SELECT = wm_visuals where name='salvis-wm-220'
 salvis-wm-overlaid-250k-zoom_1COLOR = orange
 
-.faux_db: db init.sql rivers.sql
+.faux_db_pre: db init.sql
 	bash db start
-	bash db -f init.sql -f rivers.sql
+	bash db -f init.sql
+	touch $@
+
+.faux_db: .faux_db_pre rivers.sql
+	bash db -f rivers.sql
 	touch $@
 
 .faux_test: test.sql wm.sql .faux_db
@@ -273,8 +280,8 @@ mj-msc-gray.pdf: mj-msc.pdf
 clean: ## Clean the current working directory
 	-bash db stop
 	-rm -r .faux_test .faux_aggregate-rivers .faux_test-rivers .faux_visuals \
-		.faux_db version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
-		_minted-mj-msc \
+		.faux_db .faux_db_pre version.inc.tex vars.inc.tex version.aux \
+		version.fdb_latexmk _minted-mj-msc .tmp \
 		$(shell git ls-files -o mj-msc*) \
 		$(addsuffix .pdf,$(FIGURES)) \
 		$(addsuffix .pdf,$(RIVERS)) \
@@ -287,7 +294,8 @@ clean-tables: ## Remove tables created during unit or rivers tests
 
 .PHONY: help
 help: ## Print this help message
-	@awk -F':.*?## ' '/^[a-z0-9.-]*: *.*## */{printf "%-18s %s\n",$$1,$$2}' $(MAKEFILE_LIST)
+	@awk -F':.*?## ' '/^[a-z0-9.-]*: *.*## */{printf "%-18s %s\n",$$1,$$2}' \
+		$(MAKEFILE_LIST)
 
 .PHONY: wc
 wc: mj-msc.pdf ## Character and page count
@@ -296,21 +304,15 @@ wc: mj-msc.pdf ## Character and page count
 		tr -d '[:space:]' | wc -c | \
 		awk '{printf("Chars: %d, pages: %.1f\n", $$1, $$1/1500)}'
 
-.PHONY: refresh-rivers
-refresh-rivers: aggregate-rivers.sql .faux_db ## Refresh rivers.sql from GDB10LT
-	@if [ ! -f "$(GDB10LT)" ]; then \
-		echo "ERROR: GDB10LT-static-*.zip not found. Do GDB10LT=<...>"; \
+define rivers_template
+$(1): aggregate-rivers.sql gdr2pgsql .faux_db_pre
+	@if [ ! -f "$$($(2))" ]; then \
+		echo "ERROR: $(2)-static-*.zip not found. Run env $(2)=<...>"; \
 		exit 1; \
 	fi
-	mkdir -p .tmp/shp; unzip -d .tmp/shp "$(GDB10LT)" 'HIDRO_L.*'
-	shp2pgsql -s 3857 -d ".tmp/shp/HIDRO_L.shp" | \
-		awk '!/^INSERT/{print}; /^INSERT/&&/$(RIVERFILTER)/{print;next}' | \
-		bash ./db
-	bash db -f $<
-	(\
-		echo '-- Generated at $(shell TZ=UTC date +"%FT%TZ") on $(shell whoami)@$(shell hostname -f)'; \
-		echo '-- Rivers: $(RIVERFILTER)'; \
-		docker exec wm-mj pg_dump --clean -Uosm osm -t wm_rivers | tr -d '\r' \
-	) > rivers.sql.tmp
-	mv rivers.sql.tmp rivers.sql
-	rm -fr .tmp/shp
+	./gdr2pgsql "$$($(2))" "$(3)" "$(RIVERFILTER)" "$(1)"
+endef
+
+$(eval $(call rivers_template,rivers.sql,GDB10LT,wm_rivers))
+$(eval $(call rivers_template,rivers-50.sql,GDR50LT,wm_rivers_50))
+$(eval $(call rivers_template,rivers-250.sql,GDR250LT,wm_rivers_250))
