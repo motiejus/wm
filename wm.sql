@@ -585,7 +585,6 @@ begin
         st_pointn(bends[i], st_npoints(bends[i])-1),
         0
       );
-
       if dbgname is not null then
         insert into wm_debug (stage, name, gen, nbend, way) values(
           'gexaggeration', dbgname, dbggen, i, bends[i]);
@@ -736,6 +735,7 @@ begin
     gen = 1;
 
     while mutated loop
+
       if dbgname is not null then
         insert into wm_debug (stage, name, gen, nbend, way) values(
           'afigures', dbgname, gen, i, lines[i]);
@@ -745,7 +745,6 @@ begin
       bends = wm_fix_gentle_inflections(bends, dbgname, gen);
 
       select * from wm_self_crossing(bends, dbgname, gen) into bends, mutated;
-
       if not mutated then
         attrs = wm_bend_attrs(bends, dbgname, gen);
 
@@ -765,16 +764,15 @@ begin
 
         if st_geometrytype(lines[i]) != 'ST_LineString' then
           -- For manual debugging:
-          insert into wm_manual(name, way)
-          select 'non-linestring-' || a.path[1], a.geom
-          from st_dump(lines[i]) a
-          order by a.path[1];
-          raise notice '[%] Got % (in %) instead of ST_LineString. '
+          --insert into wm_manual(name, way)
+          --select 'non-linestring-' || a.path[1], a.geom
+          --from st_dump(lines[i]) a
+          --order by a.path[1];
+          raise '[%] Got % (in %) instead of ST_LineString. '
           'Does the exaggerated bend intersect with the line? '
           'If so, try increasing intersect_patience.',
           gen, st_geometrytype(lines[i]), dbgname;
-          raise notice 'exiting lineloop, gen:%', gen;
-          exit lineloop;
+          --exit lineloop;
         end if;
         gen = gen + 1;
         continue;
