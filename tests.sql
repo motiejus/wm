@@ -12,13 +12,19 @@ end $$ LANGUAGE plpgsql;
 
 drop table if exists figures;
 create table figures (name text, way geometry);
--- to "normalize" a new line:
+-- to "normalize" a new line when it's in `f`:
 --   select st_astext(st_snaptogrid(st_transscale(geometry, 80, 130, .3, .3), 1)) from f;
 insert into figures (name, way) values ('fig3',ST_GeomFromText('LINESTRING(0 0,12 0,13 4,20 2,20 0,32 0,33 10,38 16,43 15,44 10,44 0,60 0)'));
 insert into figures (name, way) values ('fig3-1',ST_GeomFromText('LINESTRING(0 0,12 0,13 4,20 2,20 0,32 0,33 10,38 16,43 15,44 10,44 0)'));
 insert into figures (name, way) values ('fig5',ST_GeomFromText('LINESTRING(0 39,19 52,27 77,26 104,41 115,49 115,65 103,65 75,53 45,63 15,91 0)'));
 insert into figures (name, way) values ('fig6',ST_GeomFromText('LINESTRING(84 47,91 59,114 64,122 80,116 92,110 93,106 106,117 118,136 107,135 76,120 45,125 39,141 39,147 32)'));
 insert into figures (name, way) values ('fig6-rev',ST_Reverse(ST_Translate((select way from figures where name='fig6'), 60, 0)));
+insert into figures (name, way) values ('fig6-combi',
+  ST_LineMerge(ST_Union(
+      ST_Translate((select way from figures where name='fig6'), 0, 90),
+      ST_Translate((select way from figures where name='fig6'), 80, 90)
+  ))
+);
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
 
 drop table if exists debug;
@@ -99,4 +105,13 @@ begin
         st_translate(st_reverse(st_linemerge(st_union(way))), -60, 0)
     ) from (select unnest(vcrossings) way) a)
   );
+
+  select self_crossing((select ways from inflections where name='fig6-combi')) into vcrossings;
+  perform assert_equals(
+    'LINESTRING(84 137,91 149,114 154,120 135,125 129,141 129,147 122,164 137,171 149,194 154,200 135,205 129,221 129,227 122)',
+    (select st_astext(
+        st_linemerge(st_union(way))
+    ) from (select unnest(vcrossings) way) a)
+  );
+
 end $$ language plpgsql;
