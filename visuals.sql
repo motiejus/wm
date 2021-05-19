@@ -123,8 +123,7 @@ begin
       ('salvis-visvalingam-' || i, geom2),
       ('salvis-visvalingam-' || i || '-chaikin', st_chaikinsmoothing(geom2, 5));
   end loop;
-  -- TODO: 75
-  foreach i in array array[16, 24] loop
+  foreach i in array array[75, 375] loop
     geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i, 50, 'salvis-' || i);
     insert into wm_visuals(name, way) values
       ('salvis-wm-'          || i, geom3);

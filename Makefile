@@ -40,7 +40,8 @@ RIVERS = \
 		 salvis-visvalingam-64-chaikin-50k \
 		 salvis-overlaid-douglas-64-chaikin-50k \
 		 salvis-overlaid-visvalingam-64-chaikin-50k \
-		 salvis-wm-24-50k
+		 salvis-wm-75-50k \
+		 salvis-wm-375-250k
 
 #################################
 # The thesis, publishable version
@@ -192,10 +193,15 @@ salvis-overlaid-visvalingam-64-chaikin-50k_1COLOR = orange
 salvis-overlaid-visvalingam-64-chaikin-50k_WIDTHDIV = 2
 salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 
-salvis-wm-24-50k_1SELECT = wm_visuals where name='salvis'
-salvis-wm-24-50k_2SELECT = wm_visuals where name='salvis-wm-24'
-salvis-wm-24-50k_2COLOR = orange
-#salvis-wm-24-50k_WIDTHDIV = 4
+salvis-wm-75-50k_1SELECT = wm_visuals where name='salvis'
+salvis-wm-75-50k_2SELECT = wm_visuals where name='salvis-wm-75'
+salvis-wm-75-50k_1COLOR = orange
+salvis-wm-75-50k_WIDTHDIV = 2
+
+salvis-wm-375-250k_1SELECT = wm_visuals where name='salvis'
+salvis-wm-375-250k_2SELECT = wm_visuals where name='salvis-wm-375'
+salvis-wm-375-250k_1COLOR = orange
+salvis-wm-375-250k_WIDTHDIV = 2
 
 .faux_db: db init.sql rivers.sql
 	bash db start

@@ -414,9 +414,9 @@ begin
   return st_split(st_snap(input, blade, 0.00000001), blade);
 end $$ language plpgsql;
 
--- wm_exaggerate_bend exaggerates a given bend. Must be a simple linestring.
-drop function if exists wm_exaggerate_bend;
-create function wm_exaggerate_bend(
+
+drop function if exists wm_exaggerate_bend2;
+create function wm_exaggerate_bend2(
   INOUT bend geometry,
   size float,
   desired_size float
@@ -424,9 +424,13 @@ create function wm_exaggerate_bend(
 declare
   scale constant float default 1.2; -- exaggeration enthusiasm
   midpoint geometry; -- midpoint of the baseline
-  splitbend geometry; -- bend split across its half
-  bendm geometry; -- bend with coefficients to prolong the lines
   points geometry[];
+  startazimuth float;
+  azimuth float;
+  diffazimuth float;
+  point geometry;
+  sss float;
+  protect int = 10;
 begin
   if size = 0 then
     raise 'invalid input: zero-area bend';
@@ -435,35 +439,36 @@ begin
       st_pointn(bend, 1),
       st_pointn(bend, -1)
     ), .5);
+  startazimuth = st_azimuth(midpoint, st_pointn(bend, 1));
 
-  while size < desired_size loop
-    splitbend = wm_st_split(bend, st_lineinterpolatepoint(bend, .5));
-    -- Convert bend to LINESTRINGM, where M is the fraction by how
-    -- much the point will be prolonged:
-    -- 1. draw a line between midpoint and the point on the bend.
-    -- 2. multiply the line length by M. Midpoint stays intact.
-    -- 3. the new set of lines form a new bend.
-    -- Uses linear interpolation; can be updated to gaussian or similar;
-    -- then interpolate manually instead of relying on st_addmeasure.
-    bendm = st_collect(
-      st_addmeasure(st_geometryn(splitbend, 1), 1, scale),
-      st_addmeasure(st_geometryn(splitbend, 2), scale, 1)
-    );
-
-    points = array((
-        select st_scale(
-          st_makepoint(st_x(geom), st_y(geom)),
-          st_makepoint(st_m(geom), st_m(geom)),
-          midpoint
-        )
-        from st_dumppoints(bendm)
-        order by path[1], path[2]
-      ));
-
-    bend = st_setsrid(st_makeline(points), st_srid(bend));
+  while (size < desired_size) and (protect > 0) loop
+    protect = protect - 1;
+    for i in 2..st_npoints(bend)-1 loop
+      point = st_pointn(bend, i);
+      azimuth = st_azimuth(midpoint, point);
+      diffazimuth = degrees(azimuth - startazimuth);
+      if diffazimuth > 180 then
+        diffazimuth = diffazimuth - 360;
+      elseif diffazimuth < -180 then
+        diffazimuth = diffazimuth + 360;
+      end if;
+      diffazimuth = abs(diffazimuth);
+      if diffazimuth > 90 then
+        diffazimuth = 180 - diffazimuth;
+      end if;
+      sss = ((scale-1) * (diffazimuth / 90)^0.5);
+      point = st_transform(
+        st_project(
+          st_transform(point, 4326)::geography,
+          st_distance(midpoint, point) * sss, azimuth)::geometry,
+        3857
+      );
+      bend = st_setpoint(bend, i-1, point);
+    end loop;
     size = wm_adjsize(bend);
   end loop;
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 -- wm_adjsize calculates adjusted size for a polygon. Can return 0.
 drop function if exists wm_adjsize;
@@ -512,7 +517,7 @@ begin
   <<bendloop>>
   for i in 1..array_length(attrs, 1) loop
     if attrs[i].isolated and attrs[i].adjsize < desired_size then
-      bend = wm_exaggerate_bend(bends[i], attrs[i].adjsize, desired_size);
+      bend = wm_exaggerate_bend2(bends[i], attrs[i].adjsize, desired_size);
 
       -- does bend intersect with the previous or next
       -- intersect_patience bends? If they do, abort exaggeration for this one.

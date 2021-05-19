@@ -49,6 +49,8 @@ insert into wm_figures (name, way) values ('fig6-combi', ST_Union(
 insert into wm_figures (name, way) values ('selfcrossing-1-rev',ST_Reverse(
     ST_Translate((select way from wm_figures where name='selfcrossing-1'), 0, 60)));
 
+update wm_figures set way=st_setsrid(way, 3857);
+
 delete from wm_debug where name in (select distinct name from wm_figures);
 delete from wm_demo where name in (select distinct name from wm_figures);
 insert into wm_demo (name, way) select name, ST_SimplifyWM(way, .1, null, name) from wm_figures where name not in ('fig8', 'isolated-1');
