@@ -54,6 +54,7 @@
 \newcommand{\MYTITLENOCAPS}{wang--m{\"u}ller algorithm realization for cartographic line generalization}
 \newcommand{\MYAUTHOR}{Motiejus Jakštys}
 \newcommand{\inputcode}[2]{\inputminted[fontsize=\small]{#1}{#2}}
+\newenvironment{longlisting}{\captionsetup{type=listing}}{}
 
 \title{\MYTITLE}
 \author{\MYAUTHOR}
@@ -108,6 +109,7 @@ Currently available line simplification algorithms are rooted in mathematics
 \newpage
 \listoffigures
 \listoftables
+\listoflistings
 
 \newpage
 
@@ -816,12 +818,31 @@ section~\ref{sec:automated-tests}).
 \subsection{Debugging}
 \label{sec:debugging}
 
-% TODO
+This implementation includes debugging facilities, in a form of a table
+\textsc{wm\_debug}. Table's schema is written in
+listing~\ref{lst:wm-debug-sql}.
 
-NOTE: this will explain how intermediate debugging tables (\textsc{wm\_debug})
-work. This is not related to the algorithm, but the only the implementation
-itself (probably should come together with paper's regeneration and unit
-tests).
+\begin{listing}[h]
+    \begin{minted}[fontsize=\small]{sql}
+drop table if exists wm_debug;
+create table wm_debug(
+  id serial,
+  stage text not null,
+  name text not null,
+  gen bigint not null,
+  nbend bigint,
+  way geometry,
+  props jsonb
+);
+    \end{minted}
+    \caption{\textsc{wm\_debug} table definition}
+    \label{lst:wm-debug-sql}
+\end{listing}
+
+When debug mode is active, implementation steps will store their results, which
+can be useful to manually inspect results of intermediate actions. Besides
+manual inspection, most of the figure illustrations in this article are
+visualized from the \textsc{wm\_debug} table.
 
 \subsection{Merging pieces of the river into one}
 
@@ -1230,9 +1251,8 @@ implementation. A single exaggeration increment is done as follows:
 
 \end{enumerate}
 
-Figure~\ref{fig:exaggerating-a-single-bend} illustrates the details of the
-exaggeration. Figure~\ref{fig:isolated-1-exaggerated} illustrates an
-exaggerated bend with the algorithm.
+Figure~\ref{fig:isolated-1-exaggerated} illustrates an exaggerated bend with
+the algorithm.
 
 \begin{figure}[ht]
     \centering
@@ -1301,18 +1321,31 @@ Like explained in section~\ref{sec:reproducing-the-paper}, illustrations in
     the source geometries or regenerate this paper, run this script (assuming
     name of this document is \textsc{mj-msc-full.pdf}).
 
-This script will extract the source files from the \textsc{mj-msc-full.pdf} to
-    a temporary directory, run the top-level \textsc{make} command, and display
-    the generated document. Source code for the algorithm, as well as other
-    supporting files, can be found in the temporary directory.
+    Listing~\ref{lst:extract-and-generate} will extract the source files from
+    the \textsc{mj-msc-full.pdf} to a temporary directory, run the top-level
+    \textsc{make} command, and display the generated document. Source code for
+    the algorithm, as well as other supporting files, can be found in the
+    temporary directory.
 
-\inputcode{bash}{extract-and-generate}
+\begin{listing}[h]
+    \inputcode{bash}{extract-and-generate}
+    \caption{\textsc{extract-and-generate}}
+    \label{lst:extract-and-generate}
+\end{listing}
 
 \subsection{Function \textsc{st\_simplifywv}}
-%\inputcode{postgresql}{wm.sql}
+\begin{longlisting}
+    \inputcode{postgresql}{wm.sql}
+    \caption{\textsc{wm.sql}}
+    \label{lst:wm.sql}
+\end{longlisting}
 
 \subsection{Function \textsc{aggregate\_rivers}}
-%\inputcode{postgresql}{aggregate-rivers.sql}
+\begin{longlisting}
+    \inputcode{postgresql}{aggregate-rivers.sql}
+    \caption{\textsc{aggregate-rivers.sql}}
+    \label{lst:aggregate-rivers.sql}
+\end{longlisting}
 
 \end{appendices}
 \end{document}

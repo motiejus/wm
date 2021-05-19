@@ -104,11 +104,10 @@ begin
       ('salvis-visvalingam-' || i, geom2),
       ('salvis-visvalingam-' || i || '-chaikin', st_chaikinsmoothing(geom2, 5));
   end loop;
-  -- 220 doesn't work, because there is an exaggerated bend
-  -- near Šalčia-Žeimena crossing, and it "exaggerates" to the
+
+  -- more than 220 doesn't work, because there is an exaggerated bend near
+  -- Šalčia-Visinčia crossing, and it "exaggerates" to the
   -- other river.
-  -- cross-river crossing detection should be more robust --- and
-  -- the current problems are described in the paper.
   foreach i in array array[75, 220] loop
     geom3 = st_simplifywm((select way from wm_visuals where name='salvis'), i, 50, 'salvis-wm-' || i);
     insert into wm_visuals(name, way) values
