@@ -10,7 +10,7 @@ declare
 begin
   select * from ST_SimplifyWM_Estimate((select st_union(way) from agg_rivers)) into npoints, secs;
   raise notice 'Total points: %', npoints;
-  raise notice 'Expected duration: %s (+-%s), depending on bend complexity', ceil(secs), floor(secs*.5);
+  raise notice 'Expected duration: %s (+-%s)', ceil(secs), floor(secs*.5);
 end $$ language plpgsql;
 
 drop table if exists wm_demo;

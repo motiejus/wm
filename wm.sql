@@ -19,6 +19,7 @@ declare
   prev_sign int4;
   cur_sign int4;
   l_type text;
+  dbgpolygon geometry;
 begin
   l_type = st_geometrytype(line);
   if l_type != 'ST_LineString' then
@@ -82,12 +83,18 @@ begin
         i,
         bends[i]
       );
+
+      dbgpolygon = null;
+      if st_npoints(bends[i]) >= 3 then
+          dbgpolygon = st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])));
+      end if;
+
       insert into wm_debug(stage, name, gen, nbend, way) values(
         'bbends-polygon',
         dbgname,
         dbgstagenum,
         i,
-        st_makepolygon(st_addpoint(bends[i], st_startpoint(bends[i])))
+        dbgpolygon
       );
     end loop;
   end if;
