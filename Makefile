@@ -199,7 +199,7 @@ salvis-overlaid-visvalingam-64-chaikin-50k_QUADRANT = 1
 	bash db -f $<
 	touch $@
 
-.faux_visuals: visuals.sql wm.sql Makefile .faux_db
+.faux_visuals: visuals.sql wm.sql Makefile .faux_test
 	bash db -v scaledwidth=$(SCALEDWIDTH) -f $<
 	touch $@
 
