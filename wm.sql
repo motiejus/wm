@@ -254,17 +254,18 @@ declare
 begin
   mutated = false;
 
-  -- go through the bends and find one where sum of inflection angle is >180
+  <<bendloop>>
   for i in 1..array_length(bends, 1) loop
     continue when abs(inflection_angle(bends[i])) <= pi;
     -- sum of inflection angles for this bend is >180, so it may be
     -- self-crossing. now try to find another bend in this line that
     -- crosses an imaginary line of end-vertices
 
-    -- go through each bend in the given line, and see if has a potential to
-    -- cross bends[i].
+    -- Go through each bend in the given line, and see if has a potential to
+    -- cross bends[i]. The line-cut process is different when i<j and i>j;
+    -- therefore there are two loops, one for each case.
     for j in 1..i-1 loop
-      select if_selfcross(bends[i], bends[j]) into multi;
+      multi = if_selfcross(bends[i], bends[j]);
       continue when multi is null;
       mutated = true;
 
@@ -278,11 +279,11 @@ begin
         st_pointn(bends[i], st_npoints(bends[i]))
       );
       bends = bends[1:j] || bends[i+1:];
-      exit;
+      continue bendloop;
     end loop;
 
     for j in reverse array_length(bends, 1)..i+1 loop
-      select if_selfcross(bends[i], bends[j]) into multi;
+      multi = if_selfcross(bends[i], bends[j]);
       continue when multi is null;
       mutated = true;
 
@@ -294,7 +295,7 @@ begin
         st_removepoint(st_geometryn(multi, st_numgeometries(multi)), 0)
       );
       bends = bends[1:i] || bends[j+1:];
-      exit;
+      continue bendloop;
     end loop;
   end loop;
 end
