@@ -5,13 +5,15 @@ SLIDES = slides-2021-03-29.pdf
 
 NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
 ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
-FIGURES = fig8-definition-of-a-bend.pdf \
-		  fig5-gentle-inflection-before.pdf \
-		  fig5-gentle-inflection-after.pdf \
-		  inflection-1-gentle-inflection-before.pdf \
-		  inflection-1-gentle-inflection-after.pdf \
-			fig6-self-crossing-before.pdf \
-			fig6-self-crossing-after.pdf
+
+FIGURES = test-figures \
+					fig6-self-crossing-before \
+					fig6-self-crossing-after \
+					fig8-definition-of-a-bend \
+					fig5-gentle-inflection-before \
+					fig5-gentle-inflection-after \
+					inflection-1-gentle-inflection-before \
+					inflection-1-gentle-inflection-after
 
 .PHONY: test
 test: .faux_test
@@ -25,10 +27,10 @@ clean:
 	-./db stop
 	-rm -r .faux_test .faux_filter-rivers .faux_import-osm .faux_db \
 		version.inc.tex vars.inc.tex version.aux version.fdb_latexmk \
-		test-figures.pdf _minted-mj-msc \
+		minted-mj-msc \
 		$(shell git ls-files -o mj-msc*) \
-		$(SLIDES) \
-		$(FIGURES)
+		$(addsuffix .pdf,$(FIGURES)) \
+		$(SLIDES)
 
 .PHONY: clean-tables
 clean-tables:
@@ -40,7 +42,7 @@ clean-tables:
 .PHONY: slides
 slides: $(SLIDES)
 
-mj-msc.pdf: mj-msc.tex test-figures.pdf version.inc.tex vars.inc.tex bib.bib $(FIGURES)
+mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib $(addsuffix .pdf,$(FIGURES))
 	latexmk -shell-escape -g -pdf $<
 
 mj-msc-gray.pdf: mj-msc.pdf
@@ -63,61 +65,52 @@ mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES)
 	done
 	mv .tmp-$@ $@
 
-test-figures.pdf: layer2img.py .faux_test
-	python ./layer2img.py --group1-select=wm_figures --outfile=$@
-
-fig8-definition-of-a-bend.pdf: layer2img.py Makefile .faux_test
+define FIG_template
+$(1).pdf: layer2img.py Makefile .faux_test
 	python ./layer2img.py \
-		--group1-select="wm_debug where name='fig8' AND stage='bbends' AND gen=1" \
-		--group2-cmap=1 \
-		--group2-select="wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1" \
-		--outfile=$@
+		--outfile=$(1).pdf \
+		$$(if $$($(1)_WIDTHDIV),--widthdiv=$$($(1)_WIDTHDIV)) \
+		$$(foreach i,1 2 3, \
+			$$(if $$($(1)_CMAP$$(i)),--group$$(i)-cmap="$$($(1)_CMAP$$(i))") \
+			$$(if $$($(1)_SELECT$$(i)),--group$$(i)-select="$$($(1)_SELECT$$(i))") \
+			$$(if $$($(1)_LINESTYLE$$(i)),--group$$(i)-linestyle="$$($(1)_LINESTYLE$$(i))") \
+	)
+endef
 
-fig5-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
-	python ./layer2img.py \
-		--widthdiv=2 \
-		--group1-select="wm_debug where name='fig5' AND stage='bbends' AND gen=1" \
-		--group2-cmap=1 \
-		--group2-select="wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1" \
-		--outfile=$@
+$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig))))
 
-fig5-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
-	python ./layer2img.py \
-		--widthdiv=2 \
-		--group1-select="wm_debug where name='fig5' AND stage='cinflections' AND gen=1" \
-		--group2-select="wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1" \
-		--group2-cmap=1 \
-		--outfile=$@
+test-figures_SELECT1 = wm_figures
 
-inflection-1-gentle-inflection-before.pdf: layer2img.py Makefile .faux_test
-	python ./layer2img.py \
-		--widthdiv=2 \
-		--group1-select="wm_debug where name='inflection-1' AND stage='bbends' AND gen=1" \
-		--group2-select="wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1" \
-		--group2-cmap=1 \
-		--outfile=$@
+fig8-definition-of-a-bend_SELECT1 = wm_debug where name='fig8' AND stage='bbends' AND gen=1
+fig8-definition-of-a-bend_CMAP2 = 1
+fig8-definition-of-a-bend_SELECT2 = wm_debug where name='fig8' AND stage='bbends-polygon' AND gen=1
 
-inflection-1-gentle-inflection-after.pdf: layer2img.py Makefile .faux_test
-	python ./layer2img.py \
-		--widthdiv=2 \
-		--group1-select="wm_debug where name='inflection-1' AND stage='cinflections' AND gen=1" \
-		--group2-select="wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1" \
-		--group2-cmap=1 \
-		--outfile=$@
+fig5-gentle-inflection-before_WITHDIV = 2
+fig5-gentle-inflection-before_SELECT1 = wm_debug where name='fig5' AND stage='bbends' AND gen=1
+fig5-gentle-inflection-before_CMAP2 = 1
+fig5-gentle-inflection-before_SELECT2 = wm_debug where name='fig5' AND stage='bbends-polygon' AND gen=1
+fig5-gentle-inflection-after_WITHDIV = 2
+fig5-gentle-inflection-after_SELECT1 = wm_debug where name='fig5' AND stage='cinflections' AND gen=1
+fig5-gentle-inflection-after_SELECT2 = wm_debug where name='fig5' AND stage='cinflections-polygon' AND gen=1
+fig5-gentle-inflection-after_CMAP2 = 1
 
-fig6-self-crossing-before.pdf: layer2img.py Makefile .faux_test
-	python ./layer2img.py \
-		--widthdiv=4 \
-		--group1-select="wm_debug where name='fig6' AND stage='bbends' AND gen=1" \
-		--group2-select="wm_visuals where name='fig6-baseline'" --group2-linestyle=dashed \
-		--group3-select="wm_visuals where name='fig6-newline'" --group3-linestyle=dashed \
-		--outfile=$@
+inflection-1-gentle-inflection-before_WIDTHDIV = 2
+inflection-1-gentle-inflection-before_SELECT1 = wm_debug where name='inflection-1' AND stage='bbends' AND gen=1
+inflection-1-gentle-inflection-before_SELECT2 = wm_debug where name='inflection-1' AND stage='bbends-polygon' AND gen=1
+inflection-1-gentle-inflection-before_CMAP2 = 1
+inflection-1-gentle-inflection-after_WIDTHDIV = 2
+inflection-1-gentle-inflection-after_SELECT1 = wm_debug where name='inflection-1' AND stage='cinflections' AND gen=1
+inflection-1-gentle-inflection-after_SELECT2 = wm_debug where name='inflection-1' AND stage='cinflections-polygon' AND gen=1
+inflection-1-gentle-inflection-after_CMAP2 = 1
 
-fig6-self-crossing-after.pdf: layer2img.py Makefile .faux_test
-	python ./layer2img.py \
-		--widthdiv=3 \
-		--group1-select="wm_debug where name='fig6' AND stage='dcrossings' AND gen=1" \
-		--outfile=$@
+fig6-self-crossing-before_WIDTHDIV = 4
+fig6-self-crossing-before_SELECT1 = wm_debug where name='fig6' AND stage='bbends' AND gen=1
+fig6-self-crossing-before_SELECT2 = wm_visuals where name='fig6-baseline'
+fig6-self-crossing-before_SELECT3 = wm_visuals where name='fig6-newline'
+fig6-self-crossing-before_LINESTYLE2 = dashed
+fig6-self-crossing-before_LINESTYLE3 = dashed
+fig6-self-crossing-after_WIDTHDIV = 4
+fig6-self-crossing-after_SELECT1 = wm_debug where name='fig6' AND stage='dcrossings' AND gen=1
 
 .faux_test: tests.sql wm.sql .faux_db
 	./db -f tests.sql
