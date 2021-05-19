@@ -21,6 +21,7 @@ FIGURES = test-figures \
 					selfcrossing-1-before \
 					selfcrossing-1-after
 
+# paper sizes in mm
 A4p = 210x297
 A4l = 297x210
 A5p = 148x210
@@ -31,6 +32,10 @@ A7p = 74x105
 A7l = 105x74
 A8p = 52x74
 A8l = 74x52
+# interesting scales:
+# - 1:10000 (GDR10)
+# - 1:50000 (GDR50)
+# - 1:250000 (GDR250)
 
 #################################
 # The thesis, publishable version

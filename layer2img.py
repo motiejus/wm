@@ -10,7 +10,7 @@ from matplotlib import rc
 CMAP = 'tab20c'
 
 BOUNDS = ('xmin', 'ymin', 'xmax', 'ymax')
-INCH_MM = 25.4  # mm
+INCH_MM = 25.4
 BLACK, GREEN, ORANGE, PURPLE = '#000000', '#1b9e77', '#d95f02', '#7570b3'
 PSQL_CREDS = "host=127.0.0.1 dbname=osm user=osm password=osm"
 
