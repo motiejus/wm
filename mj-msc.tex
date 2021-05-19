@@ -711,17 +711,17 @@ create function ST_SimplifyWM(
 This function accepts the following parameters:
 \begin{description}
 
-    \item[\normalfont\texttt{geom}] is the input geometry. Either
+    \item[\normalfont\textsc{geom}] is the input geometry. Either
         \textsc{linestring} or \textsc{multilinestring}.
 
-    \item[\normalfont\texttt{dhalfcircle}] is the diameter of the half-circle.
+    \item[\normalfont\textsc{dhalfcircle}] is the diameter of the half-circle.
         Explained in section~\ref{sec:bend-scaling-and-dimensions}.
 
-    \item[\normalfont\texttt{intersect\_patience}] is an optional parameter to
+    \item[\normalfont\textsc{intersect\_patience}] is an optional parameter to
         exaggeration operator, explained in
         section~\ref{sec:exaggeration-operator}.
 
-    \item[\normalfont\texttt{dbgname}] is an optional human-readable name of
+    \item[\normalfont\textsc{dbgname}] is an optional human-readable name of
         the figure. Explained in section~\ref{sec:debugging}.
 
 \end{description}
@@ -842,7 +842,70 @@ create table wm_debug(
 When debug mode is active, implementation steps will store their results, which
 can be useful to manually inspect results of intermediate actions. Besides
 manual inspection, most of the figure illustrations in this article are
-visualized from the \textsc{wm\_debug} table.
+visualized from the \textsc{wm\_debug} table. Debugging mode can be activated
+by passing a non-empty \textsc{dbgname} string to the function
+\textsc{st\_simplifywm} (this function was described in
+section~\ref{sec:technical-implementation}). By convention, \textsc{dbgname} is
+the name of the geometry that's being simplified, e.g., \textsc{šalčia}.
+Purpose of each column in \textsc{wm\_debug} is described below:
+
+\begin{description}
+
+    \item[\normalfont\textsc{id}] is a unique identifier for each feature.
+        Generated automatically by PostgreSQL. Useful when it is necessary to
+        copy one or more features to a separate table for unit tests, like
+        described in section~\ref{sec:automated-tests}.
+
+    \item[\normalfont\textsc{stage}] is the stage of the algorithm. As of
+        writing, there are a few:
+        \begin{description}
+            \item[\normalfont\textsc{afigures}] at the beginning of the loop.
+            \item[\normalfont\textsc{bbends}] after bends are detected.
+
+            \item[\normalfont\textsc{cinflections}] after gentle inflections
+                are fixed.
+
+            \item[\normalfont\textsc{dcrossings}] after self-crossings are
+                eliminated.
+
+            \item[\normalfont\textsc{ebendattrs}] after bend attributes are
+                calculated.
+
+            \item[\normalfont\textsc{gexaggeration}] after bends have been
+                exaggerated.
+
+            \item[\normalfont\textsc{helimination}] after bends have been
+                eliminated.
+
+        \end{description}
+
+        Some of these have sub-stages, which are encoded by a dash and a
+        sub-stage name, e.g., \textsc{bbends-polygon} creates polygon
+        geometries after polygons have been detected; this particular example
+        is used to generate colored polygons in
+        figure~\ref{fig:fig8-definition-of-a-bend}.
+
+    \item[\normalfont\textsc{name}] is the name of the geometry, comes from
+        parameter~\textsc{dbgname}.
+
+    \item[\normalfont\textsc{gen}] is the top-level iteration number. In other
+        words, number of times the execution flow passes through
+        \textsc{detect bends} phase as depicted in
+        figure~\onpage{fig:flow-chart}.
+
+    \item[\normalfont\textsc{nbend}] is the bend's index in its \textsc{line}.
+
+    \item[\normalfont\textsc{way}] is the geometry column.
+
+    \item[\normalfont\textsc{props}] is a free-form JSON object to store
+        miscellaneous values. For example, \textsc{ebendattrs} phase stores a
+        boolean property \textsc{isolated}, which signifies whether the bend is
+        isolated or not (explained in section~\ref{sec:isolated-bend}.
+
+\end{description}
+
+When debug mode is turned off (that is, \textsc{dbgname} is left unspecified),
+\textsc{wm\_debug} is empty and the algorithm runs slightly faster.
 
 \subsection{Merging pieces of the river into one}
 
@@ -1128,6 +1191,7 @@ In reverse, adjusted size $A_{adj}$ from half-circle's diameter:
 \]
 
 \subsection{Isolated Bend}
+\label{sec:isolated-bend}
 
 Bend itself and its "isolation" can be described by \textsc{average curvature},
 which is \textcquote{wang1998line}{geometrically defined as the ratio of
