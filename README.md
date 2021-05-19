@@ -44,11 +44,11 @@ Running
 mj-msc-full.pdf    Thesis for publishing
 test               Unit tests (fast)
 test-rivers        Rivers tests (slow)
+refresh-rivers     Refresh river data from national datasets
 clean              Clean the current working directory
 clean-tables       Remove tables created during unit or rivers tests
 help               Print this help message
 wc                 Character and page count
-refresh-rivers     Refresh rivers-*.sql from Open Street Maps
 ```
 
 To execute the algorithm, run:
