@@ -1,9 +1,9 @@
 \set ON_ERROR_STOP on
 SET plpgsql.extra_errors TO 'all';
 
--- detect_bends detects bends using the inflection angles. No corrections.
-drop function if exists detect_bends;
-create function detect_bends(
+-- wm_detect_bends detects bends using the inflection angles. No corrections.
+drop function if exists wm_detect_bends;
+create function wm_detect_bends(
   line geometry,
   dbgname text default null,
   dbgstagenum integer default null,
@@ -100,7 +100,7 @@ begin
 end
 $$ language plpgsql;
 
--- fix_gentle_inflections moves bend endpoints following "Gentle Inflection at
+-- wm_fix_gentle_inflections moves bend endpoints following "Gentle Inflection at
 -- End of a Bend" section.
 --
 -- The text does not specify how many vertices can be "adjusted"; it can
@@ -108,8 +108,8 @@ $$ language plpgsql;
 -- cumulative inflection angle small (see variable below).
 --
 -- The implementation could be significantly optimized to avoid `st_reverse`
--- and array reversals, trading for complexity in fix_gentle_inflections1.
-create or replace function fix_gentle_inflections(
+-- and array reversals, trading for complexity in wm_fix_gentle_inflections1.
+create or replace function wm_fix_gentle_inflections(
   INOUT bends geometry[],
   dbgname text default null,
   dbgstagenum integer default null
@@ -121,11 +121,11 @@ declare
 begin
   len = array_length(bends, 1);
 
-  bends = fix_gentle_inflections1(bends);
+  bends = wm_fix_gentle_inflections1(bends);
   for i in 1..len loop
     bends1[i] = st_reverse(bends[len-i+1]);
   end loop;
-  bends1 = fix_gentle_inflections1(bends1);
+  bends1 = wm_fix_gentle_inflections1(bends1);
 
   for i in 1..len loop
     bends[i] = st_reverse(bends1[len-i+1]);
@@ -158,10 +158,10 @@ begin
 end
 $$ language plpgsql;
 
--- fix_gentle_inflections1 fixes gentle inflections of an array of lines in
--- one direction. This is an implementation detail of fix_gentle_inflections.
-drop function if exists fix_gentle_inflections1;
-create function fix_gentle_inflections1(INOUT bends geometry[]) as $$
+-- wm_fix_gentle_inflections1 fixes gentle inflections of an array of lines in
+-- one direction. This is an implementation detail of wm_fix_gentle_inflections.
+drop function if exists wm_fix_gentle_inflections1;
+create function wm_fix_gentle_inflections1(INOUT bends geometry[]) as $$
 declare
   pi constant real default radians(180);
   -- the threshold when the angle is still "small", so gentle inflections can
@@ -222,12 +222,12 @@ begin
 end
 $$ language plpgsql;
 
--- if_selfcross returns whether baseline of bendi crosses bendj.
+-- wm_if_selfcross returns whether baseline of bendi crosses bendj.
 -- If it doesn't, returns a null geometry.
 -- Otherwise, it will return the baseline split into a few parts where it
 -- crosses bendj.
-drop function if exists if_selfcross;
-create function if_selfcross(
+drop function if exists wm_if_selfcross;
+create function wm_if_selfcross(
   bendi geometry,
   bendj geometry
 ) returns geometry as $$
@@ -254,10 +254,10 @@ end
 $$ language plpgsql;
 
 
--- self_crossing eliminates self-crossing from the bends, following the
+-- wm_self_crossing eliminates self-crossing from the bends, following the
 -- article's section "Self-line Crossing When Cutting a Bend".
-drop function if exists self_crossing;
-create function self_crossing(
+drop function if exists wm_self_crossing;
+create function wm_self_crossing(
   INOUT bends geometry[],
   OUT mutated boolean
 ) as $$
@@ -270,7 +270,7 @@ begin
   mutated = false;
   <<bendloop>>
   for i in 1..array_length(bends, 1) loop
-    continue when abs(inflection_angle(bends[i])) <= pi;
+    continue when abs(wm_inflection_angle(bends[i])) <= pi;
     -- sum of inflection angles for this bend is >180, so it may be
     -- self-crossing. now try to find another bend in this line that
     -- crosses an imaginary line of end-vertices
@@ -279,7 +279,7 @@ begin
     -- cross bends[i]. The line-cut process is different when i<j and i>j;
     -- therefore there are two loops, one for each case.
     for j in 1..i-1 loop
-      multi = if_selfcross(bends[i], bends[j]);
+      multi = wm_if_selfcross(bends[i], bends[j]);
       continue when multi is null;
       mutated = true;
 
@@ -297,7 +297,7 @@ begin
     end loop;
 
     for j in reverse array_length(bends, 1)..i+1 loop
-      multi = if_selfcross(bends[i], bends[j]);
+      multi = wm_if_selfcross(bends[i], bends[j]);
       continue when multi is null;
       mutated = true;
 
@@ -315,8 +315,8 @@ begin
 end
 $$ language plpgsql;
 
-drop function if exists inflection_angle;
-create function inflection_angle (IN bend geometry, OUT angle real) as $$
+drop function if exists wm_inflection_angle;
+create function wm_inflection_angle (IN bend geometry, OUT angle real) as $$
 declare
   pi constant real default radians(180);
   p0 geometry;
@@ -336,10 +336,10 @@ end
 $$ language plpgsql;
 
 
-drop function if exists bend_attrs;
-drop function if exists isolated_bends;
-drop type if exists t_bend_attrs;
-create type t_bend_attrs as (
+drop function if exists wm_bend_attrs;
+drop function if exists wm_isolated_bends;
+drop type if exists wm_t_bend_attrs;
+create type wm_t_bend_attrs as (
   bend geometry,
   area real,
   cmp real,
@@ -348,16 +348,16 @@ create type t_bend_attrs as (
   curvature real,
   isolated boolean
 );
-create function bend_attrs(
+create function wm_bend_attrs(
   bends geometry[],
   dbgname text default null
-) returns setof t_bend_attrs as $$
+) returns setof wm_t_bend_attrs as $$
 declare
   fourpi constant real default 4*radians(180);
   i int4;
   polygon geometry;
   bend geometry;
-  res t_bend_attrs;
+  res wm_t_bend_attrs;
 begin
   for i in 1..array_length(bends, 1) loop
     bend = bends[i];
@@ -367,7 +367,7 @@ begin
     res.cmp = 0;
     res.adjsize = 0;
     res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
-    res.curvature = inflection_angle(bend) / st_length(bend);
+    res.curvature = wm_inflection_angle(bend) / st_length(bend);
     res.isolated = false;
     if st_numpoints(bend) >= 3 then
       polygon = st_makepolygon(st_addpoint(bend, st_startpoint(bend)));
@@ -406,8 +406,8 @@ begin
 end;
 $$ language plpgsql;
 
-create function isolated_bends(
-  INOUT bendattrs t_bend_attrs[],
+create function wm_isolated_bends(
+  INOUT bendattrs wm_t_bend_attrs[],
   dbgname text default null
 ) as $$
 declare
@@ -415,7 +415,7 @@ declare
   isolation_threshold constant real default 0.5;
   this real;
   skip_next bool;
-  res t_bend_attrs;
+  res wm_t_bend_attrs;
   i int4;
 begin
   for i in 2..array_length(bendattrs, 1)-1 loop
@@ -499,7 +499,7 @@ declare
   line geometry;
   lines geometry[];
   bends geometry[];
-  bend_attrs t_bend_attrs[];
+  bend_attrs wm_t_bend_attrs[];
   mutated boolean;
   l_type text;
 begin
@@ -526,10 +526,10 @@ begin
         );
       end if;
 
-      bends = detect_bends(lines[i], dbgname, stagenum);
-      bends = fix_gentle_inflections(bends, dbgname, stagenum);
+      bends = wm_detect_bends(lines[i], dbgname, stagenum);
+      bends = wm_fix_gentle_inflections(bends, dbgname, stagenum);
 
-      select * from self_crossing(bends) into bends, mutated;
+      select * from wm_self_crossing(bends) into bends, mutated;
 
       if dbgname is not null then
         insert into wm_debug(stage, name, gen, nbend, way) values(
@@ -547,7 +547,7 @@ begin
         continue;
       end if;
 
-      --select * from elimination(bends, diameter) into bends, mutated;
+      --select * from wm_elimination(bends, diameter) into bends, mutated;
 
       --if dbgname is not null then
       --  insert into wm_debug(stage, name, gen, nbend, way) values(
@@ -565,8 +565,8 @@ begin
       --  continue;
       --end if;
 
-      bend_attrs = array((select bend_attrs(bends, dbgname)));
-      perform isolated_bends(bend_attrs, dbgname);
+      bend_attrs = array((select wm_bend_attrs(bends, dbgname)));
+      perform wm_isolated_bends(bend_attrs, dbgname);
     end loop;
 
   end loop;
