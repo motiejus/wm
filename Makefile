@@ -84,3 +84,7 @@ slides-2021-03-29.pdf: slides-2021-03-29.txt
 
 slides-2021-03-29.html: slides-2021-03-29.txt
 	pandoc --verbose -t slidy --self-contained $< -o $@ $(SLIDY_ARGS)
+
+dump-debug_wm.sql.xz:
+	docker exec -ti wm-mj \
+		pg_dump -Uosm osm -t debug_wm | xz > $@

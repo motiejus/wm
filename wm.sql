@@ -106,7 +106,7 @@ declare
   pi constant real default radians(180);
   -- the threshold when the angle is still "small", so gentle inflections can
   -- be joined
-  small_angle constant real default radians(30);
+  small_angle constant real default radians(45);
   ptail geometry; -- tail point of tail bend
   phead geometry[]; -- 3 tail points of head bend
   i int4; -- bends[i] is the current head
@@ -268,7 +268,8 @@ create type t_bend_attrs as (
   area real,
   cmp real,
   adjsize real,
-  baselinelength real
+  baselinelength real,
+  avg_curvature real
 );
 create function bend_attrs(bends geometry[], dbgname text default null) returns setof t_bend_attrs as $$
 declare
@@ -285,10 +286,10 @@ begin
     res.area = 0;
     res.cmp = 0;
     res.adjsize = 0;
-    res.baselinelength = 0;
+    res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
+    res.avg_curvature = inflection_angle(bend) / st_length(bend);
     if st_numpoints(bend) >= 3 then
       polygon = st_makepolygon(st_addpoint(bend, st_startpoint(bend)));
-      res.baselinelength = st_distance(st_startpoint(bend), st_endpoint(bend));
       -- Compactness Index (cmp) is defined as "the ratio of the area of the
       -- polygon over the circle whose circumference length is the same as the
       -- length of the circumference of the polygon". I assume they meant the
@@ -314,7 +315,8 @@ begin
           'area', res.area,
           'cmp', res.cmp,
           'adjsize', res.adjsize,
-          'baselinelength', res.baselinelength
+          'baselinelength', res.baselinelength,
+          'avg_curvature', res.avg_curvature
         )
       );
     end if;
