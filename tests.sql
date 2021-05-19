@@ -33,35 +33,7 @@ insert into figures (name, way) values ('fig6-combi',
 insert into figures (name, way) values ('inflection-1',ST_GeomFromText('LINESTRING(110 24,114 20,133 20,145 15,145 0,136 5,123 7,114 7,111 2)'));
 insert into figures (name, way) values ('multi-island',ST_GeomFromText('MULTILINESTRING((-15 10,-10 10,-5 11,0 11,5 11,10 10,11 9,13 10,15 9),(-5 11,-2 15,0 16,2 15,5 11))'));
 
--- DETECT BENDS
-drop table if exists bends;
-create table bends (name text, ways geometry[]);
-insert into bends select name, detect_bends(way, name) from figures;
-
--- FIX BEND INFLECTIONS
-drop table if exists inflections, demo_inflections2;
-create table inflections (name text, ways geometry[]);
-insert into inflections select name, fix_gentle_inflections(ways) from bends;
-create table demo_inflections2 (name text, i bigint, way geometry);
-insert into demo_inflections2 select name, generate_subscripts(ways, 1), unnest(ways) from inflections;
-
--- SELF-LINE CROSSING
-drop table if exists selfcrossing, demo_selfcrossing3;
-create table selfcrossing (name text, ways geometry[], mutated boolean);
-insert into selfcrossing select name, (self_crossing(ways)).* from inflections;
-create table demo_selfcrossing3 (name text, i bigint, way geometry);
-insert into demo_selfcrossing3 select name, generate_subscripts(ways, 1), unnest(ways) from selfcrossing;
-
--- BEND ATTRS
-do $$
-declare
-  recs t_bend_attrs[];
-begin
-  select array(select bend_attrs(ways, name) from inflections) into recs;
-end
-$$ language plpgsql;
-
--- COMBINED
+-- Run ST_SimplifyWM in debug mode
 drop table if exists demo_wm;
 create table demo_wm (name text, i bigint, way geometry);
 insert into demo_wm (name, way) select name, ST_SimplifyWM(way, name) from figures;
@@ -101,9 +73,6 @@ end $$ language plpgsql;
 
 do $$
 declare
-  elem geometry;
-  elems1 geometry[];
-  elems2 geometry[];
   vcrossings geometry[];
   mutated boolean;
 begin

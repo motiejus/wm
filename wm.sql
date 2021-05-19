@@ -15,10 +15,10 @@ declare
   cur_sign int4;
   l_type text;
 begin
-  --l_type = st_geometrytype(line);
-  --if l_type != 'ST_LineString' then
-  --  raise 'This function works with ST_LineString, got %', l_type;
-  --end if;
+  l_type = st_geometrytype(line);
+  if l_type != 'ST_LineString' then
+    raise 'This function works with ST_LineString, got %', l_type;
+  end if;
 
   -- The last vertex is iterated over twice, because the algorithm uses 3
   -- vertices to calculate the angle between them.
