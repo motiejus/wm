@@ -40,13 +40,14 @@ Running
 
 ```
 # make help
-mj-msc-full.pdf    Thesis for publishing
-test               Unit tests (fast)
-test-rivers        Rivers tests (slow)
-refresh-rivers     Refresh river data from national datasets
 clean              Clean the current working directory
 clean-tables       Remove tables created during unit or rivers tests
 help               Print this help message
+mj-msc-full.pdf    Thesis for publishing
+mj-msc-gray.pdf    Gray version, to inspect monochrome output
+refresh-rivers     Refresh river data from national datasets
+test-rivers        Rivers tests (slow)
+test               Unit tests (fast)
 ```
 
 To execute the algorithm, run:

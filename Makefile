@@ -1,15 +1,10 @@
-OSM ?= lithuania-latest.osm.pbf
+# River selector (GNU Awk syntax) to refresh-rivers target.
 RIVERFILTER = Visinčia|Šalčia|Nemunas
-SLIDES = slides-2021-03-29.pdf
 
 # Max figure size (in meters) is when it's width is TEXTWIDTH_CM on scale 1:25k
 SCALEDWIDTH = $(shell awk '/^TEXTWIDTH_CM/{print 25000/100*$$3}' layer2img.py)
-
-##############################################################################
-# These variables have to come before first use due to how macros are expanded
-##############################################################################
-
 ARCHIVABLES = $(filter-out slides-2021-03-29.txt,$(shell git ls-files .))
+SLIDES = slides-2021-03-29.pdf
 
 LISTINGS = aggregate-rivers.sql wm.sql extract-and-generate
 
@@ -268,12 +263,9 @@ mj-msc.pdf: mj-msc.tex version.inc.tex vars.inc.tex bib.bib \
 	$(LISTINGS) $(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
 	latexmk -shell-escape -pdf $<
 
-############################
-# Report's test dependencies
-############################
-
-.PHONY: allfigs
-allfigs: $(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS))
+###################################
+# Report's DB and test dependencies
+###################################
 
 .faux_db_pre: db init.sql
 	bash db start
@@ -318,18 +310,7 @@ slides-2021-03-29.pdf: slides-2021-03-29.txt
 dump-debug_wm.sql.xz:
 	docker exec -ti wm-mj pg_dump -Uosm osm -t wm_devug | xz -v > $@
 
-release.zip: mj-msc.tex mj-msc.bbl version.inc.tex vars.inc.tex \
-	$(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS)) \
-	$(shell git ls-files .)
-	-rm $@
-	mkdir -p .tmp; touch .tmp/editorial-version
-	zip $@ $^
-	zip $@ -j .tmp/editorial-version
-
-mj-msc.bbl: mj-msc.tex bib.bib
-	biber mj-msc
-
-mj-msc-gray.pdf: mj-msc.pdf
+mj-msc-gray.pdf: mj-msc.pdf ## Gray version, to inspect monochrome output
 	gs \
 		-sOutputFile=$@ \
 		-sDEVICE=pdfwrite \
@@ -359,7 +340,7 @@ clean-tables: ## Remove tables created during unit or rivers tests
 .PHONY: help
 help: ## Print this help message
 	@awk -F':.*?## ' '/^[a-z0-9.-]*: *.*## */{printf "%-18s %s\n",$$1,$$2}' \
-		$(MAKEFILE_LIST)
+		$(MAKEFILE_LIST) | sort
 
 .PHONY: wc
 wc: mj-msc.pdf
