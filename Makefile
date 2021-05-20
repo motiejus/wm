@@ -2,8 +2,6 @@ OSM ?= lithuania-latest.osm.pbf
 RIVERFILTER = Visinčia|Šalčia|Nemunas
 SLIDES = slides-2021-03-29.pdf
 
-GDB10LT ?= $(wildcard GDB10LT-static-*.zip)
-
 # Max figure size (in meters) is when it's width is TEXTWIDTH_CM on scale 1:25k
 SCALEDWIDTH = $(shell awk '/^TEXTWIDTH_CM/{print 25000/100*$$3}' layer2img.py)
 
@@ -11,8 +9,7 @@ SCALEDWIDTH = $(shell awk '/^TEXTWIDTH_CM/{print 25000/100*$$3}' layer2img.py)
 # These variables have to come before first use due to how macros are expanded
 ##############################################################################
 
-NON_ARCHIVABLES = notes.txt referatui.txt slides-2021-03-29.txt
-ARCHIVABLES = $(filter-out $(NON_ARCHIVABLES),$(shell git ls-files .))
+ARCHIVABLES = $(filter-out slides-2021-03-29.txt,$(shell git ls-files .))
 
 LISTINGS = aggregate-rivers.sql wm.sql extract-and-generate
 
@@ -381,6 +378,6 @@ refresh-$(1): aggregate-rivers.sql gdr2pgsql .faux_db_pre
 	./gdr2pgsql "$$($(2))" "$(3)" "$(RIVERFILTER)" "$(1)"
 endef
 
-$(eval $(call rivers_template,rivers-10.sql,GDB10LT,wm_rivers))
-$(eval $(call rivers_template,rivers-50.sql,grpk50LT,wm_rivers_50))
-$(eval $(call rivers_template,rivers-250.sql,grpk250LT,wm_rivers_250))
+$(eval $(call refresh_rivers_template,rivers-10.sql,GDB10LT,wm_rivers))
+$(eval $(call refresh_rivers_template,rivers-50.sql,GDR50LT,wm_rivers_50))
+$(eval $(call refresh_rivers_template,rivers-250.sql,GDR250LT,wm_rivers_250))
