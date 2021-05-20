@@ -3,20 +3,19 @@ Wang–Müller line generalization algorithm in PostGIS
 
 This is Wang–Müller line generalization algorithm implementation in PostGIS.
 Following "Line generalization based on analysis of shape characteristics" by
-the same author, 1998.
+the same authors, 1998.
 
 Status
 ------
 
-It mostly works. Read `mj-msc-full.pdf` for visual examples and possible
-gotchas.
+Mostly works. Read `mj-msc-full.pdf` for visual examples and possible gotchas.
 
 ![line simplification example](https://raw.githubusercontent.com/motiejus/wm/main/salvis.png)
 
 Structure
 ---------
 
-There are be 2 deliverables:
+There are 2 main deliverables:
 
 - `wm.sql`, the implementation.
 - paper `mj-msc-full.pdf`, a MSc thesis, explaining it.
@@ -59,29 +58,25 @@ To execute the algorithm, run:
 
 N.B. the `make test-rivers` fails (see `test-rivers.sql`), because with higher
 `dhalfcircle` values, the unionized river (`salvis`) is going on top of itself,
-making the resulting geometry invalid.
+making the resulting geometry invalid during the process.
 
 Building the paper (pdf)
 ------------------------
 
 ```
-# make -j$(nproc) mj-msc-full.pdf
+# make -j mj-msc-full.pdf
 ```
 
-`mj-msc.tex` results in `mj-msc-full.pdf`, which will be at some point
-published to this repo. It needs quite a few dependencies, including a
-functioning Docker environment, postgresql client, geopandas, pygments,
-osm2pgsql, poppler, and a "quite extensive" LaTeX installation. Tested on
-Debian 11.
-
-`in-container` script may be helpful if the above sounds like too much.
+`mj-msc.tex` results in `mj-msc-full.pdf`. This step needs quite a few
+or a container: see `Dockerfile` for dependencies or `in-container` to run
+it all in the container.
 
 Contributing
 ------------
 
-This repository will soon be frozen and does not accept contributions. Please
-fork it. If fork has improved the algorithm substantially, feel free to ping
-me, I will link to it in this README.
+This repository does not accept contributoins. Please fork it. If a fork has
+improved the algorithm substantially, you are welcome to ping me, I will link
+to it in this README.
 
 Credit
 ------
