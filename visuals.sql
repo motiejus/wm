@@ -139,7 +139,7 @@ begin
   -- Šalčia-Visinčia crossing, and it "exaggerates" to the
   -- other river.
   foreach i in array array[75, 220] loop
-    geom3 = st_simplifywm((select way from wm_visuals where name='salvis-grpk10'), i, 50, 'salvis-wm' || i);
+    geom3 = st_simplifywm((select way from wm_visuals where name='salvis-grpk10'), i, null, 'salvis-wm' || i);
     insert into wm_visuals(name, way) values
       ('salvis-wm'          || i, geom3);
   end loop;

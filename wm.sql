@@ -765,7 +765,7 @@ drop function if exists ST_SimplifyWM;
 create function ST_SimplifyWM(
   geom geometry,
   dhalfcircle float,
-  intersect_patience integer default 10,
+  intersect_patience integer default 50,
   dbgname text default null
 ) returns geometry as $$
 declare
@@ -780,7 +780,7 @@ declare
   l_type text;
 begin
   if intersect_patience is null then
-    intersect_patience = 10;
+    intersect_patience = 50;
   end if;
   l_type = st_geometrytype(geom);
   if l_type = 'ST_LineString' then
