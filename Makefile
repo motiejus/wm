@@ -3,9 +3,8 @@ RIVERFILTER = Visinčia|Šalčia|Nemunas
 
 # Max figure size (in meters) is when it's width is TEXTWIDTH_CM on scale 1:25k
 SCALEDWIDTH = $(shell awk '/^TEXTWIDTH_CM/{print 25000/100*$$3}' layer2img.py)
-ARCHIVABLES = $(filter-out slides-2021-03-29.txt,$(shell git ls-files .))
-SLIDES = slides-2021-03-29.pdf
-
+SLIDES_IN = slides-2021-03-29.txt slides-2021-06-02.tex
+SLIDES = slides-2021-03-29 slides-2021-06-02
 LISTINGS = aggregate-rivers.sql wm.sql extract-and-generate
 
 FIGURES = \
@@ -227,7 +226,7 @@ $(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
 # The thesis, publishable version
 #################################
 
-mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES) ## Thesis for publishing
+mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(filter-out $(SLIDES_IN),$(shell git ls-files .)) ## Thesis for publishing
 	cp $< .tmp-$@
 	for f in $^; do \
 		if [ "$$f" = "$<" ]; then continue; fi; \
@@ -250,7 +249,7 @@ visuals: .faux_visuals  # Generate visuals for paper (fast)
 test-rivers: .faux_test-rivers ## Rivers tests (slow)
 
 .PHONY: slides
-slides: $(SLIDES)
+slides: $(addsuffix .pdf,$(SLIDES))
 
 .PHONY: refresh-rivers
 refresh-rivers: refresh-rivers-10.sql refresh-rivers-50.sql refresh-rivers-250.sql ## Refresh river data from national datasets
@@ -307,6 +306,9 @@ vars.inc.tex: vars.awk wm.sql Makefile
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
+slides-2021-06-02.pdf: slides-2021-06-02.tex
+	latexmk -pdf $<
+
 dump-debug_wm.sql.xz:
 	docker exec -ti wm-mj pg_dump -Uosm osm -t wm_devug | xz -v > $@
 
@@ -330,7 +332,7 @@ clean: ## Clean the current working directory
 		$(shell git ls-files -o mj-msc*) \
 		$(addsuffix .pdf,$(FIGURES)) \
 		$(addsuffix .pdf,$(RIVERS)) \
-		$(SLIDES)
+		$(addsuffix .pdf,$(SLIDES))
 
 .PHONY: clean-tables
 clean-tables: ## Remove tables created during unit or rivers tests

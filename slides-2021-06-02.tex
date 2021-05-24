@@ -1,0 +1,226 @@
+\documentclass[14pt]{beamer}
+\usetheme{default}
+\usepackage[L7x,T1]{fontenc}
+\usepackage[lithuanian]{babel}
+\usepackage{graphics}
+\usepackage{biblatex}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows,positioning}
+
+\usefonttheme{serif}
+\definecolor{vulightgrey}{RGB}{220,220,220}
+\definecolor{vudarkgrey}{RGB}{65,65,65}
+\definecolor{vupurple}{RGB}{123,0,63}
+\definecolor{darkgreen}{RGB}{32,96,32}
+
+\setbeamercolor{title}{fg=vupurple}
+\setbeamercolor{frametitle}{fg=vupurple}
+\setbeamercolor{item}{fg=vupurple}
+\setbeamercolor{navigation symbols dimmed}{fg=vulightgrey}
+\setbeamercolor{navigation symbols}{fg=vulightgrey}
+\setbeamercolor{normal text}{fg=vudarkgrey}
+
+\newcommand{\DP}{Douglas \& Peucker}
+\newcommand{\VW}{Visvalingam--Whyatt}
+\newcommand{\WM}{Wang--M{\"u}ller}
+
+\mode<presentation>{
+    \setbeamertemplate{navigation symbols}{
+        \insertslidenavigationsymbol
+        \insertframenavigationsymbol
+        \hspace{0.2cm}
+        \begin{minipage}[c]{0.5cm}
+            \vspace{-0.1cm}
+            {\strut\insertframenumber{}/\inserttotalframenumber\strut}
+        \end{minipage}
+    }
+}
+
+\newcommand{\twocols}[2]
+{
+    \begin{columns}[c]
+        \begin{column}{0.5\textwidth}
+            #1
+        \end{column}
+        \hspace{0pt} \vrule{}
+        \begin{column}{0.5\textwidth}
+            #2
+        \end{column}
+    \end{columns}
+}
+
+%% =============================================================================
+
+\title{
+    \Large\textsc{wang–müller algoritmo realizacija 
+    kartografinei upių generalizacijai}
+
+}
+\author{\small \bf Motiejus Jakštys \\[4ex]
+    \includegraphics[height=4em]{vu}
+}
+
+\date{\small 2021-06-02}
+
+\begin{document}
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Turinys}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\section{Problema}
+
+\begin{frame}{Problema}
+    \begin{itemize}[<+->]
+
+        \item Dabartiniai atvirai prieinami linijų paprastinimo algoritmai
+            nepritaikyti gamtiniams objektams: upėms, krantų linijoms.
+
+        \item Prarandami raiškūs gamtinių objektų elementai: vingiai, kilpos.
+
+    \end{itemize}
+\end{frame}
+
+\section{Uždaviniai}
+
+\begin{frame}{Uždaviniai: įvertinimas}
+    \begin{itemize}[<+->]
+        \item Įvertinti prieinamus linijų paprastinimo algoritmus.
+        \item Identifikuoti pagrindines klasikinių algoritmų problemas.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Uždaviniai: realizacija}
+    \begin{itemize}[<+->]
+        \item Apibrėžti {\WM} algoritmo techninės realizacijos metodiką.
+        \item Realizuoti {\WM} algoritmą teoriškai ir techniškai detalizuojant jį
+            sudarančias geometrijos keitimo operacijas.
+        \item Pritaikyti skirtingiems duomenų rinkiniams ir gautus rezultatus
+            palyginti su valstybiniais duomenų rinkiniais.
+    \end{itemize}
+\end{frame}
+
+\section{Aktualumas}
+
+\begin{frame}{Aktualumas: praplečiama teorija}
+    \begin{itemize}[<+->]
+        \item Leidžia išplėsti kartografinės teorijos žinias apie gamtinių
+            objektų ribų generalizavimą atsižvelgiant į jų raiškumą.
+        \item {\WM} straipsnyje sprendiniai nedetalizuojami taip, kad būtų
+            galima pritaikyti. Šis darbas tai padaro.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Aktualumas: panaudojimas}
+    \begin{itemize}[<+->]
+        \item Išplėstos galimybės pasinaudoti atviro
+            kodo programine įranga kartografinės generalizacijos
+            uždaviniams.
+        \item Sprendimas gali būti pritaikytas kartografų realizuojant
+            automatinius duomenų generalizavimo sprendimus.
+    \end{itemize}
+\end{frame}
+
+
+\section{Metodika}
+
+\begin{frame}{Techninė implementacija: aplinka}
+    \begin{itemize}[<+->]
+        \item Realizacija kurta PostGIS 3.1.1.
+
+        \item PostGIS yra PostgreSQL duomenų bazės papildinys darbui su GIS.
+
+        \item PostGIS ir PostgreSQL yra atviro kodo ir nemokami.
+            
+        \item PostGIS programos gali būti pasiekiamos iš praktiškai bet kokios
+            programavimo kalbos, todėl veikia įvairiose aplinkose.
+
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Techninė implementacija: algoritmas}
+    \begin{itemize}[<+->]
+
+        \item Algoritmas implementuotas funkcija \textsc{st\_simplifywm}.
+
+        \item Priima vieną parametrą: \textsc{dhalfcircle}: pusskritulio
+            plotas: analogiško ir didesnio ploto linkių nepaprastina.
+
+        \item Pagalbinės funkcijos:
+            \begin{itemize}
+                \item<4> \textsc{wm\_detect\_bends}
+                \item<4> \textsc{wm\_fix\_gentle\_inflections}
+                \item<4> \textsc{wm\_self\_crossing}
+                \item<4> \textsc{wm\_bend\_attrs}
+                \item<4> \textsc{wm\_st\_split}
+                \item<4> \textsc{wm\_exaggerate\_bend}
+                \item<4> ...
+            \end{itemize}
+
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Algoritmo realizacijos procesas}
+  \tikzset{
+    startstop/.style={trapezium,text centered,minimum height=2em,
+      trapezium left angle=70,trapezium right angle=110,draw=black,fill=red!20},
+    proc/.style={rectangle,minimum height=2em,text centered,draw=black,
+      fill=orange!20},
+    decision/.style={diamond,minimum height=2em,text centered,aspect=3,
+      draw=black,fill=green!20},
+    arrow/.style={thick,->,>=stealth},
+  }
+  \begin{figure}
+    \centering
+    \scalebox{.35}{
+      \begin{tikzpicture}[node distance=2cm,auto]
+        \node (start) [startstop] {Nuskaityti \textsc{linestring}};
+        \node (detect) [proc,below of=start] {Aptikti linkius};
+        \node (inflections) [proc,below of=detect] {Sutvarkyti nežymius išlinkimus};
+        \node (selfcrossing) [proc,below of=inflections] {Pašalinti save kertančias vietas};
+        \node (mutated1) [decision,below of=selfcrossing] {Koreguotas?};
+        \node (bendattrs) [proc,below of=mutated1] {Apskaičiuoti linkio savybes};
+        \node (exaggeration) [proc,below of=bendattrs] {Didinti linkį};
+        \node (mutated2) [decision,below of=exaggeration] {Koreguotas?};
+        \node (elimination) [proc,below of=mutated2] {Pašalinti linkį};
+        \node (mutated3) [decision,below of=elimination] {Koreguotas?};
+        \node (stop) [startstop,below of=mutated3] {Pabaiga};
+    
+        \coordinate [right of=mutated1,node distance=5cm] (mutated1y) {};
+        \coordinate [right of=mutated2,node distance=5cm] (mutated2y) {};
+        \coordinate [right of=mutated3,node distance=5cm] (mutated3y) {};
+    
+        \draw [arrow] (start) -- (detect);
+        \draw [arrow] (detect) -- (inflections);
+        \draw [arrow] (inflections) -- (selfcrossing);
+        \draw [arrow] (selfcrossing) -- (mutated1);
+        \draw [arrow] (mutated1) -| node [near start] {Taip} (mutated1y) |- (detect);
+        \draw [arrow] (mutated1) -- node[anchor=west] {Ne} (bendattrs);
+        \draw [arrow] (bendattrs) -- (exaggeration);
+        \draw [arrow] (exaggeration) -- (mutated2);
+        \draw [arrow] (mutated2) -| node [near start] {Taip} (mutated2y) |- (detect);
+        \draw [arrow] (mutated2) -- node[anchor=west] {Ne} (elimination);
+        \draw [arrow] (mutated3) -| node [near start] {Taip} (mutated3y) |- (detect);
+        \draw [arrow] (mutated3) -- node[anchor=west] {Ne} (stop);
+        \draw [arrow] (elimination) -- (mutated3);
+      \end{tikzpicture}
+    }
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Automatiniai testai}
+
+\end{frame}
+
+
+\end{document}
