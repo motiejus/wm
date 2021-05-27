@@ -19,7 +19,9 @@ FIGURES = \
 		  inflection-1-gentle-inflection-after \
 		  fig6-selfcrossing \
 		  selfcrossing-1 \
-		  isolated-1-exaggerated
+		  isolated-1-exaggerated \
+		  isolated-1-before \
+		  isolated-1-after
 
 RIVERS = \
 		 salvis-25k \
@@ -101,6 +103,14 @@ isolated-1-exaggerated_WIDTHDIV = 2
 isolated-1-exaggerated_1SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=2
 isolated-1-exaggerated_2SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=1
 isolated-1-exaggerated_1COLOR = orange
+
+isolated-1-before_1SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=1
+isolated-1-before_2SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=2
+isolated-1-before_2LINESTYLE = invisible
+isolated-1-before_WIDTHDIV = 2
+isolated-1-after_1SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=2
+isolated-1-after_1COLOR = orange
+isolated-1-after_WIDTHDIV = 2
 
 ################################################################################
 # 250K
@@ -306,7 +316,7 @@ vars.inc.tex: vars.awk wm.sql Makefile
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
-slides-2021-06-02.pdf: slides-2021-06-02.tex
+slides-2021-06-02.pdf: slides-2021-06-02.tex isolated-1-before.pdf isolated-1-after.pdf
 	latexmk -pdf $<
 
 dump-debug_wm.sql.xz:

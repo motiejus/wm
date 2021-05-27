@@ -154,7 +154,7 @@
         \item Algoritmas implementuotas funkcija \textsc{st\_simplifywm}.
 
         \item Priima vieną parametrą: \textsc{dhalfcircle}: pusskritulio
-            plotas: analogiško ir didesnio ploto linkių nepaprastina.
+            skersmuo: analogiško ir didesnio ploto linkių nepaprastina.
 
         \item Pagalbinės funkcijos:
             \begin{itemize}
@@ -219,6 +219,27 @@
 \end{frame}
 
 \begin{frame}{Automatiniai testai}
+    \tikzset{
+        arrow/.style={thick,->,>=stealth},
+    }
+    \begin{figure}
+        \begin{tikzpicture}[auto]
+            \onslide<1->{
+              \node (before) []{
+                \includegraphics[width=.4\textwidth]{isolated-1-before.pdf}
+              };
+            }
+            \onslide<2->{
+              \node(after) [right=2cm of before.east]{
+                  \includegraphics[width=.4\textwidth]{isolated-1-after.pdf}
+              };
+            }
+
+            \onslide<3->{
+              \draw[arrow] (before) -- node[anchor=south] {\footnotesize Programa} (after);
+            }
+        \end{tikzpicture}
+    \end{figure}
 
 \end{frame}
 
