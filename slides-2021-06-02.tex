@@ -144,12 +144,19 @@
 \section{Aktualumas}
 
 \begin{frame}[fragile] %{Aktualumas: praplečiama teorija}
-    \begin{minted}[fontsize=\small]{sql}
-      create function ST_SimplifyWM(
-      geom geometry,
-      dhalfcircle float,
-      ) returns geometry
-    \end{minted}
+  \begin{columns}[c]
+    \begin{column}{.5\textwidth}
+      \begin{minted}[fontsize=\footnotesize]{sql}
+CREATE FUNCTION ST_SimplifyWM(
+  geom geometry,
+  dhalfcircle float,
+) RETURNS geometry
+      \end{minted}
+    \end{column}
+    \begin{column}{.5\textwidth}
+      foobar
+    \end{column}
+  \end{columns}
 \end{frame}
 
 
