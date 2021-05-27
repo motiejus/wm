@@ -7,6 +7,7 @@
 \usepackage{tabularx}
 \usepackage[labelformat=empty,justification=centering]{caption}
 \usepackage{tikz}
+\usepackage{minted}
 \usetikzlibrary{shapes.geometric,arrows,positioning}
 
 \usefonttheme{serif}
@@ -142,9 +143,24 @@
 
 \section{Aktualumas}
 
-\begin{frame}{Aktualumas: praplečiama teorija}
-  \twocols{
+\begin{frame}[fragile] %{Aktualumas: praplečiama teorija}
+    \begin{minted}[fontsize=\small]{sql}
+      create function ST_SimplifyWM(
+      geom geometry,
+      dhalfcircle float,
+      ) returns geometry
+    \end{minted}
+\end{frame}
 
+
+\begin{frame}[fragile] %{Aktualumas: praplečiama teorija}
+  \twocols{
+    %\begin{minted}[fontsize=\small]{sql}
+    %  create function ST\_SimplifyWM(
+    %  geom geometry,
+    %  dhalfcircle float,
+    %  ) returns geometry
+    %\end{minted}
   }{
     \begin{itemize}
       \item Leidžia išplėsti kartografinės teorijos žinias apie gamtinių

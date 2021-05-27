@@ -317,7 +317,7 @@ slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
 slides-2021-06-02.pdf: slides-2021-06-02.tex isolated-1-before.pdf isolated-1-after.pdf
-	latexmk -pdf $<
+	latexmk -shell-escape -pdf $<
 
 dump-debug_wm.sql.xz:
 	docker exec -ti wm-mj pg_dump -Uosm osm -t wm_devug | xz -v > $@
