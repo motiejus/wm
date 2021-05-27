@@ -5,6 +5,7 @@
 \usepackage{graphics}
 \usepackage{biblatex}
 \usepackage{tabularx}
+\usepackage[labelformat=empty,justification=centering]{caption}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric,arrows,positioning}
 
@@ -41,11 +42,11 @@
 \newcommand{\twocols}[2]
 {
     \begin{columns}[c]
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.4\textwidth}
             #1
         \end{column}
-        \hspace{0pt} \vrule{}
-        \begin{column}{0.5\textwidth}
+        %\hspace{0pt} \vrule{}
+        \begin{column}{0.6\textwidth}
             #2
         \end{column}
     \end{columns}
@@ -82,40 +83,61 @@
 
 \begin{frame}
   \begin{abstract}
+
     Dabartiniai linijų simplifikavimo algoritmai netinka upėms. Šis darbas
     realizuoja {\WM} algoritmą. Jis geriau tinka upėms.
+
   \end{abstract}
 \end{frame}
 
 \section{Problema}
 
 \begin{frame}{Linijų paprastinimo algoritmų problemos}
+  \twocols{
+    \begin{figure}[ht]
+      \includegraphics[width=\textwidth]{salvis-dp64-2x50k}
+      \caption{\footnotesize Paprastinta naudojant {\DP}.}
+    \end{figure}
+  }{
     \begin{itemize}
-
-        \item Nepritaikyti gamtiniams objektams: upėms, krantų linijoms.
-
-        \item Prarandami raiškūs gamtinių objektų elementai: vingiai, kilpos.
-
+      \item Nepritaikyti gamtiniams objektams: upėms, krantų linijoms.
+      \item Prarandami raiškūs gamtinių objektų elementai: vingiai, kilpos.
     \end{itemize}
+  }
 \end{frame}
 
 \section{Uždaviniai}
 
-\begin{frame}{Darbo uždaviniai: vertinimas}
+\begin{frame}{Uždaviniai: prieinamų algoritmų vertinimas}
+  \twocols{
+    \begin{figure}[ht]
+      \includegraphics[width=\textwidth]{salvis-vwchaikin64-2x50k}
+      \caption{\footnotesize Paprastinta naudojant {\VW} + Chaikin}
+    \end{figure}
+  }{
     \begin{itemize}
-        \item Įvertinti prieinamus linijų paprastinimo algoritmus.
-        \item Įvardinti prieinamų algoritmų problemas.
+      \item Įvertinti prieinamus linijų paprastinimo algoritmus.
+      \item Įvardinti prieinamų algoritmų problemas.
     \end{itemize}
+  }
 \end{frame}
 
 
-\begin{frame}{Darbo uždaviniai: realizacija}
+\begin{frame}{Uždaviniai: {\WM} realizacija}
+  \twocols{
+    \begin{figure}[ht]
+      \includegraphics[width=\textwidth]{wang125-2}
+      \caption{{\WM} siūlomas metodas.}
+    \end{figure}
+
+  }{
     \begin{itemize}
-        \item Apibrėžti {\WM} algoritmo \\ techninės realizacijos metodiką.
-        \item Teoriškai ir techniškai realizuoti \\ {\WM} algoritmą.
+        \item Apibrėžti algoritmo techninės realizacijos metodiką.
+        \item Teoriškai ir techniškai realizuoti algoritmą.
         \item Išbandyti su skirtingais duomenų rinkiniais.
         \item Palyginti su valstybiniais duomenų rinkiniais.
     \end{itemize}
+  }
 \end{frame}
 
 \section{Aktualumas}
