@@ -8,6 +8,8 @@
 \usepackage[labelformat=empty,justification=centering]{caption}
 \usepackage{tikz}
 \usepackage{minted}
+\AtBeginEnvironment{minted}{%
+    \renewcommand{\fcolorbox}[4][]{#4}}
 \usetikzlibrary{shapes.geometric,arrows,positioning}
 
 \definecolor{vulightgrey}{RGB}{220,220,220}
@@ -145,37 +147,25 @@
 
 \begin{frame}[fragile] %{Aktualumas: praplečiama teorija}
   \begin{columns}[c]
-    \begin{column}{.5\textwidth}
-      \begin{minted}[fontsize=\footnotesize]{sql}
+    \begin{column}{.3\textwidth}
+      \begin{minted}[fontsize=\tiny]{sql}
 CREATE FUNCTION ST_SimplifyWM(
   geom geometry,
   dhalfcircle float,
-) RETURNS geometry
+) RETURNS geometry AS $$
+  ...
+end $$ language plpgsql;
       \end{minted}
     \end{column}
-    \begin{column}{.5\textwidth}
-      foobar
+    \begin{column}{.7\textwidth}
+      \begin{itemize}
+        \item Leidžia išplėsti kartografinės teorijos žinias apie gamtinių
+          objektų ribų generalizavimą atsižvelgiant į jų raiškumą.
+        \item {\WM} straipsnyje sprendiniai nedetalizuojami taip, kad būtų
+          galima pritaikyti. Šis darbas tai padaro.
+      \end{itemize}
     \end{column}
   \end{columns}
-\end{frame}
-
-
-\begin{frame}[fragile] %{Aktualumas: praplečiama teorija}
-  \twocols{
-    %\begin{minted}[fontsize=\small]{sql}
-    %  create function ST\_SimplifyWM(
-    %  geom geometry,
-    %  dhalfcircle float,
-    %  ) returns geometry
-    %\end{minted}
-  }{
-    \begin{itemize}
-      \item Leidžia išplėsti kartografinės teorijos žinias apie gamtinių
-        objektų ribų generalizavimą atsižvelgiant į jų raiškumą.
-      \item {\WM} straipsnyje sprendiniai nedetalizuojami taip, kad būtų
-        galima pritaikyti. Šis darbas tai padaro.
-    \end{itemize}
-  }
 \end{frame}
 
 \begin{frame}{Aktualumas: panaudojimas}
