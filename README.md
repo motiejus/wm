@@ -5,20 +5,15 @@ This is Wang–Müller line generalization algorithm implementation in PostGIS.
 Following "Line generalization based on analysis of shape characteristics" by
 the same authors, 1998.
 
-Status
-------
-
-Mostly works. Read `mj-msc-full.pdf` for visual examples and possible gotchas.
-
 ![line simplification example](https://raw.githubusercontent.com/motiejus/wm/main/salvis.png)
 
-Structure
----------
+Status & Structure
+------------------
 
-There are 2 main deliverables:
+There are 2 main pieces:
 
 - `wm.sql`, the implementation.
-- paper `mj-msc-full.pdf`, a MSc thesis, explaining it.
+- MSc thesis `mj-msc-full.pdf` with visual examples and known issues.
 
 It contains a few supporting files, notably:
 
