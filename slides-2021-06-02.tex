@@ -99,7 +99,7 @@
   \twocols{
     \begin{figure}[ht]
       \includegraphics[width=\textwidth]{salvis-dp64-2x50k}
-      \caption{\footnotesize Paprastinta naudojant \\ {\DP}.}
+      \caption{\footnotesize Paprastinta naudojant {\DP}.}
     \end{figure}
   }{
     \begin{itemize}
@@ -132,6 +132,7 @@
       \includegraphics[width=\textwidth]{wang125-2}
       \caption{{\WM} siūlomas metodas.}
     \end{figure}
+
   }{
     \begin{itemize}
         \item Apibrėžti algoritmo techninės realizacijos metodiką.
@@ -142,72 +143,89 @@
   }
 \end{frame}
 
-\section{Aktualumas}
+%      \begin{minted}[fontsize=\tiny]{sql}
+%CREATE FUNCTION ST_SimplifyWM(
+%  geom geometry,
+%  dhalfcircle float,
+%) RETURNS geometry AS $$
+%  ...
+%end $$ language plpgsql;
+%      \end{minted}
 
-\begin{frame}[fragile]{Aktualumas: praplečiama teorija}
-  \twocols{
-    \begin{figure}[ht]
-      \includegraphics[width=.8\textwidth]{github-wm}
-    \end{figure}
-  }{
-    \begin{itemize}
-      \item Leidžia išplėsti kartografinės teorijos žinias apie gamtinių
-        objektų ribų generalizavimą atsižvelgiant į jų raiškumą.
-      \item {\WM} straipsnyje sprendiniai nedetalizuojami taip, kad būtų
-        galima pritaikyti. Šis darbas tai padaro.
-    \end{itemize}
-  }
-\end{frame}
+\section{Aktualumas}
 
 \begin{frame}[fragile]{Aktualumas: praplečiama teorija}
   \begin{columns}[c]
     \begin{column}{.3\textwidth}
-      \begin{minted}[fontsize=\tiny]{sql}
-CREATE FUNCTION ST_SimplifyWM(
-  geom geometry,
-  dhalfcircle float,
-) RETURNS geometry AS $$
-  ...
-end $$ language plpgsql;
-      \end{minted}
+      \begin{figure}[ht]
+        \includegraphics[width=\textwidth]{selfcrossing-1}
+      \end{figure}
     \end{column}
     \begin{column}{.7\textwidth}
       \begin{itemize}
-        \item Leidžia išplėsti kartografinės teorijos žinias apie gamtinių
+
+        \item Praplečia išplėsti kartografinės teorijos žinias apie gamtinių
           objektų ribų generalizavimą atsižvelgiant į jų raiškumą.
-        \item {\WM} straipsnyje sprendiniai nedetalizuojami taip, kad būtų
+
+        \item {\WM} straipsnis sprendimų nedetalizuoja taip, kad būtų
           galima pritaikyti. Šis darbas tai padaro.
+
       \end{itemize}
     \end{column}
   \end{columns}
 \end{frame}
 
 \begin{frame}{Aktualumas: panaudojimas}
-    \begin{itemize}
-        \item Išplėstos galimybės pasinaudoti atviro
-            kodo programine įranga kartografinės generalizacijos
-            uždaviniams.
-        \item Sprendimas gali būti pritaikytas kartografų realizuojant
-            automatinius duomenų generalizavimo sprendimus.
-    \end{itemize}
+  \begin{columns}[c]
+    \begin{column}{.3\textwidth}
+      \begin{figure}[ht]
+        \includegraphics[width=\textwidth]{github-wm}
+      \end{figure}
+    \end{column}
+    \begin{column}{.7\textwidth}
+      \begin{itemize}
+
+        \item Papildomas atviro kodo sprendimas automatiniam generalizavimo
+          uždaviniams.
+
+        \item Pritaikomas kartografų.
+
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 
 \section{Metodika}
 
 \begin{frame}{Techninė implementacija: aplinka}
-    \begin{itemize}[<+->]
-        \item Realizacija kurta PostGIS 3.1.1.
+  \begin{columns}[c]
+    \begin{column}{.3\textwidth}
+      \begin{figure}[ht]
+          \includegraphics[width=\textwidth]{postgis-logo}
+      \end{figure}
+      \begin{figure}[ht]
+          \includegraphics[width=.5\textwidth]{postgresql-logo}
+      \end{figure}
+    \end{column}
+    \begin{column}{.7\textwidth}
+
+      \begin{itemize}
+        \item Realizacija kurta PostGIS.
 
         \item PostGIS yra PostgreSQL duomenų bazės papildinys darbui su GIS.
 
-        \item PostGIS ir PostgreSQL yra atviro kodo ir nemokami.
-            
-        \item PostGIS programos gali būti pasiekiamos iš praktiškai bet kokios
-            programavimo kalbos, todėl veikia įvairiose aplinkose.
+        \item Atviro kodo nemokama programinė įranga.
 
-    \end{itemize}
+        \item PostGIS sprendimai veikia iš praktiškai bet kokios programavimo
+          kalbos, todėl yra universalūs.
+
+      \end{itemize}
+
+    \end{column}
+  \end{columns}
 \end{frame}
+
 
 \begin{frame}{Techninė implementacija: algoritmas}
     \begin{itemize}[<+->]
