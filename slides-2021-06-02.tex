@@ -146,15 +146,6 @@
   }
 \end{frame}
 
-%      \begin{minted}[fontsize=\tiny]{sql}
-%CREATE FUNCTION ST_SimplifyWM(
-%  geom geometry,
-%  dhalfcircle float,
-%) RETURNS geometry AS $$
-%  ...
-%end $$ language plpgsql;
-%      \end{minted}
-
 \section{Aktualumas}
 
 \begin{frame}[fragile]{Aktualumas: praplečiama teorija}
@@ -240,26 +231,21 @@
 \end{frame}
 
 
-\begin{frame}{Techninė implementacija: algoritmas}
-    \begin{itemize}[<+->]
+\begin{frame}[fragile]{Techninė implementacija: algoritmas}
+  \begin{minted}[fontsize=\small]{sql}
+CREATE FUNCTION ST_SimplifyWM(
+  geom geometry,
+  dhalfcircle float,
+) RETURNS geometry AS $$
+...
+END $$ LANGUAGE plpgsql;
+  \end{minted}
 
-        \item Algoritmas implementuotas funkcija \textsc{st\_simplifywm}.
+  \vspace{2em}
 
-        \item Priima vieną parametrą: \textsc{dhalfcircle}: pusskritulio
-            skersmuo: analogiško ir didesnio ploto linkių nepaprastina.
+  \textsc{dhalfcircle}: pusskritulio skersmuo. Analogiško ir didesnio ploto
+  linkių, nei šis pusapskritimis, nepaprastina.
 
-        \item Pagalbinės funkcijos:
-            \begin{itemize}
-                \item<4> \textsc{wm\_detect\_bends}
-                \item<4> \textsc{wm\_fix\_gentle\_inflections}
-                \item<4> \textsc{wm\_self\_crossing}
-                \item<4> \textsc{wm\_bend\_attrs}
-                \item<4> \textsc{wm\_st\_split}
-                \item<4> \textsc{wm\_exaggerate\_bend}
-                \item<4> ...
-            \end{itemize}
-
-    \end{itemize}
 \end{frame}
 
 \begin{frame}{Algoritmo realizacijos procesas}
