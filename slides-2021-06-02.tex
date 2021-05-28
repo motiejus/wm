@@ -87,14 +87,14 @@
 \titlepage
 \end{frame}
 
-\begin{frame}
-  \begin{abstract}
-
-    Dabartiniai linijų simplifikavimo algoritmai netinka upėms. Šis darbas
-    realizuoja {\WM} algoritmą. Jis geriau tinka upėms.
-
-  \end{abstract}
-\end{frame}
+%\begin{frame}
+%  \begin{abstract}
+%
+%    Dabartiniai linijų simplifikavimo algoritmai netinka upėms. Šis darbas
+%    realizuoja {\WM} algoritmą. Jis geriau tinka upėms.
+%
+%  \end{abstract}
+%\end{frame}
 
 \section{Problema}
 
@@ -330,7 +330,7 @@ END $$ LANGUAGE plpgsql;
 
 \begin{frame}{Pasiruošimas}
   \begin{itemize}
-    \item Klaidų ieškojimas.
+    \item Pagalbinių funkcijų ir lentelių paruošimas.
     \item Upių sujungimas.
   \end{itemize}
 \end{frame}
@@ -393,6 +393,16 @@ END $$ LANGUAGE plpgsql;
   {\tiny https://dev.openmap.lt/webgl/wm.html}
 \end{frame}
 
+\begin{frame}{Faktai}
+  \begin{itemize}
+    \item $>1000$ eilučių procedūrinio SQL.
+    \item $\sim500$ eilučių Python, Awk, GNU Make.
+    \item Susidomėjimas atsirado iš karto (web versija).
+  \end{itemize}
+\end{frame}
+
+\section{Išvados ir pasiūlymai ateičiai}
+
 \begin{frame}{Išvados}
   \begin{itemize}
     \item Klasikiniai algoritmai išanalizuoti, problemos aprašytos.
@@ -417,8 +427,7 @@ END $$ LANGUAGE plpgsql;
 \begin{frame}{Ačiū}
   Klausimai? \\ \\
 
-  Techninę realizaciją ir magistrinį darbą rasite
-      \href{https://github.com/motiejus/wm}{github.com/motiejus/wm}.
+  \href{https://github.com/motiejus/wm}{github.com/motiejus/wm}
 \end{frame}
 
 \end{document}
