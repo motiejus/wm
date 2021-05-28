@@ -5,12 +5,11 @@
 \usepackage{graphics}
 \usepackage{biblatex}
 \usepackage{tabularx}
-\usepackage[labelformat=empty,justification=centering]{caption}
+\usepackage[labelfont={color=vupurple},labelformat=empty,justification=centering]{caption}
 \usepackage{tikz}
 \usepackage{minted}
-\AtBeginEnvironment{minted}{%
-    \renewcommand{\fcolorbox}[4][]{#4}}
-\usetikzlibrary{shapes.geometric,arrows,positioning}
+\usepackage{subcaption}
+
 
 \definecolor{vulightgrey}{RGB}{220,220,220}
 \definecolor{vudarkgrey}{RGB}{65,65,65}
@@ -25,6 +24,10 @@
 \setbeamercolor{normal text}{fg=vudarkgrey}
 
 \usefonttheme{serif}
+
+\AtBeginEnvironment{minted}{%
+    \renewcommand{\fcolorbox}[4][]{#4}}
+\usetikzlibrary{shapes.geometric,arrows,positioning}
 
 \newcommand{\DP}{Douglas \& Peucker}
 \newcommand{\VW}{Visvalingam--Whyatt}
@@ -202,10 +205,20 @@
   \begin{columns}[c]
     \begin{column}{.3\textwidth}
       \begin{figure}[ht]
-          \includegraphics[width=\textwidth]{postgis-logo}
-      \end{figure}
-      \begin{figure}[ht]
+        \begin{subfigure}[b]{\textwidth}
+          \centering
+          \includegraphics[width=.7\textwidth]{postgis-logo}
+        \end{subfigure}
+        \\[1ex]
+        \begin{subfigure}[b]{\textwidth}
+          \centering
           \includegraphics[width=.5\textwidth]{postgresql-logo}
+        \end{subfigure}
+        \\[1ex]
+        \begin{subfigure}[b]{\textwidth}
+          \centering
+          \includegraphics[width=.6\textwidth]{osi-logo}
+        \end{subfigure}
       \end{figure}
     \end{column}
     \begin{column}{.7\textwidth}
@@ -297,29 +310,101 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}{Automatiniai testai}
-    \tikzset{
-        arrow/.style={thick,->,>=stealth},
-    }
-    \begin{figure}
-        \begin{tikzpicture}[auto]
-            \onslide<1->{
-              \node (before) []{
-                \includegraphics[width=.4\textwidth]{isolated-1-before.pdf}
-              };
-            }
-            \onslide<2->{
-              \node(after) [right=2cm of before.east]{
-                  \includegraphics[width=.4\textwidth]{isolated-1-after.pdf}
-              };
-            }
+\begin{frame}{Automatiniai testai padeda tęstinumui}
+  \tikzset{
+    arrow/.style={thick,->,>=stealth},
+  }
+  \begin{figure}
+    \begin{tikzpicture}[auto]
+      \onslide<1->{
+        \node (before) []{
+          \includegraphics[width=.4\textwidth]{isolated-1-before.pdf}
+        };
+      }
+      \onslide<2->{
+        \node(after) [right=2cm of before.east]{
+          \includegraphics[width=.4\textwidth]{isolated-1-after.pdf}
+        };
+      }
+      \onslide<2->{
+        \draw[arrow] (before) -- node[anchor=south] {\footnotesize Programa} (after);
+      }
+    \end{tikzpicture}
+  \end{figure}
+  \onslide<3->{
+    \begin{itemize}
+      \item<3-> Iš duomenų ir rezultato sukuriamas testas.
+      \item<4-> Testai patikrina, ar programa veikia teisingai.
+      \item<4-> Išsaugomas tęstinumas ją keičiant.
+    \end{itemize}
+  }
+\end{frame}
 
-            \onslide<3->{
-              \draw[arrow] (before) -- node[anchor=south] {\footnotesize Programa} (after);
-            }
-        \end{tikzpicture}
-    \end{figure}
+\section{Įgyvendinimas}
 
+\begin{frame}{Pasiruošimas}
+  \begin{itemize}
+    \item Klaidų ieškojimas.
+    \item Upių sujungimas.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Algoritmo etapai}
+  \begin{itemize}
+    \item Linkių aptikimas ir sutvarkymas.
+    \item Linkių keitimo operatoriai: eliminavimas ir didinimas.
+    \item Jungimas neimplementuotas.
+  \end{itemize}
+\end{frame}
+
+\section{Rezultatai}
+
+\begin{frame}{GRPK10 ir {\WM}}
+  \includegraphics[width=\textwidth]{salvis-wm75--grpk10-1x50k}
+\end{frame}
+
+\begin{frame}{GRPK10, GRPK50 ir {\WM}}
+  \includegraphics[width=\textwidth]{salvis-wm75-grpk50-grpk10-1x50k}
+\end{frame}
+
+\begin{frame}{GRPK250 ir {\WM}}
+  \begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{.49\textwidth}
+      \includegraphics[width=\textwidth]{salvis-grpk250-2x}
+      \caption{GRPK250.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.49\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{salvis-wm220}
+      \caption{{\WM}.}
+    \end{subfigure}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{{\DP}}
+  \includegraphics[width=\textwidth]{salvis-wm75-dp64-grpk10-1x50k}
+\end{frame}
+
+\begin{frame}{{\DP}+Chaikin}
+  \includegraphics[width=\textwidth]{salvis-wm75-dpchaikin64-grpk10-1x50k}
+\end{frame}
+
+\begin{frame}{{\VW}}
+  \includegraphics[width=\textwidth]{salvis-wm75-vw64-grpk10-1x50k}
+\end{frame}
+
+\begin{frame}{{\VW}+Chaikin}
+  \includegraphics[width=\textwidth]{salvis-wm75-vwchaikin64-grpk10-1x50k}
+\end{frame}
+
+\begin{frame}{Išbandymas internete}
+  \centering
+  \includegraphics[width=.75\textwidth]{openmap-wm-good.png}
+  \includegraphics[width=.3\textwidth]{openmap-wm-bad.png}
+
+  {\tiny https://dev.openmap.lt/webgl/wm.html}
 \end{frame}
 
 %\begin{frame}{Rekomenduojamas skaitymas}

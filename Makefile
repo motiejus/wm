@@ -316,7 +316,9 @@ vars.inc.tex: vars.awk wm.sql Makefile
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
-slides-2021-06-02.pdf: slides-2021-06-02.tex isolated-1-before.pdf isolated-1-after.pdf
+slides-2021-06-02.pdf: slides-2021-06-02.tex \
+	isolated-1-before.pdf isolated-1-after.pdf \
+	$(wilcard *logo.pdf)
 	latexmk -shell-escape -pdf $<
 
 dump-debug_wm.sql.xz:
