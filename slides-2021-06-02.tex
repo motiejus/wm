@@ -101,8 +101,8 @@
 \begin{frame}{Linijų paprastinimo algoritmų problemos}
   \twocols{
     \begin{figure}[ht]
-      \includegraphics[width=\textwidth]{salvis-dp64-2x50k}
-      \caption{\footnotesize Paprastinta naudojant {\DP}.}
+      \includegraphics[width=\textwidth]{salvis-dp64overlaid-2x50k}
+      \includegraphics[width=\textwidth]{salvis-dpchaikin64overlaid-2x50k}
     \end{figure}
   }{
     \begin{itemize}
@@ -116,10 +116,7 @@
 
 \begin{frame}{Uždaviniai: algoritmų vertinimas}
   \twocols{
-    \begin{figure}[ht]
-      \includegraphics[width=\textwidth]{salvis-overlaid-vwchaikin64-2x50k}
-      \caption{\footnotesize GRPK10 ir {\VW}+Chaikin}
-    \end{figure}
+    \includegraphics[width=\textwidth]{amalgamate1}
   }{
     \begin{itemize}
       \item Įvertinti prieinamus linijų paprastinimo algoritmus.
@@ -377,14 +374,6 @@ END $$ LANGUAGE plpgsql;
   \includegraphics[width=\textwidth]{salvis-wm75-dpchaikin64-grpk10-1x50k}
 \end{frame}
 
-\begin{frame}{{\VW}}
-  \includegraphics[width=\textwidth]{salvis-wm75-vw64-grpk10-1x50k}
-\end{frame}
-
-\begin{frame}{{\VW}+Chaikin}
-  \includegraphics[width=\textwidth]{salvis-wm75-vwchaikin64-grpk10-1x50k}
-\end{frame}
-
 \begin{frame}{Išbandymas internete}
   \centering
   \includegraphics[width=.75\textwidth]{openmap-wm-good.png}
@@ -411,13 +400,19 @@ END $$ LANGUAGE plpgsql;
     \item Realizuotas:
       \href{https://github.com/motiejus/wm}{github.com/motiejus/wm}.
 
-    \item Rezultatai palyginti su klasikiniais algoritmais ir GRPK.
+    \item Šalčia--Visinčia rezultatai palyginti su:
+      \begin{itemize}
+        \item {\VW} (+Chaikin).
+        \item {\DP} (+Chaikin).
+        \item GRPK50.
+        \item GRPK250.
+      \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Pasiūlymai ateičiai}
   \begin{itemize}
-    \item Sukurti kobinavimo operatorių.
+    \item Implementuoti kobinavimo operatorių.
     \item Rasti ir aprašyti geresnius kriterijus izoliuotiems linkiams.
     \item Pagerinti algoritmo laiko ir atminties sąnaudas.
     \item Pilnesnė kartografinė generalizacija, įskaitant topologiją.
