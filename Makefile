@@ -370,8 +370,9 @@ clean: ## Clean the current working directory
 		.faux_db .faux_db_pre version.inc.tex vars.inc.tex version.aux \
 		version.fdb_latexmk _minted-mj-msc .tmp \
 		$(shell git ls-files -o mj-msc*) \
-		$(addsuffix .pdf,$(FIGURES)) \
-		$(addsuffix .pdf,$(RIVERS)) \
+		$(shell git ls-files -o slides-2021-06-02*) \
+		$(addsuffix .pdf,$(FIGURES) $(FIGURES_SLIDES)) \
+		$(addsuffix .pdf,$(RIVERS) $(RIVERS_SLIDES)) \
 		$(addsuffix .pdf,$(SLIDES))
 
 .PHONY: clean-tables
