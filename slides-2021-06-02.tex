@@ -90,8 +90,8 @@
 \begin{frame}
   \begin{abstract}
 
-    Dabartiniai linijų simplifikavimo algoritmai prastai tinka upėms. Šis
-    darbas realizuoja {\WM} algoritmą. Jis geriau tinka upėms.
+    Dabartiniai linijų paprastinimo algoritmai prastai tinka upėms. Šis darbas
+    realizuoja {\WM} algoritmą. Jis geriau tinka upėms.
 
   \end{abstract}
 \end{frame}
@@ -155,8 +155,8 @@
     \begin{column}{.7\textwidth}
       \begin{itemize}[<+->]
 
-        \item Praplečia išplėsti kartografinės teorijos žinias apie gamtinių
-          objektų ribų generalizavimą atsižvelgiant į jų raiškumą.
+        \item Praplečia kartografinės teorijos žinias apie gamtinių objektų
+          generalizavimą atsižvelgiant į jų raiškumą.
 
         \item {\WM} straipsnis sprendimų nedetalizuoja taip, kad būtų
           galima pritaikyti. Šis darbas tai padaro.
@@ -176,10 +176,10 @@
     \begin{column}{.7\textwidth}
       \begin{itemize}
 
-        \item Papildomas atviro kodo sprendimas automatiniam generalizavimo
+        \item Papildomas atviro kodo sprendimas automatiniams generalizavimo
           uždaviniams.
 
-        \item Pritaikomas kartografų.
+        \item Be kliūčių gali būti pritaikytas kartografų.
 
       \end{itemize}
     \end{column}
@@ -327,7 +327,7 @@ END $$ LANGUAGE plpgsql;
 
 \begin{frame}{Pasiruošimas}
   \begin{itemize}[<+->]
-    \item Pagalbinių funkcijų ir lentelių paruošimas.
+    \item Duomenų, pagalbinių funkcijų, \\ testavimo logikos paruošimas.
     \item Upių sujungimas.
   \end{itemize}
 \end{frame}
@@ -335,7 +335,7 @@ END $$ LANGUAGE plpgsql;
 \begin{frame}{Algoritmo etapai}
   \begin{itemize}[<+->]
     \item Linkių aptikimas ir sutvarkymas.
-    \item Linkių keitimo operatoriai: eliminavimas ir didinimas.
+    \item Linkių keitimo operatoriai: \\ eliminavimas ir didinimas.
     \item Jungimas neimplementuotas.
   \end{itemize}
 \end{frame}
@@ -395,7 +395,9 @@ END $$ LANGUAGE plpgsql;
 \begin{frame}{Realizacijos išvados}
   \begin{itemize}[<+->]
 
-    \item Prienami simplifikavimo algoritmai ne itin tinka upėms.
+    \item Prienami linijų paprastinimo algoritmai ne itin tinka upėms.
+
+    \item Raiškūs upių linkiai pašalinami.
 
     \item Aprašant metodą {\WM} realizacijai pastebėti trūkstami žingsniai.
 
@@ -419,7 +421,7 @@ END $$ LANGUAGE plpgsql;
 
 \begin{frame}{Pasiūlymai ateičiai}
   \begin{itemize}[<+->]
-    \item Implementuoti kobinavimo operatorių.
+    \item Implementuoti kombinavimo operatorių.
     \item Rasti ir aprašyti geresnius kriterijus izoliuotiems linkiams.
     \item Pagerinti algoritmo laiko ir atminties sąnaudas.
     \item Pilnesnė kartografinė generalizacija, įskaitant topologiją.
