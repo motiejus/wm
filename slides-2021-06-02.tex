@@ -87,14 +87,14 @@
 \titlepage
 \end{frame}
 
-%\begin{frame}
-%  \begin{abstract}
-%
-%    Dabartiniai linijų simplifikavimo algoritmai netinka upėms. Šis darbas
-%    realizuoja {\WM} algoritmą. Jis geriau tinka upėms.
-%
-%  \end{abstract}
-%\end{frame}
+\begin{frame}
+  \begin{abstract}
+
+    Dabartiniai linijų simplifikavimo algoritmai prastai tinka upėms. Šis
+    darbas realizuoja {\WM} algoritmą. Jis geriau tinka upėms.
+
+  \end{abstract}
+\end{frame}
 
 \section{Problema}
 
@@ -105,7 +105,7 @@
       \includegraphics[width=\textwidth]{salvis-dpchaikin64overlaid-2x50k}
     \end{figure}
   }{
-    \begin{itemize}
+    \begin{itemize}[<+->]
       \item Nepritaikyti gamtiniams objektams: upėms, krantų linijoms.
       \item Prarandami raiškūs gamtinių objektų elementai: vingiai, kilpos.
     \end{itemize}
@@ -134,7 +134,7 @@
     \end{figure}
 
   }{
-    \begin{itemize}
+    \begin{itemize}[<+->]
         \item Apibrėžti algoritmo techninės realizacijos metodiką.
         \item Teoriškai ir techniškai realizuoti algoritmą.
         \item Išbandyti su skirtingais duomenų rinkiniais.
@@ -153,7 +153,7 @@
       \end{figure}
     \end{column}
     \begin{column}{.7\textwidth}
-      \begin{itemize}
+      \begin{itemize}[<+->]
 
         \item Praplečia išplėsti kartografinės teorijos žinias apie gamtinių
           objektų ribų generalizavimą atsižvelgiant į jų raiškumą.
@@ -211,7 +211,7 @@
     \end{column}
     \begin{column}{.7\textwidth}
 
-      \begin{itemize}
+      \begin{itemize}[<+->]
         \item Realizacija kurta PostGIS.
 
         \item PostGIS yra PostgreSQL duomenų bazės papildinys darbui su GIS.
@@ -326,14 +326,14 @@ END $$ LANGUAGE plpgsql;
 \section{Įgyvendinimas}
 
 \begin{frame}{Pasiruošimas}
-  \begin{itemize}
+  \begin{itemize}[<+->]
     \item Pagalbinių funkcijų ir lentelių paruošimas.
     \item Upių sujungimas.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Algoritmo etapai}
-  \begin{itemize}
+  \begin{itemize}[<+->]
     \item Linkių aptikimas ir sutvarkymas.
     \item Linkių keitimo operatoriai: eliminavimas ir didinimas.
     \item Jungimas neimplementuotas.
@@ -392,26 +392,33 @@ END $$ LANGUAGE plpgsql;
 
 \section{Išvados ir pasiūlymai ateičiai}
 
-\begin{frame}{Išvados}
-  \begin{itemize}
-    \item Klasikiniai algoritmai išanalizuoti, problemos aprašytos.
-    \item Aprašytas metodas {\WM} realizacijai.
+\begin{frame}{Realizacijos išvados}
+  \begin{itemize}[<+->]
 
-    \item Realizuotas:
-      \href{https://github.com/motiejus/wm}{github.com/motiejus/wm}.
+    \item Prienami simplifikavimo algoritmai ne itin tinka upėms.
 
-    \item Šalčia--Visinčia rezultatai palyginti su:
-      \begin{itemize}
-        \item {\VW} (+Chaikin).
-        \item {\DP} (+Chaikin).
-        \item GRPK50.
-        \item GRPK250.
-      \end{itemize}
+    \item Aprašant metodą {\WM} realizacijai pastebėti trūkstami žingsniai.
+
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Palyginimo išvados}
+  Realizacija Šalčiai--Visinčiai palyginta su:
+  \begin{description}[<+->]
+
+    \item[D\&P, V--W (+Chaikin):] labiau išlaikoma natūrali
+      upės forma.
+
+    \item[GRPK50:] beveik nesiskiria nuo GRPK10.
+
+    \item[GRPK250:] padėjo atskleisti realizacijos klaidų smulkiuose
+      masteliuose.
+
+  \end{description}
+\end{frame}
+
 \begin{frame}{Pasiūlymai ateičiai}
-  \begin{itemize}
+  \begin{itemize}[<+->]
     \item Implementuoti kobinavimo operatorių.
     \item Rasti ir aprašyti geresnius kriterijus izoliuotiems linkiams.
     \item Pagerinti algoritmo laiko ir atminties sąnaudas.
@@ -420,7 +427,8 @@ END $$ LANGUAGE plpgsql;
 \end{frame}
 
 \begin{frame}{Ačiū}
-  \url{https://github.com/motiejus/wm}
+  \url{https://github.com/motiejus/wm} \\[.5em]
+  \url{https://dev.openmap.lt/webgl/wm.html}
 \end{frame}
 
 \end{document}
