@@ -374,7 +374,7 @@ clean: ## Clean the current working directory
 	-bash db stop
 	-rm -r .faux_test .faux_aggregate-rivers .faux_test-rivers .faux_visuals \
 		.faux_db .faux_db_pre version.inc.tex vars.inc.tex version.aux \
-		version.fdb_latexmk _minted-mj-msc .tmp \
+		version.fdb_latexmk _minted-* .tmp \
 		$(shell git ls-files -o mj-msc*) \
 		$(shell git ls-files -o slides-2021-06-02*) \
 		$(addsuffix .pdf,$(FIGURES) $(FIGURES_SLIDES)) \
