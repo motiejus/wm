@@ -3,9 +3,8 @@ RIVERFILTER = Visinčia|Šalčia|Nemunas
 
 # Max figure size (in meters) is when it's width is TEXTWIDTH_CM on scale 1:25k
 SCALEDWIDTH = $(shell awk '/^TEXTWIDTH_CM/{print 25000/100*$$3}' layer2img.py)
-ARCHIVABLES = $(filter-out slides-2021-03-29.txt,$(shell git ls-files .))
-SLIDES = slides-2021-03-29.pdf
-
+SLIDES_IN = slides-2021-03-29.txt slides-2021-06-02.tex
+SLIDES = slides-2021-03-29 slides-2021-06-02
 LISTINGS = aggregate-rivers.sql wm.sql extract-and-generate
 
 FIGURES = \
@@ -22,6 +21,9 @@ FIGURES = \
 		  selfcrossing-1 \
 		  isolated-1-exaggerated
 
+FIGURES_SLIDES += isolated-1-before \
+				  isolated-1-after
+
 RIVERS = \
 		 salvis-25k \
 		 salvis-2x50k \
@@ -37,6 +39,9 @@ RIVERS = \
 		 salvis-wm220-2x \
 		 salvis-wm-overlaid-250k-zoom \
 		 salvis-wm220
+
+RIVERS_SLIDES += salvis-dp64overlaid-2x50k \
+				 salvis-dpchaikin64overlaid-2x50k
 
 ################################################################################
 # FIGURES
@@ -103,6 +108,15 @@ isolated-1-exaggerated_1SELECT = wm_debug where name='isolated-1' AND stage='afi
 isolated-1-exaggerated_2SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=1
 isolated-1-exaggerated_1COLOR = orange
 
+isolated-1-before_1SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=1
+isolated-1-before_2SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=2
+isolated-1-before_2LINESTYLE = invisible
+isolated-1-before_WIDTHDIV = 2
+isolated-1-after_1SELECT = wm_debug where name='isolated-1' AND stage='afigures' AND gen=2
+isolated-1-after_1COLOR = orange
+isolated-1-after_WIDTHDIV = 2
+
+
 ################################################################################
 # 250K
 ################################################################################
@@ -135,6 +149,8 @@ label_grpk10 = GRPK 1:\numprint{10000}
 label_grpk50 = GRPK 1:\numprint{50000}
 label_vwchaikin64 = $(label_vw64) and Chaikin
 label_dpchaikin64 = $(label_dp64) and Chaikin
+label_vwchaikin64lt = $(label_vw64) ir Chaikin
+label_dpchaikin64lt = $(label_dp64) ir Chaikin
 legend_   = lower left
 legend_tr = lower right
 legend_tl = lower center
@@ -179,6 +195,22 @@ salvis-25k_WIDTHDIV = 1
 salvis-2x50k_1SELECT = wm_visuals where name='salvis-grpk10'
 salvis-2x50k_WIDTHDIV = 2
 
+salvis-dp64overlaid-2x50k_1SELECT = wm_visuals where name='salvis-grpk10'
+salvis-dp64overlaid-2x50k_1LABEL = $(label_grpk10)
+salvis-dp64overlaid-2x50k_2SELECT = wm_visuals where name='salvis-dp64'
+salvis-dp64overlaid-2x50k_2LABEL = $(label_dp64)
+salvis-dp64overlaid-2x50k_2COLOR = orange
+salvis-dp64overlaid-2x50k_QUADRANT = tl
+salvis-dp64overlaid-2x50k_LEGEND = $(legend_tl)
+
+salvis-dpchaikin64overlaid-2x50k_1SELECT = wm_visuals where name='salvis-grpk10'
+salvis-dpchaikin64overlaid-2x50k_1LABEL = $(label_grpk10)
+salvis-dpchaikin64overlaid-2x50k_2SELECT = wm_visuals where name='salvis-dpchaikin64'
+salvis-dpchaikin64overlaid-2x50k_2COLOR = orange
+salvis-dpchaikin64overlaid-2x50k_2LABEL = $(label_dpchaikin64lt)
+salvis-dpchaikin64overlaid-2x50k_QUADRANT = tl
+salvis-dpchaikin64overlaid-2x50k_LEGEND = $(legend_tl)
+
 salvis-dp64-2x50k_1SELECT = wm_visuals where name='salvis-dp64'
 salvis-dp64-2x50k_WIDTHDIV = 2
 
@@ -220,14 +252,16 @@ $(1).pdf: layer2img.py Makefile $(2)
 	)
 endef
 
-$(foreach fig,$(FIGURES),$(eval $(call FIG_template,$(fig),.faux_test)))
-$(foreach fig,$(RIVERS), $(eval $(call FIG_template,$(fig),.faux_visuals)))
+$(foreach fig,$(FIGURES),       $(eval $(call FIG_template,$(fig),.faux_test)))
+$(foreach fig,$(FIGURES_SLIDES),$(eval $(call FIG_template,$(fig),.faux_test)))
+$(foreach fig,$(RIVERS),        $(eval $(call FIG_template,$(fig),.faux_visuals)))
+$(foreach fig,$(RIVERS_SLIDES), $(eval $(call FIG_template,$(fig),.faux_visuals)))
 
 #################################
 # The thesis, publishable version
 #################################
 
-mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(ARCHIVABLES) ## Thesis for publishing
+mj-msc-full.pdf: mj-msc.pdf version.inc.tex $(filter-out $(SLIDES_IN),$(shell git ls-files .)) ## Thesis for publishing
 	cp $< .tmp-$@
 	for f in $^; do \
 		if [ "$$f" = "$<" ]; then continue; fi; \
@@ -250,7 +284,7 @@ visuals: .faux_visuals  # Generate visuals for paper (fast)
 test-rivers: .faux_test-rivers ## Rivers tests (slow)
 
 .PHONY: slides
-slides: $(SLIDES)
+slides: $(addsuffix .pdf,$(SLIDES))
 
 .PHONY: refresh-rivers
 refresh-rivers: refresh-rivers-10.sql refresh-rivers-50.sql refresh-rivers-250.sql ## Refresh river data from national datasets
@@ -307,6 +341,14 @@ vars.inc.tex: vars.awk wm.sql Makefile
 slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
+slides-2021-06-02.pdf: slides-2021-06-02.tex \
+	amalgamate1.png \
+	isolated-1-before.pdf isolated-1-after.pdf \
+	salvis-dp64overlaid-2x50k.pdf \
+	salvis-dpchaikin64overlaid-2x50k.pdf \
+	$(wilcard *logo.pdf)
+	latexmk -shell-escape -pdf $<
+
 dump-debug_wm.sql.xz:
 	docker exec -ti wm-mj pg_dump -Uosm osm -t wm_devug | xz -v > $@
 
@@ -330,7 +372,7 @@ clean: ## Clean the current working directory
 		$(shell git ls-files -o mj-msc*) \
 		$(addsuffix .pdf,$(FIGURES)) \
 		$(addsuffix .pdf,$(RIVERS)) \
-		$(SLIDES)
+		$(addsuffix .pdf,$(SLIDES))
 
 .PHONY: clean-tables
 clean-tables: ## Remove tables created during unit or rivers tests
