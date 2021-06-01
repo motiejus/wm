@@ -342,8 +342,14 @@ slides-2021-03-29.pdf: slides-2021-03-29.txt
 	pandoc -t beamer -i $< -o $@
 
 slides-2021-06-02.pdf: slides-2021-06-02.tex \
-	amalgamate1.png \
+	amalgamate1.png selfcrossing-1.pdf \
 	isolated-1-before.pdf isolated-1-after.pdf \
+	salvis-grpk250-2x.pdf \
+	salvis-wm220.pdf \
+	salvis-wm75--grpk10-1x50k.pdf \
+	salvis-wm75-grpk50-grpk10-1x50k.pdf \
+	salvis-wm75-dp64-grpk10-1x50k.pdf \
+	salvis-wm75-dpchaikin64-grpk10-1x50k.pdf \
 	salvis-dp64overlaid-2x50k.pdf \
 	salvis-dpchaikin64overlaid-2x50k.pdf \
 	$(wilcard *logo.pdf)
