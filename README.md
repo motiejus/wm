@@ -7,13 +7,21 @@ the same authors, 1998.
 
 ![line simplification example](https://raw.githubusercontent.com/motiejus/wm/main/salvis.png)
 
-Status & Structure
-------------------
+Status
+------
+
+The repository is archived and no longer developed. If you have used this code
+as a basis and created an improved version, ping me, I will link it from this
+README.
+
+Structure
+---------
 
 There are 2 main pieces:
 
 - `wm.sql`, the implementation.
 - MSc thesis `mj-msc-full.pdf` with visual examples and known issues.
+- A few presentations.
 
 It contains a few supporting files, notably:
 
@@ -67,18 +75,10 @@ Building the paper (pdf)
 or a container: see `Dockerfile` for dependencies or `in-container` to run
 it all in the container.
 
-Contributing
-------------
-
-This repository does not accept contributoins. Please fork it. If a fork has
-improved the algorithm substantially, you are welcome to ping me, I will link
-to it in this README.
-
 Credit
 ------
 
 [Nacionalinė Žemės Tarnyba](http://nzt.lt/) for the river data sets.
-
 
 License
 -------
