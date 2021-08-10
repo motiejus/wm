@@ -12,7 +12,8 @@ Status
 
 The repository is no longer developed and archived. Notable forks:
 
-- [github.com/openmaplt/wm](https://github.com/openmaplt/wm).
+- [github.com/openmaplt/wm](https://github.com/openmaplt/wm): seems like they
+  are seriously continuing the development of the algorithm.
 
 If you have used this code as a basis and created an improved version, ping me,
 I will link it from this README.
