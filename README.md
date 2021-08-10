@@ -10,9 +10,12 @@ the same authors, 1998.
 Status
 ------
 
-The repository is archived and no longer developed. If you have used this code
-as a basis and created an improved version, ping me, I will link it from this
-README.
+The repository is no longer developed and archived. Notable forks:
+
+- [github.com/openmaplt/wm](https://github.com/openmaplt/wm).
+
+If you have used this code as a basis and created an improved version, ping me,
+I will link it from this README.
 
 Structure
 ---------

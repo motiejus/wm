@@ -411,3 +411,14 @@ endef
 $(eval $(call refresh_rivers_template,rivers-10.sql,GDB10LT,wm_rivers))
 $(eval $(call refresh_rivers_template,rivers-50.sql,GDR50LT,wm_rivers_50))
 $(eval $(call refresh_rivers_template,rivers-250.sql,GDR250LT,wm_rivers_250))
+
+release.zip: mj-msc.tex mj-msc.bbl version.inc.tex vars.inc.tex \
+	$(addsuffix .pdf,$(FIGURES)) $(addsuffix .pdf,$(RIVERS)) \
+	$(shell git ls-files .)
+	-rm $@
+	mkdir -p .tmp; touch .tmp/editorial-version
+	zip $@ $^
+	zip $@ -j .tmp/editorial-version
+
+mj-msc.bbl: mj-msc.tex bib.bib
+	biber mj-msc
